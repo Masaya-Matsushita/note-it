@@ -1,17 +1,17 @@
 import { NextPage } from 'next'
 import { auth } from 'firebaseConfig/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { TextInput, Button, Box, Group, PasswordInput } from '@mantine/core'
 import { useRouter } from 'next/router'
 import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
 
-const SignUp: NextPage = () => {
+const SignIn: NextPage = () => {
   const router = useRouter()
   const form = useAuthFormInitialized()
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         auth,
         values.email,
         values.password
@@ -30,7 +30,9 @@ const SignUp: NextPage = () => {
 
   return (
     <div>
-      <h1 className='border-white border-b-slate-300 border-solid'>新規登録</h1>
+      <h1 className='border-white border-b-slate-300 border-solid'>
+        サインイン
+      </h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
@@ -62,4 +64,4 @@ const SignUp: NextPage = () => {
   )
 }
 
-export default SignUp
+export default SignIn
