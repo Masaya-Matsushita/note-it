@@ -6,11 +6,12 @@ import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { useRouter } from 'next/router'
 import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
 import { useGoogleSignIn } from 'hooks/useGoogleSignIn'
+import { useEffect } from 'react'
 
 const SignUp: NextPage = () => {
   const router = useRouter()
   const form = useAuthFormInitialized()
-  const googleSignIn = useGoogleSignIn(router)
+  const { googleSignIn, redirectToTop } = useGoogleSignIn(router)
 
   const emailSignUp = async (values: { email: string; password: string }) => {
     try {
@@ -30,6 +31,10 @@ const SignUp: NextPage = () => {
       }
     }
   }
+
+  useEffect(() => {
+    redirectToTop()
+  }, [redirectToTop])
 
   return (
     <div>
@@ -65,7 +70,7 @@ const SignUp: NextPage = () => {
           </Group>
         </form>
       </Box>
-      <Button onClick={googleSignIn}>Googleでログイン</Button>
+      <Button onClick={googleSignIn}>Googleアカウントで登録</Button>
     </div>
   )
 }
