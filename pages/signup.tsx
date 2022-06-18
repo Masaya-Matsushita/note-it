@@ -11,8 +11,22 @@ const SignUp: NextPage = () => {
   const form = useAuthFormInitialized()
 
   const handleSubmit = async (values: { email: string; password: string }) => {
-    await createUserWithEmailAndPassword(auth, values.email, values.password)
-    router.push('/')
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      )
+      const user = userCredential.user
+      console.log(userCredential, user)
+
+      router.push('/')
+    } catch (error) {
+      if (error instanceof Error) {
+        const errorMessage = error.message
+        console.log(errorMessage)
+      }
+    }
   }
 
   return (
@@ -22,6 +36,7 @@ const SignUp: NextPage = () => {
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
             required
+            id='email'
             label='Email'
             placeholder='example@mail.com'
             size='md'
@@ -29,6 +44,7 @@ const SignUp: NextPage = () => {
           />
           <PasswordInput
             required
+            id='password'
             label='Password'
             placeholder='半角英数6文字以上'
             mt='sm'
