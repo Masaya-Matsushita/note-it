@@ -39,7 +39,7 @@ const SignIn: NextPage = () => {
 
   return (
     <div>
-      <h1 className='pl-4 border-[#1a1b1e] border-b-slate-500 border-solid'>
+      <h1 className='pl-4 border-[#1a1b1e] border-b-dark-300 border-solid'>
         サインイン
       </h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
@@ -71,15 +71,14 @@ const SignIn: NextPage = () => {
           </Group>
         </form>
       </Box>
-      <div className='flex items-center my-20'>
-        <div className='grow border border-slate-500 border-solid'></div>
-        <span className='mx-6 text-lg text-slate-500'>OR</span>
-        <div className='grow border border-slate-500 border-solid'></div>
+      <div className='flex items-center mt-12 mb-8 xs:mt-16 xs:mb-12 lg:mt-20 lg:mb-16'>
+        <div className='grow border border-dark-300 border-solid'></div>
+        <span className='mx-6 text-lg text-dark-100'>OR</span>
+        <div className='grow border border-dark-300 border-solid'></div>
       </div>
       <Button
         onClick={googleSignIn}
         size='md'
-        className='text-black bg-white'
         leftIcon={<FcGoogle size={22} />}
       >
         Googleで登録

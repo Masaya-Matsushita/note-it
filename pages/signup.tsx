@@ -41,7 +41,7 @@ const SignUp: NextPage = () => {
 
   return (
     <div>
-      <h1 className='pl-4 border-[#1a1b1e] border-b-slate-500 border-solid'>
+      <h1 className='pl-4 border-[#1a1b1e] border-b-dark-300 border-solid'>
         新規登録
       </h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
@@ -73,49 +73,54 @@ const SignUp: NextPage = () => {
           </Group>
         </form>
       </Box>
-      <div className='flex items-center mt-10 mb-12'>
-        <div className='grow border border-slate-500 border-solid'></div>
-        <span className='mx-6 text-lg text-slate-300'>OR</span>
-        <div className='grow border border-slate-500 border-solid'></div>
+      <div className='flex items-center mt-12 mb-8 xs:mt-16 xs:mb-12 lg:mt-20 lg:mb-16'>
+        <div className='grow border border-dark-300 border-solid'></div>
+        <span className='mx-6 text-lg text-dark-100'>OR</span>
+        <div className='grow border border-dark-300 border-solid'></div>
       </div>
-      <div className='mb-8 text-lg text-center'>お持ちのアカウントで登録</div>
+      <div className='mb-6 text-lg text-center xs:mb-10 lg:mb-12 lg:text-xl'>
+        お持ちのアカウントで登録/ログイン
+      </div>
       <div className='flex justify-center items-center'>
         <div className='flex flex-col items-center'>
-          <Image
-            src='/google-logo.png'
-            width='80px'
-            height='80px'
-            alt='google'
-            priority
-            onClick={googleSignIn}
-          />
+          <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
+            <Image
+              src='/google-logo.png'
+              layout='fill'
+              alt='google'
+              priority
+              onClick={googleSignIn}
+            />
+          </div>
           <div className='mt-2'>Google</div>
         </div>
-        <div className='flex flex-col items-center px-20'>
-          <Image
-            src='/facebook-logo.png'
-            width='80px'
-            height='80px'
-            alt='facebook'
-            priority
-            onClick={facebookSignIn}
-          />
+        <div className='flex flex-col items-center px-8 xs:px-14 md:px-16 lg:px-20'>
+          <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
+            <Image
+              src='/facebook-logo.png'
+              layout='fill'
+              alt='facebook'
+              priority
+              onClick={facebookSignIn}
+            />
+          </div>
           <div className='mt-2'>Facebook</div>
         </div>
         <div className='flex flex-col items-center'>
-          <Image
-            src='/twitter-logo.png'
-            width='80px'
-            height='80px'
-            alt='twitter'
-            priority
-            onClick={googleSignIn}
-          />
+          <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
+            <Image
+              src='/twitter-logo.png'
+              layout='fill'
+              alt='twitter'
+              priority
+              onClick={googleSignIn}
+            />
+          </div>
           <div className='mt-2'>Twitter</div>
         </div>
       </div>
       <Link href='/signin'>
-        <a className='block mt-12 mr-8 text-lg text-right text-slate-300'>
+        <a className='block mt-12 mr-4 text-lg text-right text-dark-100'>
           登録済みの方はこちら
         </a>
       </Link>
