@@ -3,6 +3,7 @@ import { auth } from 'firebaseConfig/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { TextInput, Button, Box, Group, PasswordInput } from '@mantine/core'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
+import { FcGoogle } from 'react-icons/fc'
 import { useRouter } from 'next/router'
 import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
 import { useGoogleSignIn } from 'hooks/useGoogleSignIn'
@@ -70,7 +71,19 @@ const SignUp: NextPage = () => {
           </Group>
         </form>
       </Box>
-      <Button onClick={googleSignIn}>Googleアカウントで登録</Button>
+      <div className='flex items-center my-20'>
+        <div className='grow border border-slate-500 border-solid'></div>
+        <span className='mx-6 text-lg text-slate-500'>OR</span>
+        <div className='grow border border-slate-500 border-solid'></div>
+      </div>
+      <Button
+        onClick={googleSignIn}
+        size='md'
+        className='text-black bg-white'
+        leftIcon={<FcGoogle size={22} />}
+      >
+        Googleで登録
+      </Button>
     </div>
   )
 }

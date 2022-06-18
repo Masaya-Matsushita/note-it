@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
 import { useGoogleSignIn } from 'hooks/useGoogleSignIn'
 import { useEffect } from 'react'
+import { FcGoogle } from 'react-icons/fc'
 
 const SignIn: NextPage = () => {
   const router = useRouter()
@@ -70,7 +71,19 @@ const SignIn: NextPage = () => {
           </Group>
         </form>
       </Box>
-      <Button onClick={googleSignIn}>Googleアカウントでログイン</Button>
+      <div className='flex items-center my-20'>
+        <div className='grow border border-slate-500 border-solid'></div>
+        <span className='mx-6 text-lg text-slate-500'>OR</span>
+        <div className='grow border border-slate-500 border-solid'></div>
+      </div>
+      <Button
+        onClick={googleSignIn}
+        size='md'
+        className='text-black bg-white'
+        leftIcon={<FcGoogle size={22} />}
+      >
+        Googleで登録
+      </Button>
     </div>
   )
 }
