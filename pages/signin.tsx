@@ -10,7 +10,7 @@ const SignIn: NextPage = () => {
   const router = useRouter()
   const form = useAuthFormInitialized()
 
-  const handleSubmit = async (values: { email: string; password: string }) => {
+  const emailSignIn = async (values: { email: string; password: string }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -35,7 +35,7 @@ const SignIn: NextPage = () => {
         サインイン
       </h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
-        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+        <form onSubmit={form.onSubmit((values) => emailSignIn(values))}>
           <TextInput
             required
             id='email'

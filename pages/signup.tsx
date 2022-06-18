@@ -10,7 +10,7 @@ const SignUp: NextPage = () => {
   const router = useRouter()
   const form = useAuthFormInitialized()
 
-  const handleSubmit = async (values: { email: string; password: string }) => {
+  const emailSignUp = async (values: { email: string; password: string }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -35,7 +35,7 @@ const SignUp: NextPage = () => {
         新規登録
       </h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
-        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+        <form onSubmit={form.onSubmit((values) => emailSignUp(values))}>
           <TextInput
             required
             id='email'
