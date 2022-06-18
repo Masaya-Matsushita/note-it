@@ -39,6 +39,7 @@ const SignUp: NextPage = () => {
 
   return (
     <div>
+      <h1 className='border-white border-b-slate-300 border-solid'>新規登録</h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
