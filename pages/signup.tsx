@@ -1,7 +1,14 @@
 import { NextPage } from 'next'
 import { auth } from 'firebaseConfig/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { TextInput, Button, Box, Group, PasswordInput } from '@mantine/core'
+import {
+  TextInput,
+  Button,
+  Box,
+  Group,
+  PasswordInput,
+  Tabs,
+} from '@mantine/core'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { useRouter } from 'next/router'
 import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
@@ -41,38 +48,46 @@ const SignUp: NextPage = () => {
 
   return (
     <div>
-      <h1 className='pl-4 border-[#1a1b1e] border-b-dark-300 border-solid'>
-        新規登録
-      </h1>
-      <Box sx={{ maxWidth: 480 }} mx='auto'>
-        <form onSubmit={form.onSubmit((values) => emailSignUp(values))}>
-          <TextInput
-            required
-            id='email'
-            label='Email'
-            placeholder='example@mail.com'
-            size='md'
-            icon={<AiOutlineMail />}
-            {...form.getInputProps('email')}
-          />
-          <PasswordInput
-            required
-            id='password'
-            label='Password'
-            placeholder='半角英数6文字以上'
-            mt='sm'
-            size='md'
-            icon={<AiOutlineKey />}
-            {...form.getInputProps('password')}
-          />
+      <Tabs className='pt-8 focus:outline-none' tabPadding='xl'>
+        <Tabs.Tab label='ログイン' className='pb-2 pl-4 text-2xl font-bold'>
+          hello
+        </Tabs.Tab>
+        <Tabs.Tab label='新規登録' className='pb-2 pl-4 text-2xl font-bold'>
+          <Box sx={{ maxWidth: 480 }} mx='auto'>
+            <form onSubmit={form.onSubmit((values) => emailSignUp(values))}>
+              <TextInput
+                required
+                id='email'
+                label='Email'
+                placeholder='example@mail.com'
+                size='md'
+                icon={<AiOutlineMail />}
+                {...form.getInputProps('email')}
+              />
+              <PasswordInput
+                required
+                id='password'
+                label='Password'
+                placeholder='半角英数6文字以上'
+                mt='sm'
+                size='md'
+                icon={<AiOutlineKey />}
+                {...form.getInputProps('password')}
+              />
 
-          <Group position='right' mt='xl'>
-            <Button type='submit' size='md' leftIcon={<AiOutlineDatabase />}>
-              登録
-            </Button>
-          </Group>
-        </form>
-      </Box>
+              <Group position='right' mt='xl'>
+                <Button
+                  type='submit'
+                  size='md'
+                  leftIcon={<AiOutlineDatabase />}
+                >
+                  登録
+                </Button>
+              </Group>
+            </form>
+          </Box>
+        </Tabs.Tab>
+      </Tabs>
       <div className='flex items-center mt-12 mb-8 xs:mt-16 xs:mb-12 lg:mt-20 lg:mb-16'>
         <div className='grow border border-dark-300 border-solid'></div>
         <span className='mx-6 text-lg text-dark-100'>OR</span>
@@ -119,11 +134,6 @@ const SignUp: NextPage = () => {
           <div className='mt-2'>Twitter</div>
         </div>
       </div>
-      <Link href='/signin'>
-        <a className='block mt-12 mr-4 text-lg text-right text-dark-100'>
-          登録済みの方はこちら
-        </a>
-      </Link>
     </div>
   )
 }
