@@ -1,18 +1,11 @@
 import { MantineProvider } from '@mantine/core'
-import Head from 'next/head'
 import { FC, ReactNode } from 'react'
+import { BrowserTab } from './BrowserTab'
 
 export const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div>
-      <Head>
-        <title>Page title</title>
-        <meta
-          name='viewport'
-          content='minimum-scale=1, initial-scale=1, width=device-width'
-        />
-      </Head>
-
+      <BrowserTab />
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
