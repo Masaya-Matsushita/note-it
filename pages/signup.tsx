@@ -1,38 +1,16 @@
 import { NextPage } from 'next'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 import { app } from 'firebaseConfig/firebase'
-import { z } from 'zod'
-import { useForm, zodResolver } from '@mantine/form'
 import { TextInput, Button, Box, Group, PasswordInput } from '@mantine/core'
 import { useRouter } from 'next/router'
-
-const schema = z.object({
-  email: z
-    .string()
-    .trim()
-    .email({ message: 'メールアドレスが正しくありません。' }),
-  password: z
-    .string()
-    .trim()
-    .regex(/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,100}$/i, {
-      message: '「半角英数をそれぞれ含む6文字以上」で入力してください。',
-    }),
-})
+import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
 
 const SignUp: NextPage = () => {
   const auth = getAuth(app)
   const router = useRouter()
-
-  const form = useForm({
-    schema: zodResolver(schema),
-    initialValues: {
-      email: '',
-      password: '',
-    },
-  })
+  const form = useAuthFormInitialized()
 
   const handleSubmit = async (values: { email: string; password: string }) => {
-    console.log(values)
     await createUserWithEmailAndPassword(auth, values.email, values.password)
     router.push('/')
   }
