@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import { auth } from 'firebaseConfig/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { TextInput, Button, Box, Group, PasswordInput } from '@mantine/core'
+import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { useRouter } from 'next/router'
 import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
 
@@ -30,7 +31,7 @@ const SignIn: NextPage = () => {
 
   return (
     <div>
-      <h1 className='border-white border-b-slate-300 border-solid'>
+      <h1 className='pl-4 border-[#1a1b1e] border-b-slate-500 border-solid'>
         サインイン
       </h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
@@ -41,6 +42,7 @@ const SignIn: NextPage = () => {
             label='Email'
             placeholder='example@mail.com'
             size='md'
+            icon={<AiOutlineMail />}
             {...form.getInputProps('email')}
           />
           <PasswordInput
@@ -50,11 +52,12 @@ const SignIn: NextPage = () => {
             placeholder='半角英数6文字以上'
             mt='sm'
             size='md'
+            icon={<AiOutlineKey />}
             {...form.getInputProps('password')}
           />
 
           <Group position='right' mt='xl'>
-            <Button type='submit' size='md'>
+            <Button type='submit' size='md' leftIcon={<AiOutlineDatabase />}>
               登録
             </Button>
           </Group>

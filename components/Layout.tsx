@@ -10,10 +10,10 @@ export const Layout: FC<{ children: ReactNode }> = ({ children }) => {
         withGlobalStyles
         withNormalizeCSS
         theme={{
-          colorScheme: 'light',
+          colorScheme: 'dark',
         }}
       >
-        <div className='mx-auto max-w-4xl'>{children}</div>
+        <div className='p-4 mx-auto max-w-4xl'>{children}</div>
       </MantineProvider>
     </div>
   )
