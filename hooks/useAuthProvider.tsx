@@ -1,18 +1,26 @@
 import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
-import { auth, githubProvider, googleProvider } from 'firebaseConfig/firebase'
+import {
+  auth,
+  githubProvider,
+  googleProvider,
+  twitterProvider,
+} from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
-import { useCallback } from 'react'
 
 export const useAuthProvider = (router: NextRouter) => {
   const googleSignIn = () => {
     signInWithRedirect(auth, googleProvider)
   }
 
+  const twitterSignIn = () => {
+    signInWithRedirect(auth, twitterProvider)
+  }
+
   const githubSignIn = () => {
     signInWithRedirect(auth, githubProvider)
   }
 
-  const redirectToTop = useCallback(async () => {
+  const redirectToTop = async () => {
     try {
       const result = await getRedirectResult(auth)
       if (result) {
@@ -24,7 +32,7 @@ export const useAuthProvider = (router: NextRouter) => {
         console.log(errorMessage)
       }
     }
-  }, [router])
+  }
 
-  return { googleSignIn, githubSignIn, redirectToTop }
+  return { googleSignIn, twitterSignIn, githubSignIn, redirectToTop }
 }

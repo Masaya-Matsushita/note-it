@@ -28,7 +28,8 @@ const Login: NextPage = () => {
   const router = useRouter()
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
-  const { googleSignIn, githubSignIn, redirectToTop } = useAuthProvider(router)
+  const { googleSignIn, twitterSignIn, githubSignIn, redirectToTop } =
+    useAuthProvider(router)
 
   const emailSignIn = async (values: Omit<AuthValues, 'name'>) => {
     try {
@@ -166,7 +167,11 @@ const Login: NextPage = () => {
           </div>
         </Tabs.Tab>
       </Tabs>
-      <AuthProvider googleSignIn={googleSignIn} githubSignIn={githubSignIn} />
+      <AuthProvider
+        googleSignIn={googleSignIn}
+        twitterSignIn={twitterSignIn}
+        githubSignIn={githubSignIn}
+      />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { FC } from 'react'
 
 type Props = {
   googleSignIn: () => void
+  twitterSignIn: () => void
   githubSignIn: () => void
 }
 
@@ -12,7 +13,11 @@ type ProviderData = {
   event: Props[keyof Props]
 }[]
 
-export const AuthProvider: FC<Props> = ({ googleSignIn, githubSignIn }) => {
+export const AuthProvider: FC<Props> = ({
+  googleSignIn,
+  twitterSignIn,
+  githubSignIn,
+}) => {
   const PROVIDER_DATA: ProviderData = [
     {
       id: 1,
@@ -22,7 +27,7 @@ export const AuthProvider: FC<Props> = ({ googleSignIn, githubSignIn }) => {
     {
       id: 2,
       name: 'Twitter',
-      event: googleSignIn,
+      event: twitterSignIn,
     },
     {
       id: 3,
