@@ -4,14 +4,14 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { TextInput, Button, Box, Group, PasswordInput } from '@mantine/core'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { useRouter } from 'next/router'
-import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
+import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { useAuthThirdParty } from 'hooks/useAuthThirdParty'
 import { useEffect } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 
 const SignIn: NextPage = () => {
   const router = useRouter()
-  const form = useAuthFormInitialized()
+  const signInForm = useSignInFormInitialized()
   const { googleSignIn, redirectToTop } = useAuthThirdParty(router)
 
   const emailSignIn = async (values: { email: string; password: string }) => {
@@ -43,7 +43,7 @@ const SignIn: NextPage = () => {
         サインイン
       </h1>
       <Box sx={{ maxWidth: 480 }} mx='auto'>
-        <form onSubmit={form.onSubmit((values) => emailSignIn(values))}>
+        <form onSubmit={signInForm.onSubmit((values) => emailSignIn(values))}>
           <TextInput
             required
             id='email'
@@ -51,7 +51,7 @@ const SignIn: NextPage = () => {
             placeholder='example@mail.com'
             size='md'
             icon={<AiOutlineMail />}
-            {...form.getInputProps('email')}
+            {...signInForm.getInputProps('email')}
           />
           <PasswordInput
             required
@@ -61,7 +61,7 @@ const SignIn: NextPage = () => {
             mt='sm'
             size='md'
             icon={<AiOutlineKey />}
-            {...form.getInputProps('password')}
+            {...signInForm.getInputProps('password')}
           />
 
           <Group position='right' mt='xl'>

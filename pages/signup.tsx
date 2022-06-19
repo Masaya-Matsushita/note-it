@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { auth } from 'firebaseConfig/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import {
   TextInput,
   Button,
@@ -10,19 +10,24 @@ import {
   Tabs,
 } from '@mantine/core'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
+import { RiBallPenLine } from 'react-icons/ri'
 import { useRouter } from 'next/router'
-import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
+import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
 import { useAuthThirdParty } from 'hooks/useAuthThirdParty'
 import { useEffect } from 'react'
 import Image from 'next/image'
 
 const SignUp: NextPage = () => {
   const router = useRouter()
-  const form = useAuthFormInitialized()
+  const signUpForm = useSignUpFormInitialized()
   const { googleSignIn, githubSignIn, redirectToTop } =
     useAuthThirdParty(router)
 
-  const emailSignUp = async (values: { email: string; password: string }) => {
+  const emailSignUp = async (values: {
+    name: string
+    email: string
+    password: string
+  }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -31,6 +36,9 @@ const SignUp: NextPage = () => {
       )
       const user = userCredential.user
       console.log(userCredential, user)
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, { displayName: values.name })
+      }
 
       router.push('/')
     } catch (error) {
@@ -53,15 +61,27 @@ const SignUp: NextPage = () => {
         </Tabs.Tab>
         <Tabs.Tab label='新規登録' className='pb-2 pl-4 text-2xl font-bold'>
           <Box sx={{ maxWidth: 480 }} mx='auto'>
-            <form onSubmit={form.onSubmit((values) => emailSignUp(values))}>
+            <form
+              onSubmit={signUpForm.onSubmit((values) => emailSignUp(values))}
+            >
+              <TextInput
+                required
+                id='username'
+                label='User Name'
+                placeholder='User Name'
+                size='md'
+                icon={<RiBallPenLine />}
+                {...signUpForm.getInputProps('name')}
+              />
               <TextInput
                 required
                 id='email'
                 label='Email'
                 placeholder='example@mail.com'
+                mt='sm'
                 size='md'
                 icon={<AiOutlineMail />}
-                {...form.getInputProps('email')}
+                {...signUpForm.getInputProps('email')}
               />
               <PasswordInput
                 required
@@ -71,7 +91,7 @@ const SignUp: NextPage = () => {
                 mt='sm'
                 size='md'
                 icon={<AiOutlineKey />}
-                {...form.getInputProps('password')}
+                {...signUpForm.getInputProps('password')}
               />
 
               <Group position='right' mt='xl'>

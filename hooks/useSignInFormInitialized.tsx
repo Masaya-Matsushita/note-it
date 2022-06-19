@@ -14,13 +14,13 @@ const schema = z.object({
     }),
 })
 
-export const useAuthFormInitialized = () => {
-  const form = useForm({
+export const useSignInFormInitialized = () => {
+  const signInForm = useForm({
     schema: zodResolver(schema),
     initialValues: {
       email: '',
       password: '',
     },
   })
-  return form
+  return signInForm
 }
