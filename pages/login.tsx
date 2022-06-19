@@ -19,27 +19,21 @@ import { useRouter } from 'next/router'
 import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
 import { useAuthThirdParty } from 'hooks/useAuthThirdParty'
 import { useEffect } from 'react'
-import Image from 'next/image'
 import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
+import { AuthValues } from 'types/AuthValues'
+import { AuthProvider } from 'components/AuthProvider'
 
-const SignUp: NextPage = () => {
+const Login: NextPage = () => {
   const router = useRouter()
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
   const { googleSignIn, githubSignIn, redirectToTop } =
     useAuthThirdParty(router)
 
-  const emailSignIn = async (values: { email: string; password: string }) => {
+  const emailSignIn = async (values: Omit<AuthValues, 'name'>) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      )
-      const user = userCredential.user
-      console.log(userCredential, user)
-
+      await signInWithEmailAndPassword(auth, values.email, values.password)
       router.push('/')
     } catch (error) {
       if (error instanceof Error) {
@@ -49,23 +43,12 @@ const SignUp: NextPage = () => {
     }
   }
 
-  const emailSignUp = async (values: {
-    name: string
-    email: string
-    password: string
-  }) => {
+  const emailSignUp = async (values: AuthValues) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      )
-      const user = userCredential.user
-      console.log(userCredential, user)
+      await createUserWithEmailAndPassword(auth, values.email, values.password)
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: values.name })
       }
-
       router.push('/')
     } catch (error) {
       if (error instanceof Error) {
@@ -184,46 +167,9 @@ const SignUp: NextPage = () => {
           </div>
         </Tabs.Tab>
       </Tabs>
-      <div className='flex justify-center items-center'>
-        <div className='flex flex-col items-center'>
-          <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
-            <Image
-              src='/google-logo.png'
-              layout='fill'
-              alt='google'
-              priority
-              onClick={googleSignIn}
-            />
-          </div>
-          <div className='mt-2'>Google</div>
-        </div>
-        <div className='flex flex-col items-center px-8 xs:px-14 md:px-16 lg:px-20'>
-          <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
-            <Image
-              src='/twitter-logo.png'
-              layout='fill'
-              alt='twitter'
-              priority
-              onClick={googleSignIn}
-            />
-          </div>
-          <div className='mt-2'>Twitter</div>
-        </div>
-        <div className='flex flex-col items-center'>
-          <div className='relative w-16 h-16 rounded-full border border-dark-400 border-solid xs:w-20 xs:h-20'>
-            <Image
-              src='/github-logo.png'
-              layout='fill'
-              alt='github'
-              priority
-              onClick={githubSignIn}
-            />
-          </div>
-          <div className='mt-2'>GitHub</div>
-        </div>
-      </div>
+      <AuthProvider googleSignIn={googleSignIn} githubSignIn={githubSignIn} />
     </div>
   )
 }
 
-export default SignUp
+export default Login

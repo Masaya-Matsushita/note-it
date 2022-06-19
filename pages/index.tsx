@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
   const signout = async () => {
     await signOut(auth)
-    router.push('/signin')
+    router.push('/login')
   }
 
   return <Button onClick={signout}>サインアウト</Button>
