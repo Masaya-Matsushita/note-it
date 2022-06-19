@@ -15,12 +15,11 @@ import { useAuthFormInitialized } from 'hooks/useAuthFormInitialized'
 import { useAuthThirdParty } from 'hooks/useAuthThirdParty'
 import { useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 
 const SignUp: NextPage = () => {
   const router = useRouter()
   const form = useAuthFormInitialized()
-  const { googleSignIn, facebookSignIn, redirectToTop } =
+  const { googleSignIn, githubSignIn, redirectToTop } =
     useAuthThirdParty(router)
 
   const emailSignUp = async (values: { email: string; password: string }) => {
@@ -112,18 +111,6 @@ const SignUp: NextPage = () => {
         <div className='flex flex-col items-center px-8 xs:px-14 md:px-16 lg:px-20'>
           <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
             <Image
-              src='/facebook-logo.png'
-              layout='fill'
-              alt='facebook'
-              priority
-              onClick={facebookSignIn}
-            />
-          </div>
-          <div className='mt-2'>Facebook</div>
-        </div>
-        <div className='flex flex-col items-center'>
-          <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
-            <Image
               src='/twitter-logo.png'
               layout='fill'
               alt='twitter'
@@ -132,6 +119,18 @@ const SignUp: NextPage = () => {
             />
           </div>
           <div className='mt-2'>Twitter</div>
+        </div>
+        <div className='flex flex-col items-center'>
+          <div className='relative w-16 h-16 rounded-full border border-dark-400 border-solid xs:w-20 xs:h-20'>
+            <Image
+              src='/github-logo.png'
+              layout='fill'
+              alt='github'
+              priority
+              onClick={githubSignIn}
+            />
+          </div>
+          <div className='mt-2'>GitHub</div>
         </div>
       </div>
     </div>
