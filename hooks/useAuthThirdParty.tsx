@@ -1,11 +1,15 @@
 import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
-import { auth, googleProvider } from 'firebaseConfig/firebase'
+import { auth, githubProvider, googleProvider } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { useCallback } from 'react'
 
 export const useAuthThirdParty = (router: NextRouter) => {
   const googleSignIn = () => {
     signInWithRedirect(auth, googleProvider)
+  }
+
+  const githubSignIn = () => {
+    signInWithRedirect(auth, githubProvider)
   }
 
   const redirectToTop = useCallback(async () => {
@@ -22,5 +26,5 @@ export const useAuthThirdParty = (router: NextRouter) => {
     }
   }, [router])
 
-  return { googleSignIn, redirectToTop }
+  return { googleSignIn, githubSignIn, redirectToTop }
 }

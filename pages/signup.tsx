@@ -19,7 +19,8 @@ import Image from 'next/image'
 const SignUp: NextPage = () => {
   const router = useRouter()
   const form = useAuthFormInitialized()
-  const { googleSignIn, redirectToTop } = useAuthThirdParty(router)
+  const { googleSignIn, githubSignIn, redirectToTop } =
+    useAuthThirdParty(router)
 
   const emailSignUp = async (values: { email: string; password: string }) => {
     try {
@@ -118,6 +119,18 @@ const SignUp: NextPage = () => {
             />
           </div>
           <div className='mt-2'>Twitter</div>
+        </div>
+        <div className='flex flex-col items-center'>
+          <div className='relative w-16 h-16 rounded-full border border-dark-400 border-solid xs:w-20 xs:h-20'>
+            <Image
+              src='/github-logo.png'
+              layout='fill'
+              alt='github'
+              priority
+              onClick={githubSignIn}
+            />
+          </div>
+          <div className='mt-2'>GitHub</div>
         </div>
       </div>
     </div>
