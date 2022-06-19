@@ -17,7 +17,7 @@ import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { RiBallPenLine } from 'react-icons/ri'
 import { useRouter } from 'next/router'
 import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
-import { useAuthThirdParty } from 'hooks/useAuthThirdParty'
+import { useAuthProvider } from 'hooks/useAuthProvider'
 import { useEffect } from 'react'
 import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
@@ -28,8 +28,7 @@ const Login: NextPage = () => {
   const router = useRouter()
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
-  const { googleSignIn, githubSignIn, redirectToTop } =
-    useAuthThirdParty(router)
+  const { googleSignIn, githubSignIn, redirectToTop } = useAuthProvider(router)
 
   const emailSignIn = async (values: Omit<AuthValues, 'name'>) => {
     try {

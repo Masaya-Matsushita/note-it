@@ -3,7 +3,7 @@ import { auth, githubProvider, googleProvider } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { useCallback } from 'react'
 
-export const useAuthThirdParty = (router: NextRouter) => {
+export const useAuthProvider = (router: NextRouter) => {
   const googleSignIn = () => {
     signInWithRedirect(auth, googleProvider)
   }
