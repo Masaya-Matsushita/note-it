@@ -6,6 +6,7 @@ import {
   twitterProvider,
 } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
+import { useCallback } from 'react'
 
 type HookType = (router: NextRouter) => {
   googleSignIn: () => void
@@ -27,11 +28,12 @@ export const useAuthProvider: HookType = (router) => {
     signInWithRedirect(auth, githubProvider)
   }
 
-  const redirectToTop = async () => {
+  const redirectToTop = useCallback(async () => {
     try {
       const result = await getRedirectResult(auth)
       if (result) {
-        router.push('/')
+        const user = result.user
+        router.push(`/my-page/${user.uid}`)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -39,7 +41,7 @@ export const useAuthProvider: HookType = (router) => {
         console.log(errorMessage)
       }
     }
-  }
+  }, [router])
 
   return { googleSignIn, twitterSignIn, githubSignIn, redirectToTop }
 }

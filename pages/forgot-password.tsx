@@ -19,7 +19,6 @@ const ForgotPassword: NextPage = () => {
   })
 
   const handleSubmit = async (value: { email: string }) => {
-    console.log(value)
     try {
       auth.languageCode = 'ja'
       await sendPasswordResetEmail(auth, value.email)

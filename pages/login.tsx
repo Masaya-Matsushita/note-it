@@ -24,6 +24,7 @@ import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 type AuthValues = {
   name: string
@@ -43,7 +44,10 @@ const Login: NextPage = () => {
   ): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password)
-      router.push('/')
+      const user = auth.currentUser
+      if (user) {
+        router.push(`/my-page/${user.uid}`)
+      }
     } catch (error) {
       if (error instanceof Error) {
         const errorMessage = error.message
@@ -55,10 +59,11 @@ const Login: NextPage = () => {
   const emailSignUp = async (values: AuthValues): Promise<void> => {
     try {
       await createUserWithEmailAndPassword(auth, values.email, values.password)
-      if (auth.currentUser) {
-        await updateProfile(auth.currentUser, { displayName: values.name })
+      const user = auth.currentUser
+      if (user) {
+        await updateProfile(user, { displayName: values.name })
         auth.languageCode = 'ja'
-        await sendEmailVerification(auth.currentUser)
+        await sendEmailVerification(user)
         showNotification({
           title: 'ようこそ！',
           message: '認証メールが届いていることを確認してください。',
@@ -66,8 +71,8 @@ const Login: NextPage = () => {
           icon: <AiOutlineMail size={20} />,
           style: { padding: '15px' },
         })
+        router.push(`/my-page/${user.uid}`)
       }
-      router.push('/')
     } catch (error) {
       if (error instanceof Error) {
         const errorMessage = error.message
@@ -76,7 +81,9 @@ const Login: NextPage = () => {
     }
   }
 
-  redirectToTop()
+  useEffect(() => {
+    redirectToTop()
+  }, [redirectToTop])
 
   return (
     <div>
