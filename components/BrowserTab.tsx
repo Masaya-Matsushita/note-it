@@ -1,6 +1,7 @@
 import Head from 'next/head'
+import { FC } from 'react'
 
-export const BrowserTab = () => {
+export const BrowserTab: FC = () => {
   return (
     <Head>
       <title>Note It</title>

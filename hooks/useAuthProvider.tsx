@@ -7,7 +7,14 @@ import {
 } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 
-export const useAuthProvider = (router: NextRouter) => {
+type HookType = (router: NextRouter) => {
+  googleSignIn: () => void
+  twitterSignIn: () => void
+  githubSignIn: () => void
+  redirectToTop: () => Promise<void>
+}
+
+export const useAuthProvider: HookType = (router) => {
   const googleSignIn = () => {
     signInWithRedirect(auth, googleProvider)
   }

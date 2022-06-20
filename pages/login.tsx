@@ -21,8 +21,13 @@ import { useAuthProvider } from 'hooks/useAuthProvider'
 import { useEffect } from 'react'
 import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
-import { AuthValues } from 'types/AuthValues'
 import { AuthProvider } from 'components/AuthProvider'
+
+type AuthValues = {
+  name: string
+  email: string
+  password: string
+}
 
 const Login: NextPage = () => {
   const router = useRouter()
@@ -31,7 +36,9 @@ const Login: NextPage = () => {
   const { googleSignIn, twitterSignIn, githubSignIn, redirectToTop } =
     useAuthProvider(router)
 
-  const emailSignIn = async (values: Omit<AuthValues, 'name'>) => {
+  const emailSignIn = async (
+    values: Omit<AuthValues, 'name'>
+  ): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password)
       router.push('/')
@@ -43,7 +50,7 @@ const Login: NextPage = () => {
     }
   }
 
-  const emailSignUp = async (values: AuthValues) => {
+  const emailSignUp = async (values: AuthValues): Promise<void> => {
     try {
       await createUserWithEmailAndPassword(auth, values.email, values.password)
       if (auth.currentUser) {

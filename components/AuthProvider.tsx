@@ -7,18 +7,12 @@ type Props = {
   githubSignIn: () => void
 }
 
-type ProviderData = {
-  id: number
-  name: string
-  event: Props[keyof Props]
-}[]
-
 export const AuthProvider: FC<Props> = ({
   googleSignIn,
   twitterSignIn,
   githubSignIn,
 }) => {
-  const PROVIDER_DATA: ProviderData = [
+  const PROVIDER_DATA = [
     {
       id: 1,
       name: 'Google',
@@ -34,7 +28,7 @@ export const AuthProvider: FC<Props> = ({
       name: 'GitHub',
       event: githubSignIn,
     },
-  ]
+  ] as const
 
   return (
     <div className='flex justify-center items-center'>
