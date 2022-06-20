@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import { auth } from 'firebaseConfig/firebase'
 import {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth'
@@ -13,12 +14,12 @@ import {
   PasswordInput,
   Tabs,
 } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { RiBallPenLine } from 'react-icons/ri'
 import { useRouter } from 'next/router'
 import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
 import { useAuthProvider } from 'hooks/useAuthProvider'
-import { useEffect } from 'react'
 import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
@@ -55,6 +56,14 @@ const Login: NextPage = () => {
       await createUserWithEmailAndPassword(auth, values.email, values.password)
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: values.name })
+        await sendEmailVerification(auth.currentUser)
+        showNotification({
+          title: 'ようこそ！',
+          message: '認証メールが届いていることを確認してください。',
+          autoClose: 10000,
+          icon: <AiOutlineMail size={20} />,
+          style: { padding: '15px' },
+        })
       }
       router.push('/')
     } catch (error) {
@@ -65,9 +74,7 @@ const Login: NextPage = () => {
     }
   }
 
-  useEffect(() => {
-    redirectToTop()
-  }, [redirectToTop])
+  redirectToTop()
 
   return (
     <div>
