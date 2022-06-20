@@ -9,7 +9,9 @@ export const useCheckIsSignIn = (router: NextRouter) => {
         router.push('/')
       }
       if (!user && router.pathname !== '/login') {
-        router.push('/login')
+        if (router.pathname !== '/forgot-password') {
+          router.push('/login')
+        }
       }
     })
   }

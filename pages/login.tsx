@@ -23,6 +23,7 @@ import { useAuthProvider } from 'hooks/useAuthProvider'
 import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
+import Link from 'next/link'
 
 type AuthValues = {
   name: string
@@ -56,6 +57,7 @@ const Login: NextPage = () => {
       await createUserWithEmailAndPassword(auth, values.email, values.password)
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: values.name })
+        auth.languageCode = 'ja'
         await sendEmailVerification(auth.currentUser)
         showNotification({
           title: 'ようこそ！',
@@ -107,7 +109,13 @@ const Login: NextPage = () => {
                 icon={<AiOutlineKey />}
                 {...signInForm.getInputProps('password')}
               />
-
+              <div className='flex justify-end'>
+                <Link href={'/forgot-password'} passHref>
+                  <a className='inline-block mt-2 mr-2 text-dark-200'>
+                    パスワードをお忘れですか？
+                  </a>
+                </Link>
+              </div>
               <Group position='right' mt='xl' className='pb-6'>
                 <Button
                   type='submit'
