@@ -12,7 +12,12 @@ const Home: NextPage = () => {
     router.push('/login')
   }
 
-  return <Button onClick={signout}>サインアウト</Button>
+  return (
+    <div>
+      <div>{router.query.uid}</div>
+      <Button onClick={signout}>サインアウト</Button>
+    </div>
+  )
 }
 
 export default Home
