@@ -67,7 +67,7 @@ const Login: NextPage = () => {
       <Tabs className='pt-8 focus:outline-none' tabPadding='xl'>
         <Tabs.Tab
           label='ログイン'
-          className='px-4 pb-2 text-2xl font-bold sm:px-6 md:px-8'
+          className='px-4 pb-2 text-xl font-bold text-dark-300 xxs:text-2xl sm:px-6 md:px-8'
         >
           <Box sx={{ maxWidth: 480 }} mx='auto'>
             <form
@@ -106,14 +106,14 @@ const Login: NextPage = () => {
             </form>
           </Box>
           <AuthDivider />
-          <div className='mb-6 text-lg text-center xs:mb-10 lg:mb-12 lg:text-xl'>
+          <div className='mb-6 text-center xxs:text-lg xs:mb-10 lg:mb-12 lg:text-xl'>
             お持ちのアカウントで
             <span className='pl-1 font-bold text-blue-200'>ログイン</span>
           </div>
         </Tabs.Tab>
         <Tabs.Tab
           label='新規登録'
-          className='px-4 pb-2 text-2xl font-bold sm:px-6 md:px-8'
+          className='px-4 pb-2 text-xl font-bold text-dark-300 xxs:text-2xl sm:px-6 md:px-8'
         >
           <Box sx={{ maxWidth: 480 }} mx='auto'>
             <form
@@ -161,7 +161,7 @@ const Login: NextPage = () => {
             </form>
           </Box>
           <AuthDivider />
-          <div className='mb-6 text-lg text-center xs:mb-10 lg:mb-12 lg:text-xl'>
+          <div className='mb-6 text-center xxs:text-lg xs:mb-10 lg:mb-12 lg:text-xl'>
             お持ちのアカウントで
             <span className='pl-1 font-bold text-blue-200'>新規登録</span>
           </div>
