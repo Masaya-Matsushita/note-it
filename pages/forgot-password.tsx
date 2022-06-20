@@ -1,13 +1,18 @@
 import { Button, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
+import { SendEmailTroubleModal } from 'components/SendEmailTroubleModal'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import Link from 'next/link'
+import { useState } from 'react'
 import { AiOutlineMail } from 'react-icons/ai'
+import { BiHelpCircle } from 'react-icons/bi'
 
 const ForgotPassword: NextPage = () => {
+  const [opened, setOpened] = useState(false)
+
   const form = useForm({
     initialValues: {
       email: '',
@@ -62,10 +67,11 @@ const ForgotPassword: NextPage = () => {
               ← ログインページに戻る
             </a>
           </Link>
-          <Button className='xs:w-32 xs:h-10' type='submit'>
+          <Button className='xs:w-48 xs:h-12' type='submit'>
             送信
           </Button>
         </div>
+        <SendEmailTroubleModal opened={opened} setOpened={setOpened} />
       </form>
     </div>
   )

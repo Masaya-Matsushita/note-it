@@ -49,7 +49,7 @@ export const AuthProvider: FC<Props> = ({
                 />
               </div>
             ) : (
-              <div className='relative w-16 h-16 xs:w-20 xs:h-20'>
+              <div className='relative w-16 h-16 hover:cursor-pointer xs:w-20 xs:h-20'>
                 <Image
                   src={`/${data.name}Logo.png`}
                   layout='fill'

@@ -4,7 +4,7 @@ import { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 
-const Home: NextPage = () => {
+const MypageUid: NextPage = () => {
   const router = useRouter()
 
   const signout = async () => {
@@ -20,4 +20,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default MypageUid
