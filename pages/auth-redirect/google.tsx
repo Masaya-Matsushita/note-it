@@ -1,5 +1,5 @@
 import { LoadingOverlay } from '@mantine/core'
-import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
+import { getRedirectResult, signInWithRedirect, UserCredential } from 'firebase/auth'
 import { auth, googleProvider } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -9,7 +9,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
 
   const redirectToMypage = async (): Promise<void> => {
     try {
-      const result = await getRedirectResult(auth)
+      const result: UserCredential | null = await getRedirectResult(auth)
       if (result) {
         const user = result.user
         router.push(`/my-page/${user.uid}`)

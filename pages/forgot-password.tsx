@@ -23,6 +23,7 @@ const ForgotPassword: NextPage = () => {
     },
   })
 
+  // 再設定メール送信
   const handleSubmit = async (value: { email: string }) => {
     try {
       setLoading(true)

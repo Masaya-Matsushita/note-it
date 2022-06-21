@@ -23,7 +23,7 @@ import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 type AuthValues = {
   name: string
@@ -37,6 +37,7 @@ const Login: NextPage = () => {
   const signUpForm = useSignUpFormInitialized()
   const [loading, setLoading] = useState(false)
 
+  // email & passwordでログイン
   const emailSignIn = async (
     values: Omit<AuthValues, 'name'>
   ): Promise<void> => {
@@ -56,6 +57,7 @@ const Login: NextPage = () => {
     setLoading(false)
   }
 
+  // email & passwordで新規登録
   const emailSignUp = async (values: AuthValues): Promise<void> => {
     try {
       setLoading(true)

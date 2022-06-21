@@ -6,6 +6,8 @@ import { useCallback } from 'react'
 type HookType = (router: NextRouter) => () => void
 
 export const useCheckIsSignIn: HookType = (router) => {
+
+  //　未ログインのときloginへ、ログインのときmy-pageへ
   const checkIsSignIn = useCallback((): void => {
     onAuthStateChanged(auth, (user) => {
       if (user && router.pathname === '/login') {
