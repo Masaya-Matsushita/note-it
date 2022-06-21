@@ -6,26 +6,32 @@ import {
   twitterProvider,
 } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
-import { useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback } from 'react'
 
-type HookType = (router: NextRouter) => {
+type HookType = (
+  router: NextRouter,
+  setVisible: Dispatch<SetStateAction<boolean>>
+) => {
   googleSignIn: () => void
   twitterSignIn: () => void
   githubSignIn: () => void
   redirectToTop: () => Promise<void>
 }
 
-export const useAuthProvider: HookType = (router) => {
+export const useAuthProvider: HookType = (router, setVisible) => {
   const googleSignIn = (): void => {
     signInWithRedirect(auth, googleProvider)
+    setVisible(true)
   }
 
   const twitterSignIn = (): void => {
     signInWithRedirect(auth, twitterProvider)
+    setVisible(true)
   }
 
   const githubSignIn = (): void => {
     signInWithRedirect(auth, githubProvider)
+    setVisible(true)
   }
 
   const redirectToTop = useCallback(async (): Promise<void> => {

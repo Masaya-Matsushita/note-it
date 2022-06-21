@@ -11,6 +11,7 @@ import { AiOutlineMail } from 'react-icons/ai'
 
 const ForgotPassword: NextPage = () => {
   const [opened, setOpened] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const form = useForm({
     initialValues: {
@@ -24,6 +25,7 @@ const ForgotPassword: NextPage = () => {
 
   const handleSubmit = async (value: { email: string }) => {
     try {
+      setLoading(true)
       auth.languageCode = 'ja'
       await sendPasswordResetEmail(auth, value.email)
       form.reset()
@@ -39,6 +41,7 @@ const ForgotPassword: NextPage = () => {
         console.log(errorMessage)
       }
     }
+    setLoading(false)
   }
 
   return (
@@ -66,7 +69,7 @@ const ForgotPassword: NextPage = () => {
               ← ログインページに戻る
             </a>
           </Link>
-          <Button className='xs:w-48 xs:h-12' type='submit'>
+          <Button loading={loading} className='xs:w-48 xs:h-12' type='submit'>
             送信
           </Button>
         </div>

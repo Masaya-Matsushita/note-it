@@ -13,6 +13,7 @@ import {
   Group,
   PasswordInput,
   Tabs,
+  LoadingOverlay,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
@@ -24,7 +25,7 @@ import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 type AuthValues = {
   name: string
@@ -36,13 +37,16 @@ const Login: NextPage = () => {
   const router = useRouter()
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
+  const [visible, setVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
   const { googleSignIn, twitterSignIn, githubSignIn, redirectToTop } =
-    useAuthProvider(router)
+    useAuthProvider(router, setVisible)
 
   const emailSignIn = async (
     values: Omit<AuthValues, 'name'>
   ): Promise<void> => {
     try {
+      setLoading(true)
       await signInWithEmailAndPassword(auth, values.email, values.password)
       const user = auth.currentUser
       if (user) {
@@ -54,10 +58,12 @@ const Login: NextPage = () => {
         console.log(errorMessage)
       }
     }
+    setLoading(false)
   }
 
   const emailSignUp = async (values: AuthValues): Promise<void> => {
     try {
+      setLoading(true)
       await createUserWithEmailAndPassword(auth, values.email, values.password)
       const user = auth.currentUser
       if (user) {
@@ -79,6 +85,7 @@ const Login: NextPage = () => {
         console.log(errorMessage)
       }
     }
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -127,6 +134,7 @@ const Login: NextPage = () => {
                 <Button
                   type='submit'
                   size='md'
+                  loading={loading}
                   leftIcon={<AiOutlineDatabase />}
                 >
                   ログイン
@@ -182,6 +190,7 @@ const Login: NextPage = () => {
                 <Button
                   type='submit'
                   size='md'
+                  loading={loading}
                   leftIcon={<AiOutlineDatabase />}
                 >
                   登録
@@ -201,6 +210,7 @@ const Login: NextPage = () => {
         twitterSignIn={twitterSignIn}
         githubSignIn={githubSignIn}
       />
+      <LoadingOverlay visible={visible} loaderProps={{ size: 'xl' }} />
     </div>
   )
 }
