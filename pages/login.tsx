@@ -13,14 +13,12 @@ import {
   Group,
   PasswordInput,
   Tabs,
-  LoadingOverlay,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { RiBallPenLine } from 'react-icons/ri'
 import { useRouter } from 'next/router'
 import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
-import { useAuthProvider } from 'hooks/useAuthProvider'
 import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
@@ -37,10 +35,7 @@ const Login: NextPage = () => {
   const router = useRouter()
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
-  const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { googleSignIn, twitterSignIn, githubSignIn, redirectToTop } =
-    useAuthProvider(router, setVisible)
 
   const emailSignIn = async (
     values: Omit<AuthValues, 'name'>
@@ -87,10 +82,6 @@ const Login: NextPage = () => {
     }
     setLoading(false)
   }
-
-  useEffect(() => {
-    redirectToTop()
-  }, [redirectToTop])
 
   return (
     <div>
@@ -205,12 +196,7 @@ const Login: NextPage = () => {
           </div>
         </Tabs.Tab>
       </Tabs>
-      <AuthProvider
-        googleSignIn={googleSignIn}
-        twitterSignIn={twitterSignIn}
-        githubSignIn={githubSignIn}
-      />
-      <LoadingOverlay visible={visible} loaderProps={{ size: 'xl' }} />
+      <AuthProvider />
     </div>
   )
 }

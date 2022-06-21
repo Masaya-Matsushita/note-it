@@ -1,32 +1,23 @@
 import Image from 'next/image'
-import { FC } from 'react'
+import { useRouter } from 'next/router'
 
-type Props = {
-  googleSignIn: () => void
-  twitterSignIn: () => void
-  githubSignIn: () => void
-}
-
-export const AuthProvider: FC<Props> = ({
-  googleSignIn,
-  twitterSignIn,
-  githubSignIn,
-}) => {
+export const AuthProvider = () => {
+  const router = useRouter()
   const PROVIDER_DATA = [
     {
       id: 1,
       name: 'Google',
-      event: googleSignIn,
+      path: 'google',
     },
     {
       id: 2,
       name: 'Twitter',
-      event: twitterSignIn,
+      path: 'twitter',
     },
     {
       id: 3,
       name: 'GitHub',
-      event: githubSignIn,
+      path: 'github',
     },
   ] as const
 
@@ -45,7 +36,7 @@ export const AuthProvider: FC<Props> = ({
                   layout='fill'
                   alt={data.name}
                   priority
-                  onClick={data.event}
+                  onClick={() => router.push(`/auth-redirect/${data.path}`)}
                 />
               </div>
             ) : (
@@ -55,7 +46,7 @@ export const AuthProvider: FC<Props> = ({
                   layout='fill'
                   alt={data.name}
                   priority
-                  onClick={data.event}
+                  onClick={() => router.push(`/auth-redirect/${data.path}`)}
                 />
               </div>
             )}
