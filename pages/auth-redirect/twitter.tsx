@@ -1,13 +1,18 @@
 import { LoadingOverlay } from '@mantine/core'
-import { getRedirectResult, signInWithRedirect, UserCredential } from 'firebase/auth'
+import {
+  getRedirectResult,
+  signInWithRedirect,
+  UserCredential,
+} from 'firebase/auth'
 import { auth, twitterProvider } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import { useCallback, useEffect } from 'react'
 
 const AuthRedirectWithTwitter: NextPage = () => {
   const router = useRouter()
 
-  const redirectToMypage = async (): Promise<void> => {
+  const redirectToMypage = useCallback(async (): Promise<void> => {
     try {
       const result: UserCredential | null = await getRedirectResult(auth)
       if (result) {
@@ -23,9 +28,14 @@ const AuthRedirectWithTwitter: NextPage = () => {
         router.push('/login')
       }
     }
-  }
+  }, [router])
 
-  redirectToMypage()
+  useEffect(() => {
+    if (!router.isReady) {
+      return
+    }
+    redirectToMypage()
+  }, [router.isReady, redirectToMypage])
 
   return <LoadingOverlay visible={true} loaderProps={{ size: 'xl' }} />
 }
