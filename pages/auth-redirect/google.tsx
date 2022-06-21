@@ -1,21 +1,20 @@
 import { LoadingOverlay } from '@mantine/core'
-import { getRedirectResult } from 'firebase/auth'
-import { auth } from 'firebaseConfig/firebase'
+import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
+import { auth, googleProvider } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect } from 'react'
 
-const AuthRedirect: NextPage = () => {
+const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()
 
-  const redirectToMypage = useCallback(async (): Promise<void> => {
+  const redirectToMypage = async (): Promise<void> => {
     try {
       const result = await getRedirectResult(auth)
       if (result) {
         const user = result.user
         router.push(`/my-page/${user.uid}`)
       } else {
-        router.push('/login')
+        signInWithRedirect(auth, googleProvider)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -24,16 +23,11 @@ const AuthRedirect: NextPage = () => {
         router.push('/login')
       }
     }
-  }, [router])
+  }
 
-  useEffect(() => {
-    if (!router.isReady) {
-      return
-    }
-    redirectToMypage()
-  }, [router.isReady, redirectToMypage])
+  redirectToMypage()
 
   return <LoadingOverlay visible={true} loaderProps={{ size: 'xl' }} />
 }
 
-export default AuthRedirect
+export default AuthRedirectWithGoogle
