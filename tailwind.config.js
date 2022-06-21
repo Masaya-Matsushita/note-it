@@ -18,9 +18,14 @@ module.exports = {
         900: '#141517',
         1000: '#101113',
       },
+      blue: {
+        200: '#4dabf7',
+        400: '#1971c2',
+      },
     },
     extend: {},
     screens: {
+      xxs: '290px',
       xs: '576px',
       sm: '768px',
       md: '992px',

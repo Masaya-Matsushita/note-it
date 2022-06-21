@@ -1,7 +1,30 @@
 import { z } from 'zod'
 import { useForm, zodResolver } from '@mantine/form'
+import { UseFormReturnType } from '@mantine/form/lib/use-form'
 
-const schema = z.object({
+type SchemaType = z.ZodObject<
+  {
+    email: z.ZodString
+    password: z.ZodString
+  },
+  'strip',
+  z.ZodTypeAny,
+  {
+    email: string
+    password: string
+  },
+  {
+    email: string
+    password: string
+  }
+>
+
+type HookType = () => UseFormReturnType<{
+  email: string
+  password: string
+}>
+
+const schema: SchemaType = z.object({
   email: z
     .string()
     .trim()
@@ -14,13 +37,13 @@ const schema = z.object({
     }),
 })
 
-export const useAuthFormInitialized = () => {
-  const form = useForm({
+export const useSignInFormInitialized: HookType = () => {
+  const signInForm = useForm({
     schema: zodResolver(schema),
     initialValues: {
       email: '',
       password: '',
     },
   })
-  return form
+  return signInForm
 }
