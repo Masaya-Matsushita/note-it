@@ -20,9 +20,9 @@ export const SendEmailTroubleModal: FC<Props> = ({ opened, setOpened }) => {
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title='Q. 正常にメールが届かない'
+        withCloseButton={false}
       >
-        <div className='mt-8 ml-2 text-lg'>主な考えられる原因</div>
+        <div className='mb-2 ml-2 text-xl'>主な考えられる原因</div>
         <div className='grow mb-2 border border-dark-400 border-solid'></div>
         <ol className='space-y-1'>
           <li> 迷惑メールフォルダに振り分けされてしまっている</li>

@@ -3,8 +3,10 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import { useCallback } from 'react'
 
-export const useCheckIsSignIn = (router: NextRouter) => {
-  const checkIsSignIn = useCallback(() => {
+type HookType = (router: NextRouter) => () => void
+
+export const useCheckIsSignIn: HookType = (router) => {
+  const checkIsSignIn = useCallback((): void => {
     onAuthStateChanged(auth, (user) => {
       if (user && router.pathname === '/login') {
         router.push(`/my-page/${user.uid}`)

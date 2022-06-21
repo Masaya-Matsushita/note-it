@@ -16,19 +16,19 @@ type HookType = (router: NextRouter) => {
 }
 
 export const useAuthProvider: HookType = (router) => {
-  const googleSignIn = () => {
+  const googleSignIn = (): void => {
     signInWithRedirect(auth, googleProvider)
   }
 
-  const twitterSignIn = () => {
+  const twitterSignIn = (): void => {
     signInWithRedirect(auth, twitterProvider)
   }
 
-  const githubSignIn = () => {
+  const githubSignIn = (): void => {
     signInWithRedirect(auth, githubProvider)
   }
 
-  const redirectToTop = useCallback(async () => {
+  const redirectToTop = useCallback(async (): Promise<void> => {
     try {
       const result = await getRedirectResult(auth)
       if (result) {

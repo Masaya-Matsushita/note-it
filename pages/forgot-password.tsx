@@ -8,7 +8,6 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
 import { AiOutlineMail } from 'react-icons/ai'
-import { BiHelpCircle } from 'react-icons/bi'
 
 const ForgotPassword: NextPage = () => {
   const [opened, setOpened] = useState(false)

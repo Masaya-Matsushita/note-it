@@ -4,10 +4,10 @@ import { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 
-const MypageUid: NextPage = () => {
+const Mypage: NextPage = () => {
   const router = useRouter()
 
-  const signout = async () => {
+  const signout = async (): Promise<void> => {
     await signOut(auth)
     router.push('/login')
   }
@@ -20,4 +20,4 @@ const MypageUid: NextPage = () => {
   )
 }
 
-export default MypageUid
+export default Mypage
