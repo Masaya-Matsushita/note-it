@@ -12,8 +12,10 @@ export const useCheckIsSignIn: HookType = (router) => {
         router.push(`/my-page/${user.uid}`)
       }
       if (!user && router.pathname !== '/login') {
-        if (router.pathname !== '/forgot-password') {
-          router.push('/login')
+        if (router.pathname !== '/auth-redirect') {
+          if (router.pathname !== '/forgot-password') {
+            router.push('/login')
+          }
         }
       }
     })
