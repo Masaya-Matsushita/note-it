@@ -10,7 +10,6 @@ import { useState } from 'react'
 import { AiOutlineMail } from 'react-icons/ai'
 
 const ForgotPassword: NextPage = () => {
-  const [opened, setOpened] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const form = useForm({
@@ -36,11 +35,9 @@ const ForgotPassword: NextPage = () => {
         icon: <AiOutlineMail size={20} />,
         style: { padding: '15px' },
       })
-    } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message
-        console.log(errorMessage)
-      }
+    } catch (error: any) {
+      const errorCode = error.code
+      const errorMessage = error.message
     }
     setLoading(false)
   }
@@ -74,7 +71,7 @@ const ForgotPassword: NextPage = () => {
             送信
           </Button>
         </div>
-        <SendEmailTroubleModal opened={opened} setOpened={setOpened} />
+        <SendEmailTroubleModal />
       </form>
     </div>
   )

@@ -1,13 +1,10 @@
 import { Modal } from '@mantine/core'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { useState } from 'react'
 import { BiHelpCircle } from 'react-icons/bi'
 
-type Props = {
-  opened: boolean
-  setOpened: Dispatch<SetStateAction<boolean>>
-}
+export const SendEmailTroubleModal = (): JSX.Element => {
+  const [opened, setOpened] = useState(false)
 
-export const SendEmailTroubleModal: FC<Props> = ({ opened, setOpened }) => {
   return (
     <div className='flex justify-end items-center mt-6 xs:mt-4'>
       <BiHelpCircle />

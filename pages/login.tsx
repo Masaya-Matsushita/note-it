@@ -48,11 +48,9 @@ const Login: NextPage = () => {
       if (user) {
         router.push(`/my-page/${user.uid}`)
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message
-        console.log(errorMessage)
-      }
+    } catch (error: any) {
+      const errorCode = error.code
+      const errorMessage = error.message
     }
     setLoading(false)
   }
@@ -76,11 +74,9 @@ const Login: NextPage = () => {
         })
         router.push(`/my-page/${user.uid}`)
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message
-        console.log(errorMessage)
-      }
+    } catch (error: any) {
+      const errorCode = error.code
+      const errorMessage = error.message
     }
     setLoading(false)
   }
