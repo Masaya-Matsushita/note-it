@@ -12,7 +12,7 @@ export default function App(props: AppProps) {
 
   useEffect(() => {
     checkIsSignIn()
-  }, [checkIsSignIn])
+  }, [])
 
   return (
     <>
