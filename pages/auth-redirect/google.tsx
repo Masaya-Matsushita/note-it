@@ -10,6 +10,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
 
   const redirectToMypage = (): void => {
     try {
+      console.log('Start')
       getRedirectResult(auth).then((result) => {
         // getRedirectResultが呼ばれたとき
         console.log('Called!')
@@ -21,7 +22,10 @@ const AuthRedirectWithGoogle: NextPage = () => {
         } else {
           // resultがnullの時
           console.log('Null')
+          // if (router.query.foo === 'foo') {
+          // console.log('foo')
           signInWithRedirect(auth, googleProvider)
+          // }
         }
       })
     } catch (error) {
@@ -38,7 +42,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
       return
     }
     redirectToMypage()
-  }, [])
+  }, [router.isReady])
 
   return <LoadingOverlay visible={true} loaderProps={{ size: 'xl' }} />
 }

@@ -7,12 +7,12 @@ import {
 import { auth, githubProvider } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 
 const AuthRedirectWithGitHub: NextPage = () => {
   const router = useRouter()
 
-  const redirectToMypage = useCallback(async (): Promise<void> => {
+  const redirectToMypage = async (): Promise<void> => {
     try {
       const result: UserCredential | null = await getRedirectResult(auth)
       if (result) {
@@ -28,14 +28,14 @@ const AuthRedirectWithGitHub: NextPage = () => {
         router.push('/login')
       }
     }
-  }, [router])
+  }
 
   useEffect(() => {
     if (!router.isReady) {
       return
     }
     redirectToMypage()
-  }, [router.isReady, redirectToMypage])
+  }, [router.isReady])
 
   return <LoadingOverlay visible={true} loaderProps={{ size: 'xl' }} />
 }
