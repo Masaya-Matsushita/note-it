@@ -4,21 +4,31 @@ import { auth } from 'firebaseConfig/firebase'
 
 type HookType = (router: NextRouter) => () => void
 
+//　未ログインのときloginへ、ログイン済のときmy-pageへ
 export const useCheckIsSignIn: HookType = (router) => {
-  //　未ログインのときloginへ、ログインのときmy-pageへ
   const checkIsSignIn = (): void => {
     onAuthStateChanged(auth, (user) => {
       // onAuthStateChangedが呼ばれたとき
       console.log('onAuthStateChanged is Called!')
+      // ログインしている時
       if (user && router.pathname === '/login') {
-        // ログインしている時
         console.log('To Mypage')
         router.push(`/my-page/${user.uid}`)
       }
+      if (user && router.pathname === '/forgot-password') {
+        console.log('To Mypage')
+        router.push(`/my-page/${user.uid}`)
+      }
+      if (user && router.pathname === '/auth-redirect') {
+        console.log('To Mypage')
+        router.push(`/my-page/${user.uid}`)
+      }
+      // ログインしていない時
       if (!user && router.pathname !== '/login') {
-        // ログインしていない時
-        console.log('To Login')
-        router.push('/login')
+        if (router.pathname !== '/forgot-password') {
+          console.log('To Login')
+          router.push('/login')
+        }
       }
     })
   }
