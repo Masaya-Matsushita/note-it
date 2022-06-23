@@ -3,28 +3,39 @@ import { FcHighPriority } from 'react-icons/fc'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 type Props = {
-  errorCode: string
+  error: string
   setError: Dispatch<SetStateAction<string>>
+  method: string
+  setMethod: Dispatch<SetStateAction<string>>
 }
 
-export const ErrorModal: FC<Props> = ({ errorCode, setError }) => {
+export const ErrorModal: FC<Props> = ({
+  error,
+  setError,
+  method,
+  setMethod,
+}) => {
   const [opened, setOpened] = useState(false)
   const [errorCodeJa, setErrorCodeJa] = useState('')
 
   const translateToJa = (): void => {
     if (
-      errorCode === '' ||
-      errorCode === 'auth/cancelled-popup-request' ||
-      errorCode === 'auth/popup-closed-by-user'
+      error === '' ||
+      error === 'auth/cancelled-popup-request' ||
+      error === 'auth/popup-closed-by-user'
     ) {
       return
     }
 
     setOpened(true)
 
-    switch (errorCode) {
+    switch (error) {
       case 'auth/email-already-in-use':
-        setErrorCodeJa('このメールアドレスは使用されています')
+        if (method === 'signup') {
+          setErrorCodeJa('このメールアドレスは使用されています')
+        } else {
+          setErrorCodeJa('メールアドレスまたはパスワードが違います')
+        }
         return
 
       case 'auth/invalid-email':
@@ -40,9 +51,7 @@ export const ErrorModal: FC<Props> = ({ errorCode, setError }) => {
         return
 
       case 'auth/user-mismatch':
-        setErrorCodeJa(
-          '認証されているユーザーと異なるアカウントが選択されました'
-        )
+        setErrorCodeJa('メールアドレスまたはパスワードが違います')
         return
 
       case 'auth/weak-password':
@@ -71,21 +80,28 @@ export const ErrorModal: FC<Props> = ({ errorCode, setError }) => {
         return
 
       default:
-        setErrorCodeJa(
-          'エラーが発生しました。しばらく時間をおいてお試しください'
-        )
+        if (method === 'signin') {
+          setErrorCodeJa(
+            '認証に失敗しました。しばらく時間をおいて再度お試しください'
+          )
+        } else {
+          setErrorCodeJa(
+            'エラーが発生しました。しばらく時間をおいてお試しください'
+          )
+        }
         return
     }
   }
 
   const handleClose = () => {
     setError('')
+    setMethod('')
     setOpened(false)
   }
 
   useEffect(() => {
     translateToJa()
-  }, [errorCode])
+  }, [error])
 
   return (
     <Modal

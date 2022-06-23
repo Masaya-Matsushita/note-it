@@ -38,6 +38,7 @@ const Login: NextPage = () => {
   const signUpForm = useSignUpFormInitialized()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [method, setMethod] = useState('')
 
   // email & passwordでログイン
   const emailSignIn = async (
@@ -51,6 +52,7 @@ const Login: NextPage = () => {
         router.push(`/my-page/${user.uid}`)
       }
     } catch (error: any) {
+      setMethod('signin')
       setError(error.code)
     }
     setLoading(false)
@@ -76,14 +78,20 @@ const Login: NextPage = () => {
         router.push(`/my-page/${user.uid}`)
       }
     } catch (error: any) {
-      const errorCode = error.code
+      setMethod('signup')
+      setError(error.code)
     }
     setLoading(false)
   }
 
   return (
     <div>
-      <ErrorModal errorCode={error} setError={setError} />
+      <ErrorModal
+        error={error}
+        setError={setError}
+        method={method}
+        setMethod={setMethod}
+      />
       <Tabs className='pt-8 focus:outline-none' tabPadding='xl'>
         <Tabs.Tab
           label='ログイン'
