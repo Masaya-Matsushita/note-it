@@ -63,7 +63,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
   }, [router.isReady])
 
   return (
-    <div>
+    <>
       <ErrorModal
         error={error}
         setError={setError}
@@ -71,7 +71,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
         setMethod={setMethod}
       />
       <LoadingOverlay visible={visible} loaderProps={{ size: 'xl' }} />
-    </div>
+    </>
   )
 }
 

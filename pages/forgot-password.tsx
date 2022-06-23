@@ -43,7 +43,7 @@ const ForgotPassword: NextPage = () => {
   }
 
   return (
-    <div>
+    <>
       <h1 className='text-center'>パスワード再設定</h1>
       <div className='text-center sm:text-lg'>
         パスワード再設定のリンクを送信します。メールアドレスをご入力ください。
@@ -73,7 +73,7 @@ const ForgotPassword: NextPage = () => {
         </div>
         <SendEmailTroubleModal />
       </form>
-    </div>
+    </>
   )
 }
 

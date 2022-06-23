@@ -85,7 +85,7 @@ const Login: NextPage = () => {
   }
 
   return (
-    <div>
+    <>
       <ErrorModal
         error={error}
         setError={setError}
@@ -204,7 +204,7 @@ const Login: NextPage = () => {
         </Tabs.Tab>
       </Tabs>
       <AuthProvider />
-    </div>
+    </>
   )
 }
 
