@@ -1,6 +1,7 @@
-import { Modal } from '@mantine/core'
+import { Button, Modal } from '@mantine/core'
 import { FcHighPriority } from 'react-icons/fc'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 type Props = {
   error: string
@@ -15,15 +16,12 @@ export const ErrorModal: FC<Props> = ({
   method,
   setMethod,
 }) => {
+  const router = useRouter()
   const [opened, setOpened] = useState(false)
   const [errorCodeJa, setErrorCodeJa] = useState('')
 
   const translateToJa = (): void => {
-    if (
-      error === '' ||
-      error === 'auth/cancelled-popup-request' ||
-      error === 'auth/popup-closed-by-user'
-    ) {
+    if (error === '') {
       return
     }
 
@@ -32,39 +30,39 @@ export const ErrorModal: FC<Props> = ({
     switch (error) {
       case 'auth/email-already-in-use':
         if (method === 'signup') {
-          setErrorCodeJa('このメールアドレスは使用されています')
+          setErrorCodeJa('このメールアドレスは使用されています。')
         } else {
-          setErrorCodeJa('メールアドレスまたはパスワードが違います')
+          setErrorCodeJa('メールアドレスまたはパスワードが違います。')
         }
         return
 
       case 'auth/invalid-email':
-        setErrorCodeJa('メールアドレスの形式が正しくありません')
+        setErrorCodeJa('メールアドレスの形式が正しくありません。')
         return
 
       case 'auth/user-disabled':
-        setErrorCodeJa('サービスの利用が停止されています')
+        setErrorCodeJa('サービスの利用が停止されています。')
         return
 
       case 'auth/user-not-found':
-        setErrorCodeJa('メールアドレスまたはパスワードが違います')
+        setErrorCodeJa('メールアドレスまたはパスワードが違います。')
         return
 
       case 'auth/user-mismatch':
-        setErrorCodeJa('メールアドレスまたはパスワードが違います')
+        setErrorCodeJa('メールアドレスまたはパスワードが違います。')
         return
 
       case 'auth/weak-password':
-        setErrorCodeJa('パスワードは6文字以上にしてください')
+        setErrorCodeJa('パスワードは6文字以上にしてください。')
         return
 
       case 'auth/wrong-password':
-        setErrorCodeJa('メールアドレスまたはパスワードが違います')
+        setErrorCodeJa('メールアドレスまたはパスワードが違います。')
         return
 
       case 'auth/popup-blocked':
         setErrorCodeJa(
-          '認証ポップアップがブロックされました。ポップアップブロックをご利用の場合は設定を解除してください'
+          '認証ポップアップがブロックされました。ポップアップブロックをご利用の場合は設定を解除してください。'
         )
         return
 
@@ -72,21 +70,21 @@ export const ErrorModal: FC<Props> = ({
       case 'auth/auth-domain-config-required':
       case 'auth/operation-not-allowed':
       case 'auth/unauthorized-domain':
-        setErrorCodeJa('現在この認証方法はご利用頂けません')
+        setErrorCodeJa('現在この認証方法はご利用頂けません。')
         return
 
       case 'auth/requires-recent-login':
-        setErrorCodeJa('認証の有効期限が切れています')
+        setErrorCodeJa('認証の有効期限が切れています。')
         return
 
       default:
         if (method === 'signin') {
           setErrorCodeJa(
-            '認証に失敗しました。しばらく時間をおいて再度お試しください'
+            '認証に失敗しました。しばらく時間をおいて再度お試しください。'
           )
         } else {
           setErrorCodeJa(
-            'エラーが発生しました。しばらく時間をおいてお試しください'
+            'エラーが発生しました。しばらく時間をおいてお試しください。'
           )
         }
         return
@@ -114,6 +112,14 @@ export const ErrorModal: FC<Props> = ({
         <FcHighPriority size={24} />
         <div className='ml-2 sm:text-lg'>{errorCodeJa}</div>
       </div>
+      {method === 'redirect' ? (
+        <Button
+          className='block mt-2 mr-2 ml-auto'
+          onClick={() => router.push('/login')}
+        >
+          ログイン画面へ戻る
+        </Button>
+      ) : null}
     </Modal>
   )
 }

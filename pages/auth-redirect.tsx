@@ -1,4 +1,5 @@
 import { LoadingOverlay } from '@mantine/core'
+import { ErrorModal } from 'components/ErrorModal'
 import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
 import {
   auth,
@@ -8,14 +9,18 @@ import {
 } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()
+  const [visible, setVisible] = useState(true)
+  const [error, setError] = useState('')
+  const [method, setMethod] = useState('')
 
   const redirectToMypage = (): void => {
     try {
       console.log(router)
+      // throw new Error('aaa');
 
       console.log('Start')
       getRedirectResult(auth).then((result) => {
@@ -43,8 +48,10 @@ const AuthRedirectWithGoogle: NextPage = () => {
         }
       })
     } catch (error: any) {
-      const errorCode = error.code
-      const errorMessage = error.message
+      // console.log(error.code)
+      setVisible(false)
+      setMethod('redirect')
+      setError(error.code)
     }
   }
 
@@ -55,7 +62,17 @@ const AuthRedirectWithGoogle: NextPage = () => {
     redirectToMypage()
   }, [router.isReady])
 
-  return <LoadingOverlay visible={true} loaderProps={{ size: 'xl' }} />
+  return (
+    <div>
+      <ErrorModal
+        error={error}
+        setError={setError}
+        method={method}
+        setMethod={setMethod}
+      />
+      <LoadingOverlay visible={visible} loaderProps={{ size: 'xl' }} />
+    </div>
+  )
 }
 
 export default AuthRedirectWithGoogle
