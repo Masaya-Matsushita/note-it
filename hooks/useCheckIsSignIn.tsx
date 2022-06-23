@@ -8,26 +8,31 @@ type HookType = (router: NextRouter) => () => void
 export const useCheckIsSignIn: HookType = (router) => {
   const checkIsSignIn = (): void => {
     onAuthStateChanged(auth, (user) => {
-      // onAuthStateChangedが呼ばれたとき
       console.log('onAuthStateChanged is Called!')
-      // ログインしている時
-      if (user && router.pathname === '/login') {
-        console.log('To Mypage')
-        router.push(`/my-page/${user.uid}`)
-      }
-      if (user && router.pathname === '/forgot-password') {
-        console.log('To Mypage')
-        router.push(`/my-page/${user.uid}`)
-      }
-      if (user && router.pathname === '/auth-redirect') {
-        console.log('To Mypage')
-        router.push(`/my-page/${user.uid}`)
-      }
-      // ログインしていない時
-      if (!user && router.pathname !== '/login') {
-        if (router.pathname !== '/forgot-password') {
-          console.log('To Login')
-          router.push('/login')
+      if (user) {
+        switch (router.pathname) {
+          case '/login':
+          case '/forgot-password':
+          case '/auth-redirect': {
+            console.log('To Mypage')
+            router.push(`/my-page/${user.uid}`)
+            break
+          }
+          default: {
+            break
+          }
+        }
+      } else {
+        switch (router.pathname) {
+          case '/auth-redirect':
+          case '/my-page/[uid]': {
+            console.log('To Login')
+            router.push('/login')
+            break
+          }
+          default: {
+            break
+          }
         }
       }
     })
