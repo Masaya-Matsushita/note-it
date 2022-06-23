@@ -31,7 +31,7 @@ const ForgotPassword: NextPage = () => {
       form.reset()
       showNotification({
         message: '再設定メールが送信されました。',
-        autoClose: 5000,
+        autoClose: false,
         icon: <AiOutlineMail size={20} />,
         style: { padding: '15px' },
       })
@@ -63,7 +63,7 @@ const ForgotPassword: NextPage = () => {
         />
         <div className='flex flex-col-reverse mt-5 xs:flex-row xs:justify-between'>
           <Link href='/login' passHref>
-            <a className='mt-3 ml-2 w-full text-sm text-center text-dark-100 no-underline xs:w-auto sm:text-base'>
+            <a className='mt-5 ml-2 w-full text-center text-dark-100 no-underline xs:mt-3 xs:w-auto sm:text-base'>
               ← ログインページに戻る
             </a>
           </Link>

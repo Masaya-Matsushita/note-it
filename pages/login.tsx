@@ -24,6 +24,7 @@ import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
 import { useState } from 'react'
+import { ErrorModal } from 'components/ErrorModal'
 
 type AuthValues = {
   name: string
@@ -36,6 +37,7 @@ const Login: NextPage = () => {
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   // email & passwordでログイン
   const emailSignIn = async (
@@ -49,8 +51,7 @@ const Login: NextPage = () => {
         router.push(`/my-page/${user.uid}`)
       }
     } catch (error: any) {
-      const errorCode = error.code
-      const errorMessage = error.message
+      setError(error.code)
     }
     setLoading(false)
   }
@@ -68,7 +69,7 @@ const Login: NextPage = () => {
         showNotification({
           title: 'ようこそ！',
           message: '認証メールが届いていることを確認してください。',
-          autoClose: 10000,
+          autoClose: false,
           icon: <AiOutlineMail size={20} />,
           style: { padding: '15px' },
         })
@@ -76,13 +77,13 @@ const Login: NextPage = () => {
       }
     } catch (error: any) {
       const errorCode = error.code
-      const errorMessage = error.message
     }
     setLoading(false)
   }
 
   return (
     <div>
+      <ErrorModal errorCode={error} setError={setError} />
       <Tabs className='pt-8 focus:outline-none' tabPadding='xl'>
         <Tabs.Tab
           label='ログイン'
