@@ -57,6 +57,7 @@ const Login: NextPage<{
     setRedirect(false)
     setMethod('signin')
     setSignInValues(values)
+    console.log('redirect in login/handleSignIn:', redirect)
   }
 
   // 新規登録ボタンをクリック
@@ -71,6 +72,7 @@ const Login: NextPage<{
     switch (method) {
       // サインイン
       case 'signin': {
+        console.log('redirect in login/useEffect:', redirect)
         emailSignIn()
         break
       }
@@ -89,11 +91,13 @@ const Login: NextPage<{
   const emailSignIn = async (): Promise<void> => {
     try {
       setLoading(true)
+      console.log('redirect in login/emailSignIn/beforeSignIn:', redirect)
       await signInWithEmailAndPassword(
         auth,
         signInValues.email,
         signInValues.password
       )
+      console.log('redirect in login/emailSignIn/afterSignIn:', redirect)
       const user = auth.currentUser
       if (user?.emailVerified) {
         router.push(`/my-page/${user.uid}`)

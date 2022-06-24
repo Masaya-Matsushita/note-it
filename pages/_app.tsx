@@ -9,11 +9,15 @@ export default function App(props: AppProps) {
   const { Component, pageProps } = props
   const router = useRouter()
   const [redirect, setRedirect] = useState(true)
-  const redirectOnAuthState = useRedirectOnAuthState(router, redirect)
+  const redirectOnAuthState = useRedirectOnAuthState()
 
   useEffect(() => {
+    console.log('redirect in _app.tsx/useEffect:', redirect)
     if (redirect) {
-      redirectOnAuthState()
+      console.log('redirect in _app.tsx/useEffect/if:', redirect)
+      redirectOnAuthState(router, redirect)
+    } else {
+      console.log('redirect in _app.tsx/useEffect/else:', redirect)
     }
   }, [redirect])
 
