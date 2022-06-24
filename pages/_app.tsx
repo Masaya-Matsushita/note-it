@@ -11,6 +11,7 @@ export default function App(props: AppProps) {
   const checkIsSignIn = useCheckIsSignIn(router)
 
   useEffect(() => {
+    console.log('useEffect is called')
     checkIsSignIn()
   }, [])
 

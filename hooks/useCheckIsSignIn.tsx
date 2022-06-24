@@ -7,15 +7,16 @@ type HookType = (router: NextRouter) => () => void
 //　未ログインのときloginへ、ログイン済のときmy-pageへ
 export const useCheckIsSignIn: HookType = (router) => {
   const checkIsSignIn = (): void => {
+    console.log('checkIsSignIn is called!')
     onAuthStateChanged(auth, (user) => {
-      console.log('onAuthStateChanged is Called!')
+      console.log('onAuthStateChanged is called!')
       if (user) {
         switch (router.pathname) {
           case '/login':
           case '/forgot-password':
           case '/auth-redirect': {
             console.log('To Mypage')
-            router.push(`/my-page/${user.uid}`)
+            // router.push(`/my-page/${user.uid}`)
             break
           }
           default: {
@@ -27,7 +28,7 @@ export const useCheckIsSignIn: HookType = (router) => {
           case '/auth-redirect':
           case '/my-page/[uid]': {
             console.log('To Login')
-            router.push('/login')
+            // router.push('/login')
             break
           }
           default: {
