@@ -1,13 +1,13 @@
-import { NextRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
+import { NextRouter } from 'next/router'
 
-type HookType = (router: NextRouter) => () => void
-
-//　未ログインのときloginへ、ログイン済のときmy-pageへ
-export const useCheckIsSignIn: HookType = (router) => {
-  const checkIsSignIn = (): void => {
-    console.log('checkIsSignIn is called!')
+// 未ログインのときloginへ、ログイン済のときmy-pageへ
+export const useRedirectOnAuthState = (
+  router: NextRouter,
+  redirect: boolean
+) => {
+  const redirectOnAuthState = () => {
     onAuthStateChanged(auth, (user) => {
       console.log('onAuthStateChanged is called!')
       if (user) {
@@ -16,7 +16,10 @@ export const useCheckIsSignIn: HookType = (router) => {
           case '/forgot-password':
           case '/auth-redirect': {
             console.log('To Mypage')
-            // router.push(`/my-page/${user.uid}`)
+            if (redirect) {
+              const uid = user.uid
+              router.push(`/my-page/${uid}`)
+            }
             break
           }
           default: {
@@ -28,7 +31,8 @@ export const useCheckIsSignIn: HookType = (router) => {
           case '/auth-redirect':
           case '/my-page/[uid]': {
             console.log('To Login')
-            // router.push('/login')
+            console.log(redirect)
+            router.push('/login')
             break
           }
           default: {
@@ -39,5 +43,5 @@ export const useCheckIsSignIn: HookType = (router) => {
     })
   }
 
-  return checkIsSignIn
+  return redirectOnAuthState
 }
