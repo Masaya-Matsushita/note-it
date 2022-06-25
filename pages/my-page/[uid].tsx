@@ -3,7 +3,7 @@ import { signOut } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
@@ -16,9 +16,12 @@ const Mypage: NextPage = () => {
     router.push('/login')
   }
 
-  if (auth.currentUser) {
-    console.log(auth.currentUser.emailVerified)
-  }
+  useEffect(() => {
+    if (auth.currentUser) {
+      console.log(auth.currentUser.emailVerified)
+      console.log(auth.currentUser.providerData[0].providerId)
+    }
+  }, [])
 
   return (
     <div>
