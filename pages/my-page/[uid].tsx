@@ -17,9 +17,18 @@ const Mypage: NextPage = () => {
   }
 
   useEffect(() => {
-    if (auth.currentUser) {
-      console.log(auth.currentUser.emailVerified)
-      console.log(auth.currentUser.providerData[0].providerId)
+    const user = auth.currentUser
+    if (user) {
+      if (
+        user.providerData[0].providerId === 'password' &&
+        user.emailVerified === false
+      ) {
+        // 未認証
+        // 確認メール再送信 & ログアウト用のモーダルを作成し、認証後再ログインしてもらう
+      } else {
+        // 認証済み
+        // コンテンツのfetch＆表示
+      }
     }
   }, [])
 
