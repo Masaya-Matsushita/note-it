@@ -26,12 +26,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
       getRedirectResult(auth).then((result) => {
         // getRedirectResultが呼ばれたとき
         console.log('Called!')
-        if (result) {
-          // resultに値がある時
-          console.log('User.')
-          const user = result.user
-          router.push(`/my-page/${user.uid}`)
-        } else {
+        if (result === null) {
           // resultがnullの時
           console.log('Null')
           // queryの値で認証先プロバイダを判断
