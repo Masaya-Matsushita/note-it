@@ -22,6 +22,7 @@ export const useRedirectOnAuthState = (router: NextRouter) => {
       } else {
         switch (router.pathname) {
           case '/auth-redirect':
+          case '/no-verified':
           case '/my-page/[uid]': {
             router.push('/login')
             break
