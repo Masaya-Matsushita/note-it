@@ -13,7 +13,7 @@ export const useRedirectOnAuthState = () => {
           case '/forgot-password':
           case '/auth-redirect': {
             // console.log('To Mypage')
-            console.log('redirect in useRedirectOnAuthState:', redirect)
+            console.log('useRedirectOnAuthState:', redirect)
             const uid = user.uid
             router.push(`/my-page/${uid}`)
             break
@@ -27,7 +27,7 @@ export const useRedirectOnAuthState = () => {
           case '/auth-redirect':
           case '/my-page/[uid]': {
             // console.log('To Login')
-            console.log('redirect in useRedirectOnAuthState:', redirect)
+            console.log('useRedirectOnAuthState:', redirect)
             router.push('/login')
             break
           }
