@@ -8,10 +8,10 @@ import 'styles/globals.css'
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
   const router = useRouter()
-  const redirectOnAuthState = useRedirectOnAuthState()
+  const redirectOnAuthState = useRedirectOnAuthState(router)
 
   useEffect(() => {
-    redirectOnAuthState(router)
+    redirectOnAuthState()
   }, [])
 
   return (

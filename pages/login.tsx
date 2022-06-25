@@ -47,14 +47,13 @@ const Login: NextPage = () => {
     try {
       setLoading(true)
       await signInWithEmailAndPassword(auth, values.email, values.password)
-      const user = auth.currentUser
-      if (user?.emailVerified) {
-        router.push(`/my-page/${user.uid}`)
-      } else {
-        throw new Error('auth/email not verified')
-      }
+      // const user = auth.currentUser
+      // if (user?.emailVerified) {
+      //   router.push(`/my-page/${user.uid}`)
+      // } else {
+      //   throw new Error('auth/email not verified')
+      // }
     } catch (error: any) {
-      console.log(error.message)
       setMethod('signin')
       setError(error.code)
     }

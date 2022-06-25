@@ -20,30 +20,20 @@ const AuthRedirectWithGoogle: NextPage = () => {
   const redirectToMypage = (): void => {
     try {
       console.log(router)
-      // throw new Error('aaa');
 
-      console.log('Start')
       getRedirectResult(auth).then((result) => {
-        // getRedirectResultが呼ばれたとき
-        console.log('Called!')
         if (result === null) {
-          // resultがnullの時
-          console.log('Null')
           // queryの値で認証先プロバイダを判断
           if (router.query.provider === 'google') {
-            console.log('google')
             signInWithRedirect(auth, googleProvider)
           } else if (router.query.provider === 'twitter') {
-            console.log('twitter')
             signInWithRedirect(auth, twitterProvider)
           } else if (router.query.provider === 'github') {
-            console.log('github')
             signInWithRedirect(auth, githubProvider)
           }
         }
       })
     } catch (error: any) {
-      // console.log(error.code)
       setVisible(false)
       setMethod('redirect')
       setError(error.code)
