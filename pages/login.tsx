@@ -23,7 +23,8 @@ import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { ErrorModal } from 'components/ErrorModal'
 
 type AuthValues = {
   name: string
@@ -31,62 +32,126 @@ type AuthValues = {
   password: string
 }
 
-const Login: NextPage = () => {
+const Login: NextPage<{
+  redirect: boolean
+  setRedirect: Dispatch<SetStateAction<boolean>>
+}> = ({ redirect, setRedirect }) => {
   const router = useRouter()
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [method, setMethod] = useState('')
+  const [signInValues, setSignInValues] = useState({
+    email: '',
+    password: '',
+  })
+  const [signUpValues, setSignUpValues] = useState({
+    name: '',
+    email: '',
+    password: '',
+  })
 
-  // email & passwordでログイン
-  const emailSignIn = async (
-    values: Omit<AuthValues, 'name'>
-  ): Promise<void> => {
-    try {
-      setLoading(true)
-      await signInWithEmailAndPassword(auth, values.email, values.password)
-      const user = auth.currentUser
-      if (user) {
-        router.push(`/my-page/${user.uid}`)
+  // ログインボタンをクリック
+  const handleSignIn = (values: Omit<AuthValues, 'name'>) => {
+    setRedirect(false)
+    setMethod('signin')
+    setSignInValues(values)
+    console.log('login/handleSignIn:', redirect)
+  }
+
+  // 新規登録ボタンをクリック
+  const handleSignUp = (values: AuthValues) => {
+    setRedirect(false)
+    setMethod('signup')
+    setSignUpValues(values)
+  }
+
+  // redirectがfalseになったとき
+  useEffect(() => {
+    switch (method) {
+      // サインイン
+      case 'signin': {
+        console.log('login/useEffect:', redirect)
+        emailSignIn()
+        break
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message
-        console.log(errorMessage)
+      // 新規登録
+      case 'signup': {
+        emailSignUp()
+        break
+      }
+      default: {
+        break
       }
     }
+  }, [redirect])
+
+  // email & passwordでログイン
+  const emailSignIn = async (): Promise<void> => {
+    try {
+      setLoading(true)
+      console.log('login/emailSignIn/beforeSignIn:', redirect)
+      await signInWithEmailAndPassword(
+        auth,
+        signInValues.email,
+        signInValues.password
+      )
+      console.log('login/emailSignIn/afterSignIn:', redirect)
+      const user = auth.currentUser
+      if (user?.emailVerified) {
+        router.push(`/my-page/${user.uid}`)
+      } else {
+        throw new Error('auth/email not verified')
+      }
+    } catch (error: any) {
+      // console.log(error.message)
+      setError(error.code)
+    }
     setLoading(false)
+    setRedirect(true)
   }
 
   // email & passwordで新規登録
-  const emailSignUp = async (values: AuthValues): Promise<void> => {
+  const emailSignUp = async () => {
     try {
       setLoading(true)
-      await createUserWithEmailAndPassword(auth, values.email, values.password)
+      await createUserWithEmailAndPassword(
+        auth,
+        signUpValues.email,
+        signUpValues.password
+      )
       const user = auth.currentUser
       if (user) {
-        await updateProfile(user, { displayName: values.name })
+        await updateProfile(user, { displayName: signUpValues.name })
         auth.languageCode = 'ja'
-        await sendEmailVerification(user)
+        const actionCodeSettings = {
+          url: 'https://note-it-five.vercel.app/mypage/' + user.uid,
+        }
+        await sendEmailVerification(user, actionCodeSettings)
         showNotification({
           title: 'ようこそ！',
           message: '認証メールが届いていることを確認してください。',
-          autoClose: 10000,
+          autoClose: false,
           icon: <AiOutlineMail size={20} />,
           style: { padding: '15px' },
         })
-        router.push(`/my-page/${user.uid}`)
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message
-        console.log(errorMessage)
-      }
+    } catch (error: any) {
+      setError(error.code)
     }
     setLoading(false)
+    setRedirect(true)
   }
 
   return (
-    <div>
+    <>
+      <ErrorModal
+        error={error}
+        setError={setError}
+        method={method}
+        setMethod={setMethod}
+      />
       <Tabs className='pt-8 focus:outline-none' tabPadding='xl'>
         <Tabs.Tab
           label='ログイン'
@@ -94,7 +159,7 @@ const Login: NextPage = () => {
         >
           <Box sx={{ maxWidth: 480 }} mx='auto'>
             <form
-              onSubmit={signInForm.onSubmit((values) => emailSignIn(values))}
+              onSubmit={signInForm.onSubmit((values) => handleSignIn(values))}
             >
               <TextInput
                 required
@@ -147,7 +212,7 @@ const Login: NextPage = () => {
         >
           <Box sx={{ maxWidth: 480 }} mx='auto'>
             <form
-              onSubmit={signUpForm.onSubmit((values) => emailSignUp(values))}
+              onSubmit={signUpForm.onSubmit((values) => handleSignUp(values))}
             >
               <TextInput
                 required
@@ -186,7 +251,7 @@ const Login: NextPage = () => {
                   loading={loading}
                   leftIcon={<AiOutlineDatabase />}
                 >
-                  登録
+                  新規登録
                 </Button>
               </Group>
             </form>
@@ -199,7 +264,7 @@ const Login: NextPage = () => {
         </Tabs.Tab>
       </Tabs>
       <AuthProvider />
-    </div>
+    </>
   )
 }
 

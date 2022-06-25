@@ -23,7 +23,17 @@ module.exports = {
         400: '#1971c2',
       },
     },
-    extend: {},
+    extend: {
+      height: {
+        screen: ['100vh', '100dvh'],
+      },
+      minHeight: {
+        screen: ['100vh', '100dvh'],
+      },
+      maxHeight: {
+        screen: ['100vh', '100dvh'],
+      },
+    },
     screens: {
       xxs: '290px',
       xs: '576px',

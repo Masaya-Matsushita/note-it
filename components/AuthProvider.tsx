@@ -36,7 +36,13 @@ export const AuthProvider = () => {
                   layout='fill'
                   alt={data.name}
                   priority
-                  onClick={() => router.push(`/auth-redirect/${data.path}`)}
+                  // queryを渡すことで2回リダイレクトされなくなる
+                  onClick={() =>
+                    router.push({
+                      pathname: `/auth-redirect`,
+                      query: { provider: data.path },
+                    })
+                  }
                 />
               </div>
             ) : (
@@ -46,7 +52,13 @@ export const AuthProvider = () => {
                   layout='fill'
                   alt={data.name}
                   priority
-                  onClick={() => router.push(`/auth-redirect/${data.path}`)}
+                  // queryを渡すことで2回リダイレクトされなくなる
+                  onClick={() =>
+                    router.push({
+                      pathname: `/auth-redirect`,
+                      query: { provider: data.path },
+                    })
+                  }
                 />
               </div>
             )}

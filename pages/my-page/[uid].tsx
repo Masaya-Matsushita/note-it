@@ -16,6 +16,10 @@ const Mypage: NextPage = () => {
     router.push('/login')
   }
 
+  if (auth.currentUser) {
+    console.log(auth.currentUser.emailVerified)
+  }
+
   return (
     <div>
       <div>{router.query.uid}</div>

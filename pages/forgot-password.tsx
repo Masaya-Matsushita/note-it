@@ -10,7 +10,6 @@ import { useState } from 'react'
 import { AiOutlineMail } from 'react-icons/ai'
 
 const ForgotPassword: NextPage = () => {
-  const [opened, setOpened] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const form = useForm({
@@ -32,21 +31,19 @@ const ForgotPassword: NextPage = () => {
       form.reset()
       showNotification({
         message: '再設定メールが送信されました。',
-        autoClose: 5000,
+        autoClose: false,
         icon: <AiOutlineMail size={20} />,
         style: { padding: '15px' },
       })
-    } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message
-        console.log(errorMessage)
-      }
+    } catch (error: any) {
+      const errorCode = error.code
+      const errorMessage = error.message
     }
     setLoading(false)
   }
 
   return (
-    <div>
+    <>
       <h1 className='text-center'>パスワード再設定</h1>
       <div className='text-center sm:text-lg'>
         パスワード再設定のリンクを送信します。メールアドレスをご入力ください。
@@ -66,7 +63,7 @@ const ForgotPassword: NextPage = () => {
         />
         <div className='flex flex-col-reverse mt-5 xs:flex-row xs:justify-between'>
           <Link href='/login' passHref>
-            <a className='mt-3 ml-2 w-full text-sm text-center text-dark-100 no-underline xs:w-auto sm:text-base'>
+            <a className='mt-5 ml-2 w-full text-center text-dark-100 no-underline xs:mt-3 xs:w-auto sm:text-base'>
               ← ログインページに戻る
             </a>
           </Link>
@@ -74,9 +71,9 @@ const ForgotPassword: NextPage = () => {
             送信
           </Button>
         </div>
-        <SendEmailTroubleModal opened={opened} setOpened={setOpened} />
+        <SendEmailTroubleModal />
       </form>
-    </div>
+    </>
   )
 }
 

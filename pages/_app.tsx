@@ -1,23 +1,32 @@
 import { Layout } from 'components/Layout'
-import { useCheckIsSignIn } from 'hooks/useCheckIsSignIn'
+import { useRedirectOnAuthState } from 'hooks/useRedirectOnAuthState'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import 'styles/globals.css'
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
   const router = useRouter()
-  const checkIsSignIn = useCheckIsSignIn(router)
+  const [redirect, setRedirect] = useState(true)
+  console.log('_app.tsx:', redirect) // 追加した1行
+  const redirectOnAuthState = useRedirectOnAuthState()
 
   useEffect(() => {
-    checkIsSignIn()
-  }, [checkIsSignIn])
+    console.log('_app.tsx/useEffect:', redirect)
+    if (redirect) {
+      redirectOnAuthState(router, redirect)
+    }
+  }, [redirect])
 
   return (
     <>
       <Layout>
-        <Component {...pageProps} />
+        <Component
+          {...pageProps}
+          redirect={redirect}
+          setRedirect={setRedirect}
+        />
       </Layout>
     </>
   )
