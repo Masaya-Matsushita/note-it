@@ -13,6 +13,7 @@ import {
   Group,
   PasswordInput,
   Tabs,
+  Checkbox,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
@@ -39,6 +40,7 @@ const Login: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [method, setMethod] = useState('')
+  const [checked, setChecked] = useState(false)
 
   // email & passwordでログイン
   const emailSignIn = async (
@@ -107,7 +109,6 @@ const Login: NextPage = () => {
                 label='Email'
                 placeholder='example@mail.com'
                 size='md'
-                className='mt-4'
                 icon={<AiOutlineMail />}
                 {...signInForm.getInputProps('email')}
               />
@@ -121,23 +122,29 @@ const Login: NextPage = () => {
                 icon={<AiOutlineKey />}
                 {...signInForm.getInputProps('password')}
               />
-              <div className='flex justify-end'>
+              <Group position='apart' mt='lg' className='text-dark-200'>
+                <label htmlFor='checkbox' className='flex items-center'>
+                  <Checkbox
+                    id='checkbox'
+                    checked={checked}
+                    onChange={(e) => setChecked(e.currentTarget.checked)}
+                    className='inline-block mr-2'
+                  />
+                  ログイン状態を保持
+                </label>
                 <Link href={'/forgot-password'} passHref>
-                  <a className='inline-block mt-2 mr-2 text-dark-200'>
-                    パスワードをお忘れですか？
-                  </a>
+                  <a className='text-dark-200'>パスワードをお忘れですか？</a>
                 </Link>
-              </div>
-              <Group position='right' mt='xl' className='pb-6'>
-                <Button
-                  type='submit'
-                  size='md'
-                  loading={loading}
-                  leftIcon={<AiOutlineDatabase />}
-                >
-                  ログイン
-                </Button>
               </Group>
+              <Button
+                type='submit'
+                size='md'
+                loading={loading}
+                leftIcon={<AiOutlineDatabase />}
+                className='block mx-auto mt-8 w-full xs:mt-6  xs:mr-0 xs:ml-auto xs:w-40 xs:h-12'
+              >
+                ログイン
+              </Button>
             </form>
           </Box>
           <AuthDivider />
@@ -183,17 +190,15 @@ const Login: NextPage = () => {
                 icon={<AiOutlineKey />}
                 {...signUpForm.getInputProps('password')}
               />
-
-              <Group position='right' mt='xl'>
-                <Button
-                  type='submit'
-                  size='md'
-                  loading={loading}
-                  leftIcon={<AiOutlineDatabase />}
-                >
-                  新規登録
-                </Button>
-              </Group>
+              <Button
+                type='submit'
+                size='md'
+                loading={loading}
+                leftIcon={<AiOutlineDatabase />}
+                className='block mx-auto mt-8 w-full xs:mt-6  xs:mr-0 xs:ml-auto xs:w-40 xs:h-12'
+              >
+                新規登録
+              </Button>
             </form>
           </Box>
           <AuthDivider />
