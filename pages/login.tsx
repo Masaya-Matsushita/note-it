@@ -67,14 +67,11 @@ const Login: NextPage = () => {
       if (user) {
         await updateProfile(user, { displayName: values.name })
         auth.languageCode = 'ja'
-        const actionCodeSettings = {
-          url: 'https://note-it-five.vercel.app/mypage/' + user.uid,
-        }
-        await sendEmailVerification(user, actionCodeSettings)
+        await sendEmailVerification(user)
         showNotification({
-          title: 'ようこそ！',
-          message: '認証メールが届いていることを確認してください。',
-          autoClose: false,
+          title: '認証メールを送信しました！',
+          message: 'メールフォルダをご確認ください',
+          autoClose: 10000,
           icon: <AiOutlineMail size={20} />,
           style: { padding: '15px' },
         })
