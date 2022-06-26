@@ -14,6 +14,7 @@ export const ResendVerifyEmailModal = (): JSX.Element => {
     if (user) {
       auth.languageCode = 'ja'
       await sendEmailVerification(user)
+      setOpened(false)
       showNotification({
         title: '認証メールを送信しました！',
         message: 'メールフォルダをご確認ください',
@@ -41,7 +42,7 @@ export const ResendVerifyEmailModal = (): JSX.Element => {
         <div>
           <div className='mb-2 ml-2 text-xl'>リンクが期限切れの場合</div>
           <div className='grow mb-6 border border-dark-400 border-solid'></div>
-          <div>こちらから認証メールを再送信できます</div>
+          <div>こちらから認証メールを再送信できます。</div>
           <Button
             onClick={handleSendEmail}
             className='block px-6 mt-3 mr-4 ml-auto'

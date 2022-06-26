@@ -16,6 +16,7 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
     if (user) {
       auth.languageCode = 'ja'
       await sendEmailVerification(user)
+      setOpened(false)
       showNotification({
         title: '認証メールを送信しました！',
         message: 'メールフォルダをご確認ください',
@@ -52,7 +53,7 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
           <div>
             <div className='grow mt-16 mb-4 border border-dark-500 border-solid'></div>
             <div>
-              上記で解決しない場合、認証メールを再送信することもできます。古いメールのリンクは無効になります。
+              上記で解決しない場合、認証メールを再送信することもできます。（古いメールのリンクは無効になります）
             </div>
             <Button
               onClick={handleSendEmail}

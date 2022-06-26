@@ -44,7 +44,9 @@ const ForgotPassword: NextPage = () => {
 
   return (
     <>
-      <h1 className='text-center'>パスワード再設定</h1>
+      <div className='my-4 text-2xl font-bold text-center sm:text-4xl'>
+        パスワード再設定
+      </div>
       <div className='text-center sm:text-lg'>
         パスワード再設定のリンクを送信します。メールアドレスをご入力ください。
       </div>
