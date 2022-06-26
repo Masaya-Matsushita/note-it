@@ -3,17 +3,14 @@ import { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 
 // 未ログインのときloginへ、ログイン済のときmy-pageへ
-export const useRedirectOnAuthState = () => {
-  const redirectOnAuthState = (router: NextRouter, redirect: boolean) => {
+export const useRedirectOnAuthState = (router: NextRouter) => {
+  const redirectOnAuthState = () => {
     onAuthStateChanged(auth, (user) => {
-      // console.log('onAuthStateChanged is called!')
-      if (user && redirect) {
+      if (user) {
         switch (router.pathname) {
           case '/login':
           case '/forgot-password':
           case '/auth-redirect': {
-            // console.log('To Mypage')
-            console.log('useRedirectOnAuthState:', redirect)
             const uid = user.uid
             router.push(`/my-page/${uid}`)
             break
@@ -25,9 +22,8 @@ export const useRedirectOnAuthState = () => {
       } else {
         switch (router.pathname) {
           case '/auth-redirect':
+          case '/no-verified':
           case '/my-page/[uid]': {
-            // console.log('To Login')
-            console.log('useRedirectOnAuthState:', redirect)
             router.push('/login')
             break
           }

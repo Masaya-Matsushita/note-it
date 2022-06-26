@@ -23,7 +23,7 @@ import { AuthDivider } from 'components/AuthDivider'
 import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ErrorModal } from 'components/ErrorModal'
 
 type AuthValues = {
@@ -32,98 +32,42 @@ type AuthValues = {
   password: string
 }
 
-const Login: NextPage<{
-  redirect: boolean
-  setRedirect: Dispatch<SetStateAction<boolean>>
-}> = ({ redirect, setRedirect }) => {
+const Login: NextPage = () => {
   const router = useRouter()
   const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [method, setMethod] = useState('')
-  const [signInValues, setSignInValues] = useState({
-    email: '',
-    password: '',
-  })
-  const [signUpValues, setSignUpValues] = useState({
-    name: '',
-    email: '',
-    password: '',
-  })
-
-  // ログインボタンをクリック
-  const handleSignIn = (values: Omit<AuthValues, 'name'>) => {
-    setRedirect(false)
-    setMethod('signin')
-    setSignInValues(values)
-    console.log('login/handleSignIn:', redirect)
-  }
-
-  // 新規登録ボタンをクリック
-  const handleSignUp = (values: AuthValues) => {
-    setRedirect(false)
-    setMethod('signup')
-    setSignUpValues(values)
-  }
-
-  // redirectがfalseになったとき
-  useEffect(() => {
-    switch (method) {
-      // サインイン
-      case 'signin': {
-        console.log('login/useEffect:', redirect)
-        emailSignIn()
-        break
-      }
-      // 新規登録
-      case 'signup': {
-        emailSignUp()
-        break
-      }
-      default: {
-        break
-      }
-    }
-  }, [redirect])
 
   // email & passwordでログイン
-  const emailSignIn = async (): Promise<void> => {
+  const emailSignIn = async (
+    values: Omit<AuthValues, 'name'>
+  ): Promise<void> => {
     try {
       setLoading(true)
-      console.log('login/emailSignIn/beforeSignIn:', redirect)
-      await signInWithEmailAndPassword(
-        auth,
-        signInValues.email,
-        signInValues.password
-      )
-      console.log('login/emailSignIn/afterSignIn:', redirect)
-      const user = auth.currentUser
-      if (user?.emailVerified) {
-        router.push(`/my-page/${user.uid}`)
-      } else {
-        throw new Error('auth/email not verified')
-      }
+      await signInWithEmailAndPassword(auth, values.email, values.password)
+      // const user = auth.currentUser
+      // if (user?.emailVerified) {
+      //   router.push(`/my-page/${user.uid}`)
+      // } else {
+      //   throw new Error('auth/email not verified')
+      // }
     } catch (error: any) {
-      // console.log(error.message)
+      setMethod('signin')
       setError(error.code)
     }
     setLoading(false)
-    setRedirect(true)
   }
 
   // email & passwordで新規登録
-  const emailSignUp = async () => {
+  const emailSignUp = async (values: AuthValues) => {
     try {
       setLoading(true)
-      await createUserWithEmailAndPassword(
-        auth,
-        signUpValues.email,
-        signUpValues.password
-      )
+      await createUserWithEmailAndPassword(auth, values.email, values.password)
       const user = auth.currentUser
       if (user) {
-        await updateProfile(user, { displayName: signUpValues.name })
+        await updateProfile(user, { displayName: values.name })
         auth.languageCode = 'ja'
         const actionCodeSettings = {
           url: 'https://note-it-five.vercel.app/mypage/' + user.uid,
@@ -138,10 +82,10 @@ const Login: NextPage<{
         })
       }
     } catch (error: any) {
+      setMethod('signup')
       setError(error.code)
     }
     setLoading(false)
-    setRedirect(true)
   }
 
   return (
@@ -159,7 +103,7 @@ const Login: NextPage<{
         >
           <Box sx={{ maxWidth: 480 }} mx='auto'>
             <form
-              onSubmit={signInForm.onSubmit((values) => handleSignIn(values))}
+              onSubmit={signInForm.onSubmit((values) => emailSignIn(values))}
             >
               <TextInput
                 required
@@ -212,7 +156,7 @@ const Login: NextPage<{
         >
           <Box sx={{ maxWidth: 480 }} mx='auto'>
             <form
-              onSubmit={signUpForm.onSubmit((values) => handleSignUp(values))}
+              onSubmit={signUpForm.onSubmit((values) => emailSignUp(values))}
             >
               <TextInput
                 required
