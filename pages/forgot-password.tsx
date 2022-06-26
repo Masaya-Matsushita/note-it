@@ -71,7 +71,7 @@ const ForgotPassword: NextPage = () => {
             送信
           </Button>
         </div>
-        <SendEmailTroubleModal />
+        <SendEmailTroubleModal resendButton={false} />
       </form>
     </>
   )
