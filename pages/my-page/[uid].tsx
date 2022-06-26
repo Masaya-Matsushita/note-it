@@ -13,6 +13,7 @@ const Mypage: NextPage = () => {
     setLoading(true)
     await signOut(auth)
     setLoading(false)
+    router.push('/login')
   }
 
   useEffect(() => {

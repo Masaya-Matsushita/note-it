@@ -47,12 +47,10 @@ const Login: NextPage = () => {
     try {
       setLoading(true)
       await signInWithEmailAndPassword(auth, values.email, values.password)
-      // const user = auth.currentUser
-      // if (user?.emailVerified) {
-      //   router.push(`/my-page/${user.uid}`)
-      // } else {
-      //   throw new Error('auth/email not verified')
-      // }
+      const user = auth.currentUser
+      if (user) {
+        router.push(`/my-page/${user.uid}`)
+      }
     } catch (error: any) {
       setMethod('signin')
       setError(error.code)
@@ -80,6 +78,7 @@ const Login: NextPage = () => {
           icon: <AiOutlineMail size={20} />,
           style: { padding: '15px' },
         })
+        router.push(`/my-page/${user.uid}`)
       }
     } catch (error: any) {
       setMethod('signup')
