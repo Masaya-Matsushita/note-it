@@ -1,5 +1,5 @@
 import { Button } from '@mantine/core'
-import { showNotification } from '@mantine/notifications'
+import { ResendVerifyEmailModal } from 'components/ResendVerifyEmailModal'
 import { SendEmailTroubleModal } from 'components/SendEmailTroubleModal'
 import { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
@@ -31,6 +31,7 @@ const NoVerified: NextPage = () => {
       </ol>
       <Button onClick={toMyPage}>マイページへ</Button>
       <SendEmailTroubleModal resendButton={true} />
+      <ResendVerifyEmailModal />
     </div>
   )
 }
