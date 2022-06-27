@@ -12,10 +12,11 @@ const NoVerified: NextPage = () => {
   const [error, setError] = useState('')
 
   const toMyPage = () => {
-    // ボタンを押す度にuserを再定義し直したい
-    // リロードすると再定義される
+    // ボタンを押す度にuserを初期化、再定義したい
+    // リロードすると再定義できる
     try {
       const user = auth.currentUser
+      // 認証済でmy-pageへ遷移
       if (user?.emailVerified === true) {
         router.push(`my-page/${user.uid}`)
       } else {

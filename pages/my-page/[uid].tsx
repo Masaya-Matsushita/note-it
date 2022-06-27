@@ -27,22 +27,14 @@ const Mypage: NextPage = () => {
 
   useEffect(() => {
     const user = auth.currentUser
-    if (user) {
-      if (
-        user.providerData[0].providerId === 'password' &&
-        user.emailVerified === false
-      ) {
-        // 未認証
-        // 確認メール再送信 & ログアウト用のモーダルを作成し、認証後再ログインしてもらう
-        console.log('ng')
-        console.log(user)
-        router.push('/no-verified')
-      } else {
-        // 認証済み
-        // コンテンツのfetch＆表示
-        console.log('ok')
-        setPageLoading(false)
-      }
+    // パスワードログインかつメール未認証のとき、no-verifiedページへ
+    if (
+      user?.providerData[0].providerId === 'password' &&
+      user?.emailVerified === false
+    ) {
+      router.push('/no-verified')
+    } else {
+      setPageLoading(false)
     }
   }, [])
 
@@ -55,6 +47,7 @@ const Mypage: NextPage = () => {
   return (
     <div>
       <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
+      {/* ユーザーが未認証の時は表示されない */}
       {visible ? (
         <div>
           <ErrorModal error={error} setError={setError} />

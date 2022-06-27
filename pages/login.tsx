@@ -41,6 +41,7 @@ const Login: NextPage = () => {
   const [checked, setChecked] = useState(false)
   const [emailValue, setEmailValue] = useState('')
 
+  // localStorageにemailが保存されていた場合、emailValueに代入&checkedをtrue
   useEffect(() => {
     if (localStorage.hasOwnProperty('email')) {
       setEmailValue(localStorage.email)
@@ -48,6 +49,7 @@ const Login: NextPage = () => {
     }
   }, [])
 
+  // emailValue(signInのemail)へ入力
   const inputEmail: ComponentProps<'input'>['onChange'] = (e) => {
     setEmailValue(e.currentTarget.value)
   }
@@ -60,15 +62,17 @@ const Login: NextPage = () => {
       const email = e.currentTarget.email.value
       const password = e.currentTarget.password.value
       await signInWithEmailAndPassword(auth, email, password)
+      // checkedの値で分岐
       if (checked) {
+        // localStorageにemailを保存
         localStorage.setItem('email', email)
       } else {
+        // localStorageのemailを削除
         localStorage.removeItem('email')
       }
+      // my-pageへ遷移
       const user = auth.currentUser
-      if (user) {
-        router.push(`/my-page/${user.uid}`)
-      }
+      router.push(`/my-page/${user?.uid}`)
     } catch (error: any) {
       setMethod('signin')
       setError(error.code)
@@ -83,8 +87,10 @@ const Login: NextPage = () => {
       await createUserWithEmailAndPassword(auth, values.email, values.password)
       const user = auth.currentUser
       if (user) {
+        // displayNameにnameを設定
         await updateProfile(user, { displayName: values.name })
         auth.languageCode = 'ja'
+        // 確認メールを送信
         await sendEmailVerification(user)
         showNotification({
           title: '認証メールを送信しました！',
@@ -93,6 +99,7 @@ const Login: NextPage = () => {
           icon: <AiOutlineMail size={20} />,
           style: { padding: '15px' },
         })
+        // my-pageへ遷移
         router.push(`/my-page/${user.uid}`)
       }
     } catch (error: any) {
@@ -224,7 +231,7 @@ const Login: NextPage = () => {
           </div>
         </Tabs.Tab>
       </Tabs>
-      <AuthProvider />
+      <AuthProvider router={router} />
     </>
   )
 }

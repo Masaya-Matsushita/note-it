@@ -2,6 +2,7 @@ import Head from 'next/head'
 
 export const BrowserTab = (): JSX.Element => {
   return (
+    // ブラウザのタブ設定
     <Head>
       <title>Note It</title>
       <meta

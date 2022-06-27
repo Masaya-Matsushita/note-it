@@ -17,11 +17,11 @@ const AuthRedirectWithGoogle: NextPage = () => {
   const [error, setError] = useState('')
   const [method, setMethod] = useState('')
 
+  // 各プロバイダへリダイレクト認証
   const redirectToMypage = (): void => {
     try {
-      console.log(router)
-
       getRedirectResult(auth).then((result) => {
+        // ユーザーが未認証の時
         if (result === null) {
           // queryの値で認証先プロバイダを判断
           if (router.query.provider === 'google') {
@@ -34,6 +34,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
         }
       })
     } catch (error: any) {
+      // pageLoadingを非表示に、ErrorModalを表示
       setPageLoading(false)
       setMethod('redirect')
       setError(error.code)
@@ -41,6 +42,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
   }
 
   useEffect(() => {
+    // router起因のエラー対処 'No router instance found. you should only use "next/router" inside the client side of your app.'
     if (!router.isReady) {
       return
     }
@@ -50,6 +52,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
   return (
     <>
       <ErrorModal
+        router={router}
         error={error}
         setError={setError}
         method={method}

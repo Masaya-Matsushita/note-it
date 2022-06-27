@@ -28,6 +28,7 @@ type HookType = () => UseFormReturnType<{
   password: string
 }>
 
+// フォームのバリデーションを定義
 const schema: SchemaType = z.object({
   name: z
     .string()
@@ -47,6 +48,7 @@ const schema: SchemaType = z.object({
 })
 
 export const useSignUpFormInitialized: HookType = () => {
+  // フォームの初期値、バリデーションを設定
   const signUpForm = useForm({
     schema: zodResolver(schema),
     initialValues: {

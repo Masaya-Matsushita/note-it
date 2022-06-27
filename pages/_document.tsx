@@ -1,3 +1,4 @@
+// MantineをNext.jsで使用するときの設定ファイル
 import { createGetInitialProps } from '@mantine/next'
 import Document, { Head, Html, Main, NextScript } from 'next/document'
 

@@ -11,6 +11,7 @@ export default function App(props: AppProps) {
   const router = useRouter()
   const redirectOnAuthState = useRedirectOnAuthState(router)
 
+  // マウント時に一度だけ実行
   useEffect(() => {
     redirectOnAuthState()
   }, [])
