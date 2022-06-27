@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 
 const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()
-  const [visible, setVisible] = useState(true)
+  const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [method, setMethod] = useState('')
 
@@ -34,7 +34,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
         }
       })
     } catch (error: any) {
-      setVisible(false)
+      setPageLoading(false)
       setMethod('redirect')
       setError(error.code)
     }
@@ -55,7 +55,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
         method={method}
         setMethod={setMethod}
       />
-      <LoadingOverlay visible={visible} loaderProps={{ size: 'xl' }} />
+      <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
     </>
   )
 }

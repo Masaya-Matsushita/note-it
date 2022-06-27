@@ -1,4 +1,4 @@
-import { Button } from '@mantine/core'
+import { Button, LoadingOverlay } from '@mantine/core'
 import { signOut } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react'
 const Mypage: NextPage = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [pageLoading, setPageLoading] = useState(true)
+  const [visible, setVisible] = useState(false)
 
   const signout = async (): Promise<void> => {
     setLoading(true)
@@ -32,16 +34,28 @@ const Mypage: NextPage = () => {
         // 認証済み
         // コンテンツのfetch＆表示
         console.log('ok')
+        setPageLoading(false)
       }
     }
   }, [])
 
+  useEffect(() => {
+    if (!pageLoading) {
+      setVisible(true)
+    }
+  }, [pageLoading])
+
   return (
     <div>
-      <div>{router.query.uid}</div>
-      <Button onClick={signout} loading={loading}>
-        サインアウト
-      </Button>
+      <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
+      {visible ? (
+        <div>
+          <div>{router.query.uid}</div>
+          <Button onClick={signout} loading={loading}>
+            サインアウト
+          </Button>
+        </div>
+      ) : null}
     </div>
   )
 }
