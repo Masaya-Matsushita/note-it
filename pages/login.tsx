@@ -170,11 +170,7 @@ const Login: NextPage = () => {
               </Button>
             </form>
           </Box>
-          <AuthDivider />
-          <div className='mb-6 text-center xxs:text-lg xs:mb-10 lg:mb-12 lg:text-xl'>
-            お持ちのアカウントで
-            <span className='pl-1 font-bold text-blue-200'>ログイン</span>
-          </div>
+          <AuthDivider label='ログイン' />
         </Tabs.Tab>
         <Tabs.Tab
           label='新規登録'
@@ -224,11 +220,7 @@ const Login: NextPage = () => {
               </Button>
             </form>
           </Box>
-          <AuthDivider />
-          <div className='mb-6 text-center xxs:text-lg xs:mb-10 lg:mb-12 lg:text-xl'>
-            お持ちのアカウントで
-            <span className='pl-1 font-bold text-blue-200'>新規登録</span>
-          </div>
+          <AuthDivider label='新規登録' />
         </Tabs.Tab>
       </Tabs>
       <AuthProvider router={router} />
