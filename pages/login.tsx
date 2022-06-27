@@ -23,7 +23,7 @@ import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
 import { AuthDivider } from 'components/AuthDivider'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import { ErrorModal } from 'components/ErrorModal'
 
 type AuthValues = {
@@ -39,6 +39,18 @@ const Login: NextPage = () => {
   const [error, setError] = useState('')
   const [method, setMethod] = useState('')
   const [checked, setChecked] = useState(false)
+  const [emailValue, setEmailValue] = useState('')
+
+  useEffect(() => {
+    if (localStorage.hasOwnProperty('email')) {
+      setEmailValue(localStorage.email)
+      setChecked(true)
+    }
+  }, [])
+
+  const inputEmail: ComponentProps<'input'>['onChange'] = (e) => {
+    setEmailValue(e.currentTarget.value)
+  }
 
   // email & passwordでログイン
   const emailSignIn: ComponentProps<'form'>['onInput'] = async (e) => {
@@ -48,6 +60,11 @@ const Login: NextPage = () => {
       const email = e.currentTarget.email.value
       const password = e.currentTarget.password.value
       await signInWithEmailAndPassword(auth, email, password)
+      if (checked) {
+        localStorage.setItem('email', email)
+      } else {
+        localStorage.removeItem('email')
+      }
       const user = auth.currentUser
       if (user) {
         router.push(`/my-page/${user.uid}`)
@@ -106,6 +123,8 @@ const Login: NextPage = () => {
                 name='email'
                 label='Email'
                 placeholder='example@mail.com'
+                value={emailValue}
+                onChange={inputEmail}
                 size='md'
                 icon={<AiOutlineMail />}
               />
