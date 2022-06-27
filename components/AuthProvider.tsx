@@ -1,46 +1,34 @@
 import Image from 'next/image'
-import { useRouter } from 'next/router'
+import { NextRouter } from 'next/router'
+import { FC } from 'react'
 
-export const AuthProvider = () => {
-  const router = useRouter()
-  const PROVIDER_DATA = [
-    {
-      id: 1,
-      name: 'Google',
-      path: 'google',
-    },
-    {
-      id: 2,
-      name: 'Twitter',
-      path: 'twitter',
-    },
-    {
-      id: 3,
-      name: 'GitHub',
-      path: 'github',
-    },
-  ] as const
+type Props = { router: NextRouter }
+
+export const AuthProvider: FC<Props> = ({ router }) => {
+  const PROVIDER = ['Google', 'Twitter', 'GitHub'] as const
 
   return (
+    // それぞれproviderのqueryを含んでauth-redirectに遷移するボタン
     <div className='flex justify-center items-center'>
-      {PROVIDER_DATA.map((data) => {
+      {PROVIDER.map((provider) => {
         return (
           <div
-            key={data.id}
+            key={provider}
             className='flex flex-col items-center px-4 xs:px-7 md:px-8 lg:px-10'
           >
-            {data.name === 'GitHub' ? (
+            {/* GitHubの場合、ボタンの縁にborderをつける */}
+            {provider === 'GitHub' ? (
               <div className='relative w-16 h-16 rounded-full border border-dark-400 border-solid xs:w-20 xs:h-20'>
                 <Image
-                  src={`/${data.name}Logo.png`}
+                  src={`/${provider}Logo.png`}
                   layout='fill'
-                  alt={data.name}
+                  alt={provider}
                   priority
                   // queryを渡すことで2回リダイレクトされなくなる
                   onClick={() =>
                     router.push({
                       pathname: `/auth-redirect`,
-                      query: { provider: data.path },
+                      query: { provider: provider.toLowerCase() },
                     })
                   }
                 />
@@ -48,21 +36,21 @@ export const AuthProvider = () => {
             ) : (
               <div className='relative w-16 h-16 hover:cursor-pointer xs:w-20 xs:h-20'>
                 <Image
-                  src={`/${data.name}Logo.png`}
+                  src={`/${provider}Logo.png`}
                   layout='fill'
-                  alt={data.name}
+                  alt={provider}
                   priority
                   // queryを渡すことで2回リダイレクトされなくなる
                   onClick={() =>
                     router.push({
                       pathname: `/auth-redirect`,
-                      query: { provider: data.path },
+                      query: { provider: provider.toLowerCase() },
                     })
                   }
                 />
               </div>
             )}
-            <div className='mt-2'>{data.name}</div>
+            <div className='mt-2'>{provider}</div>
           </div>
         )
       })}

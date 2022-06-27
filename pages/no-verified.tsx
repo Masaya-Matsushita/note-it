@@ -1,60 +1,60 @@
 import { Button } from '@mantine/core'
-import { showNotification } from '@mantine/notifications'
+import { ResendVerifyEmailModal } from 'components/ResendVerifyEmailModal'
 import { SendEmailTroubleModal } from 'components/SendEmailTroubleModal'
-import { sendEmailVerification, signOut } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { AiOutlineMail } from 'react-icons/ai'
+import { ErrorModal } from 'components/ErrorModal'
 
 const NoVerified: NextPage = () => {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSendEmail = async (): Promise<void> => {
-    const user = auth.currentUser
-    if (user) {
-      console.log('hoge')
-      auth.languageCode = 'ja'
-      const actionCodeSettings = {
-        url: 'https://note-it-five.vercel.app/mypage/' + user.uid,
+  const toMyPage = () => {
+    // ボタンを押す度にuserを初期化、再定義したい
+    // リロードすると再定義できる
+    try {
+      const user = auth.currentUser
+      // 認証済でmy-pageへ遷移
+      if (user?.emailVerified === true) {
+        router.push(`my-page/${user.uid}`)
+      } else {
+        throw new Error('auth/user-not-verified')
       }
-      await sendEmailVerification(user, actionCodeSettings)
-      showNotification({
-        title: '送信完了！',
-        message: 'メールが届いていることをご確認ください。',
-        autoClose: 10000,
-        icon: <AiOutlineMail size={20} />,
-        style: { padding: '15px' },
-      })
+    } catch (error: any) {
+      setError(error.message)
     }
   }
 
-  const signout = async (): Promise<void> => {
-    setLoading(true)
-    await signOut(auth)
-    setLoading(false)
-    router.push('/login')
-  }
-
   return (
-    <div>
-      <div>メールアドレスが未認証です</div>
-      <div>1.以下の「認証メールを送信」ボタンを押す。</div>
-      <div>
-        2.登録したメールアドレス宛に「認証メール」が届いていることを確認。
+    <>
+      <ErrorModal error={error} setError={setError} />
+      <div className='my-4 text-2xl font-bold text-center sm:text-4xl'>
+        メールアドレスが未認証です
       </div>
-      <div>3.メール本文内のリンクをクリックすることで認証が完了します。</div>
-      <div>
-        4.このページをリロードするか、以下の「ログイン画面へ」ボタンからログインし直してください。
+      <div className='text-center sm:text-lg'>
+        ログイン前にメールアドレスを認証する必要があります
       </div>
-      <Button onClick={handleSendEmail}>認証メールを送信</Button>
-      <Button onClick={signout} loading={loading}>
-        ログイン画面へ
-      </Button>
-      <SendEmailTroubleModal />
-    </div>
+      <div className='grow my-4 border border-dark-400 border-solid'></div>
+      <div className='md:mx-20'>
+        <ol className='p-4 space-y-6 max-w-3xl text-lg list-inside sm:text-xl'>
+          <li>
+            登録したメールアドレス宛に「認証メール」が届いていることを確認。
+          </li>
+          <li>メール本文内のリンクをクリックすることで認証が完了します。</li>
+          <li>「マイページへ」ボタンからマイページへ移動してください。</li>
+        </ol>
+        <Button
+          className='block mb-8 ml-auto w-full xs:w-48 xs:h-12 xs:text-lg'
+          onClick={toMyPage}
+        >
+          マイページへ
+        </Button>
+        <SendEmailTroubleModal resendButton={true} />
+        <ResendVerifyEmailModal />
+      </div>
+    </>
   )
 }
 

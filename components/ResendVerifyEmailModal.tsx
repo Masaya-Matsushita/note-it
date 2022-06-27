@@ -2,13 +2,11 @@ import { Button, Modal } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { sendEmailVerification } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import { AiOutlineMail } from 'react-icons/ai'
 import { BiHelpCircle } from 'react-icons/bi'
 
-type Props = { resendButton: boolean }
-
-export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
+export const ResendVerifyEmailModal = (): JSX.Element => {
   const [opened, setOpened] = useState(false)
   const [error, setError] = useState('')
 
@@ -41,30 +39,20 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
   }
 
   return (
-    <div className='flex justify-end items-center mt-6 xs:mt-4'>
-      <BiHelpCircle />
-      <span
-        className='text-base underline hover:cursor-pointer'
-        onClick={() => setOpened(true)}
-      >
-        メールが届かない場合
-      </span>
-      <Modal opened={opened} onClose={handleClose} withCloseButton={false}>
-        <div className='mb-2 ml-2 text-xl'>主な考えられる原因</div>
-        <div className='grow mb-2 border border-dark-400 border-solid'></div>
-        <ol className='space-y-1'>
-          <li> 迷惑メールフォルダに振り分けされてしまっている</li>
-          <li>入力したメールアドレスが間違っている</li>
-          <li>受信トレイの空き容量が不足している</li>
-          <li>インターネット接続が不安定である</li>
-        </ol>
-        {/* 再送信ボタンの有無 */}
-        {resendButton ? (
+    <div>
+      <div className='flex justify-end items-center mt-4'>
+        <BiHelpCircle />
+        <span
+          className='text-base underline hover:cursor-pointer'
+          onClick={() => setOpened(true)}
+        >
+          リンクが期限切れの場合
+        </span>
+        <Modal opened={opened} onClose={handleClose} withCloseButton={false}>
           <div>
-            <div className='grow mt-16 mb-4 border border-dark-500 border-solid'></div>
-            <div>
-              上記で解決しない場合、認証メールを再送信することもできます。（古いメールのリンクは無効になります）
-            </div>
+            <div className='mb-2 ml-2 text-xl'>リンクが期限切れの場合</div>
+            <div className='grow mb-6 border border-dark-400 border-solid'></div>
+            <div>こちらから認証メールを再送信できます。</div>
             {error !== '' ? (
               <div className='mt-2 text-sm font-bold text-red-500'>
                 エラーが発生しました。しばらく時間をおいてお試しください。
@@ -72,17 +60,13 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
             ) : null}
             <Button
               onClick={handleSendEmail}
-              className='block px-6 mt-2 mr-2 ml-auto'
+              className='block px-6 mt-3 mr-4 ml-auto'
             >
               再送信
             </Button>
           </div>
-        ) : (
-          <div className='mt-8 text-right'>
-            確認後、もう一度お試しください。
-          </div>
-        )}
-      </Modal>
+        </Modal>
+      </div>
     </div>
   )
 }

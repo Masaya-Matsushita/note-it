@@ -1,32 +1,35 @@
 import { Button, Modal } from '@mantine/core'
 import { FcHighPriority } from 'react-icons/fc'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { NextRouter } from 'next/router'
 
 type Props = {
+  router?: NextRouter
   error: string
   setError: Dispatch<SetStateAction<string>>
-  method: string
-  setMethod: Dispatch<SetStateAction<string>>
+  method?: string
+  setMethod?: Dispatch<SetStateAction<string>>
 }
 
 export const ErrorModal: FC<Props> = ({
+  router,
   error,
   setError,
   method,
   setMethod,
 }) => {
-  const router = useRouter()
   const [opened, setOpened] = useState(false)
   const [errorCodeJa, setErrorCodeJa] = useState('')
 
+  // errorを日本語に翻訳してモーダルで表示
   const translateToJa = (): void => {
+    // 初期値では何もしない
     if (error === '') {
       return
     }
-
+    // モーダルを表示
     setOpened(true)
-
+    // errorを日本語に翻訳
     switch (error) {
       case 'auth/email-already-in-use':
         if (method === 'signup') {
@@ -77,6 +80,20 @@ export const ErrorModal: FC<Props> = ({
         setErrorCodeJa('認証の有効期限が切れています。')
         return
 
+      case 'auth/user-not-verified':
+        setErrorCodeJa('メールアドレスが未認証です。')
+        return
+
+      case 'auth/user-cancelled':
+        setErrorCodeJa('認証をキャンセルしました。')
+        return
+
+      case 'auth/account-exists-with-different-credential':
+        setErrorCodeJa(
+          ' このメールアドレスは既に別の方法で認証されています。別の方法をお試しください。'
+        )
+        return
+
       default:
         if (method === 'signin') {
           setErrorCodeJa(
@@ -91,12 +108,16 @@ export const ErrorModal: FC<Props> = ({
     }
   }
 
+  // error,methodを初期値に戻す＆モーダルを閉じる
   const handleClose = () => {
     setError('')
-    setMethod('')
+    if (setMethod) {
+      setMethod('')
+    }
     setOpened(false)
   }
 
+  // errorに値が入ると実行
   useEffect(() => {
     translateToJa()
   }, [error])
@@ -112,10 +133,11 @@ export const ErrorModal: FC<Props> = ({
         <FcHighPriority size={24} />
         <div className='ml-2 sm:text-lg'>{errorCodeJa}</div>
       </div>
+      {/* auth-redirectページの場合、ログイン画面へボタンを表示 */}
       {method === 'redirect' ? (
         <Button
           className='block mt-2 mr-2 ml-auto'
-          onClick={() => router.push('/login')}
+          onClick={() => router?.push('/login')}
         >
           ログイン画面へ戻る
         </Button>

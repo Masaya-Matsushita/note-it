@@ -1,4 +1,5 @@
 import { Layout } from 'components/Layout'
+import { Provider } from 'components/Provider'
 import { useRedirectOnAuthState } from 'hooks/useRedirectOnAuthState'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
@@ -10,15 +11,18 @@ export default function App(props: AppProps) {
   const router = useRouter()
   const redirectOnAuthState = useRedirectOnAuthState(router)
 
+  // マウント時に一度だけ実行
   useEffect(() => {
     redirectOnAuthState()
   }, [])
 
   return (
     <>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <Provider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </Provider>
     </>
   )
 }

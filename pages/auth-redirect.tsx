@@ -1,6 +1,15 @@
 import { LoadingOverlay } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
-import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
+import {
+  fetchSignInMethodsForEmail,
+  getAuth,
+  getRedirectResult,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  linkWithCredential,
+  signInWithEmailAndPassword,
+  signInWithRedirect,
+} from 'firebase/auth'
 import {
   auth,
   githubProvider,
@@ -13,15 +22,15 @@ import { useEffect, useState } from 'react'
 
 const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()
-  const [visible, setVisible] = useState(true)
+  const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [method, setMethod] = useState('')
 
+  // 各プロバイダへリダイレクト認証
   const redirectToMypage = (): void => {
-    try {
-      console.log(router)
-
-      getRedirectResult(auth).then((result) => {
+    getRedirectResult(auth)
+      .then((result) => {
+        // ユーザーが未認証の時
         if (result === null) {
           // queryの値で認証先プロバイダを判断
           if (router.query.provider === 'google') {
@@ -33,14 +42,49 @@ const AuthRedirectWithGoogle: NextPage = () => {
           }
         }
       })
-    } catch (error: any) {
-      setVisible(false)
-      setMethod('redirect')
-      setError(error.code)
-    }
+      .catch((error: any) => {
+        console.log(error.code)
+        // // pendingCredとemailがundefinedになる
+        // if (error.code === 'auth/account-exists-with-different-credential') {
+        //   const pendingCred = error.credential // undefined
+        //   const email = error.email // undefined
+        //   fetchSignInMethodsForEmail(auth, email) // auth/missing-identifier
+        //     .then((methods) => {
+        //       console.log(methods)
+        //       if (methods[0] === 'password') {
+        //         const password = prompt('パスワードを入力してください。')
+        //         if (password) {
+        //           console.log(password)
+        //           signInWithEmailAndPassword(auth, email, password)
+        //             .then((result) => {
+        //               return linkWithCredential(result.user, pendingCred)
+        //             })
+        //             .then((usercred) => {
+        //               console.log(usercred)
+        //               console.log('success!')
+        //             })
+        //             .catch((error) => {
+        //               console.log(error.code)
+        //             })
+        //         }
+        //       }
+        //     })
+        //     .catch((error) => {
+        //       console.log(error.code)
+        //     })
+        //   return
+        //   // このアカウントは既に別の方法でログインされています。
+        // }
+
+        // pageLoadingを非表示に、ErrorModalを表示
+        setPageLoading(false)
+        setMethod('redirect')
+        setError(error.code)
+      })
   }
 
   useEffect(() => {
+    // router起因のエラー対処 'No router instance found. you should only use "next/router" inside the client side of your app.'
     if (!router.isReady) {
       return
     }
@@ -50,12 +94,13 @@ const AuthRedirectWithGoogle: NextPage = () => {
   return (
     <>
       <ErrorModal
+        router={router}
         error={error}
         setError={setError}
         method={method}
         setMethod={setMethod}
       />
-      <LoadingOverlay visible={visible} loaderProps={{ size: 'xl' }} />
+      <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
     </>
   )
 }
