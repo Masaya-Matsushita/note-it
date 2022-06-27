@@ -21,10 +21,9 @@ import { RiBallPenLine } from 'react-icons/ri'
 import { useRouter } from 'next/router'
 import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
 import { AuthDivider } from 'components/AuthDivider'
-import { useSignInFormInitialized } from 'hooks/useSignInFormInitialized'
 import { AuthProvider } from 'components/AuthProvider'
 import Link from 'next/link'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 import { ErrorModal } from 'components/ErrorModal'
 
 type AuthValues = {
@@ -35,7 +34,6 @@ type AuthValues = {
 
 const Login: NextPage = () => {
   const router = useRouter()
-  const signInForm = useSignInFormInitialized()
   const signUpForm = useSignUpFormInitialized()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -43,12 +41,13 @@ const Login: NextPage = () => {
   const [checked, setChecked] = useState(false)
 
   // email & passwordでログイン
-  const emailSignIn = async (
-    values: Omit<AuthValues, 'name'>
-  ): Promise<void> => {
+  const emailSignIn: ComponentProps<'form'>['onInput'] = async (e) => {
     try {
+      e.preventDefault()
       setLoading(true)
-      await signInWithEmailAndPassword(auth, values.email, values.password)
+      const email = e.currentTarget.email.value
+      const password = e.currentTarget.password.value
+      await signInWithEmailAndPassword(auth, email, password)
       const user = auth.currentUser
       if (user) {
         router.push(`/my-page/${user.uid}`)
@@ -100,27 +99,25 @@ const Login: NextPage = () => {
           className='px-4 pb-2 text-xl font-bold text-dark-300 xxs:text-2xl sm:px-6 md:px-8'
         >
           <Box sx={{ maxWidth: 480 }} mx='auto'>
-            <form
-              onSubmit={signInForm.onSubmit((values) => emailSignIn(values))}
-            >
+            <form onSubmit={emailSignIn}>
               <TextInput
                 required
                 id='email'
+                name='email'
                 label='Email'
                 placeholder='example@mail.com'
                 size='md'
                 icon={<AiOutlineMail />}
-                {...signInForm.getInputProps('email')}
               />
               <PasswordInput
                 required
-                id='password'
+                id='name'
+                name='password'
                 label='Password'
                 placeholder='半角英数6文字以上'
                 mt='sm'
                 size='md'
                 icon={<AiOutlineKey />}
-                {...signInForm.getInputProps('password')}
               />
               <Group position='apart' mt='lg' className='text-dark-200'>
                 <label htmlFor='checkbox' className='flex items-center'>
@@ -130,7 +127,7 @@ const Login: NextPage = () => {
                     onChange={(e) => setChecked(e.currentTarget.checked)}
                     className='inline-block mr-2'
                   />
-                  ログイン状態を保持
+                  メールアドレスを記憶する
                 </label>
                 <Link href={'/forgot-password'} passHref>
                   <a className='text-dark-200'>パスワードをお忘れですか？</a>
