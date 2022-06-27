@@ -44,7 +44,7 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
     <div className='flex justify-end items-center mt-6 xs:mt-4'>
       <BiHelpCircle />
       <span
-        className='text-sm underline hover:cursor-pointer xs:text-base'
+        className='text-base underline hover:cursor-pointer'
         onClick={() => setOpened(true)}
       >
         メールが届かない場合

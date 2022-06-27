@@ -43,7 +43,7 @@ export const ResendVerifyEmailModal = (): JSX.Element => {
       <div className='flex justify-end items-center mt-4'>
         <BiHelpCircle />
         <span
-          className='text-sm underline hover:cursor-pointer xs:text-base'
+          className='text-base underline hover:cursor-pointer'
           onClick={() => setOpened(true)}
         >
           リンクが期限切れの場合

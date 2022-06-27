@@ -33,22 +33,27 @@ const NoVerified: NextPage = () => {
       <div className='my-4 text-2xl font-bold text-center sm:text-4xl'>
         メールアドレスが未認証です
       </div>
-      <hr />
-      <ol className='p-4 space-y-6 text-lg list-inside sm:text-xl md:text-2xl'>
-        <li>
-          登録したメールアドレス宛に「認証メール」が届いていることを確認。
-        </li>
-        <li>メール本文内のリンクをクリックすることで認証が完了します。</li>
-        <li>「マイページへ」ボタンからマイページへ移動してください。</li>
-      </ol>
-      <Button
-        className='block mb-8 ml-auto w-full xs:w-48 xs:h-12 xs:text-lg'
-        onClick={toMyPage}
-      >
-        マイページへ
-      </Button>
-      <SendEmailTroubleModal resendButton={true} />
-      <ResendVerifyEmailModal />
+      <div className='text-center sm:text-lg'>
+        ログイン前にメールアドレスを認証する必要があります
+      </div>
+      <div className='grow my-4 border border-dark-400 border-solid'></div>
+      <div className='md:mx-20'>
+        <ol className='p-4 space-y-6 max-w-3xl text-lg list-inside sm:text-xl'>
+          <li>
+            登録したメールアドレス宛に「認証メール」が届いていることを確認。
+          </li>
+          <li>メール本文内のリンクをクリックすることで認証が完了します。</li>
+          <li>「マイページへ」ボタンからマイページへ移動してください。</li>
+        </ol>
+        <Button
+          className='block mb-8 ml-auto w-full xs:w-48 xs:h-12 xs:text-lg'
+          onClick={toMyPage}
+        >
+          マイページへ
+        </Button>
+        <SendEmailTroubleModal resendButton={true} />
+        <ResendVerifyEmailModal />
+      </div>
     </>
   )
 }
