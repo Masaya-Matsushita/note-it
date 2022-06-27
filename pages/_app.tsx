@@ -1,4 +1,5 @@
 import { Layout } from 'components/Layout'
+import { Provider } from 'components/Provider'
 import { useRedirectOnAuthState } from 'hooks/useRedirectOnAuthState'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
@@ -16,9 +17,11 @@ export default function App(props: AppProps) {
 
   return (
     <>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <Provider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </Provider>
     </>
   )
 }
