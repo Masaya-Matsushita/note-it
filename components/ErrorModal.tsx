@@ -6,8 +6,8 @@ import { useRouter } from 'next/router'
 type Props = {
   error: string
   setError: Dispatch<SetStateAction<string>>
-  method: string
-  setMethod: Dispatch<SetStateAction<string>>
+  method?: string
+  setMethod?: Dispatch<SetStateAction<string>>
 }
 
 export const ErrorModal: FC<Props> = ({
@@ -77,6 +77,10 @@ export const ErrorModal: FC<Props> = ({
         setErrorCodeJa('認証の有効期限が切れています。')
         return
 
+      case 'auth/user-not-verified':
+        setErrorCodeJa('メールアドレスが未認証です。')
+        return
+
       default:
         if (method === 'signin') {
           setErrorCodeJa(
@@ -93,7 +97,9 @@ export const ErrorModal: FC<Props> = ({
 
   const handleClose = () => {
     setError('')
-    setMethod('')
+    if (setMethod) {
+      setMethod('')
+    }
     setOpened(false)
   }
 

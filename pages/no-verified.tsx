@@ -4,23 +4,31 @@ import { SendEmailTroubleModal } from 'components/SendEmailTroubleModal'
 import { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { ErrorModal } from 'components/ErrorModal'
 
 const NoVerified: NextPage = () => {
   const router = useRouter()
+  const [error, setError] = useState('')
 
   const toMyPage = () => {
     // ボタンを押す度にuserを再定義し直したい
     // リロードすると再定義される
-    const user = auth.currentUser
-    if (user?.emailVerified === true) {
-      router.push(`my-page/${user.uid}`)
-    } else {
-      console.log('未認証です！')
+    try {
+      const user = auth.currentUser
+      if (user?.emailVerified === true) {
+        router.push(`my-page/${user.uid}`)
+      } else {
+        throw new Error('auth/user-not-verified')
+      }
+    } catch (error: any) {
+      setError(error.message)
     }
   }
 
   return (
     <>
+      <ErrorModal error={error} setError={setError} />
       <div className='my-4 text-2xl font-bold text-center sm:text-4xl'>
         メールアドレスが未認証です
       </div>
