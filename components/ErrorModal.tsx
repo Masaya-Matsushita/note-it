@@ -84,6 +84,16 @@ export const ErrorModal: FC<Props> = ({
         setErrorCodeJa('メールアドレスが未認証です。')
         return
 
+      case 'auth/user-cancelled':
+        setErrorCodeJa('認証をキャンセルしました。')
+        return
+
+      case 'auth/account-exists-with-different-credential':
+        setErrorCodeJa(
+          ' このメールアドレスは既に別の方法で認証されています。別の方法をお試しください。'
+        )
+        return
+
       default:
         if (method === 'signin') {
           setErrorCodeJa(
