@@ -1,4 +1,5 @@
 import { Button, LoadingOverlay } from '@mantine/core'
+import { ErrorModal } from 'components/ErrorModal'
 import { signOut } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
@@ -10,12 +11,18 @@ const Mypage: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
   const [visible, setVisible] = useState(false)
+  const [error, setError] = useState('')
 
-  const signout = async (): Promise<void> => {
-    setLoading(true)
-    await signOut(auth)
-    setLoading(false)
-    router.push('/login')
+  // ログアウト処理
+  const logout = async (): Promise<void> => {
+    try {
+      setLoading(true)
+      await signOut(auth)
+      setLoading(false)
+      router.push('/login')
+    } catch (error: any) {
+      setError(error.code)
+    }
   }
 
   useEffect(() => {
@@ -50,8 +57,9 @@ const Mypage: NextPage = () => {
       <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
       {visible ? (
         <div>
+          <ErrorModal error={error} setError={setError} />
           <div>{router.query.uid}</div>
-          <Button onClick={signout} loading={loading}>
+          <Button onClick={logout} loading={loading}>
             サインアウト
           </Button>
         </div>

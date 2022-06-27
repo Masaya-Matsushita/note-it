@@ -1,6 +1,7 @@
 import { Button, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
+import { ErrorModal } from 'components/ErrorModal'
 import { SendEmailTroubleModal } from 'components/SendEmailTroubleModal'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
@@ -11,18 +12,20 @@ import { AiOutlineMail } from 'react-icons/ai'
 
 const ForgotPassword: NextPage = () => {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
+  // フォームの初期値、バリデーションを設定
   const form = useForm({
     initialValues: {
       email: '',
     },
-
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      email: (value) =>
+        /^\S+@\S+$/.test(value) ? null : 'メールアドレスが正しくありません。',
     },
   })
 
-  // 再設定メール送信
+  // 再設定メールを送信
   const handleSubmit = async (value: { email: string }) => {
     try {
       setLoading(true)
@@ -31,19 +34,19 @@ const ForgotPassword: NextPage = () => {
       form.reset()
       showNotification({
         message: '再設定メールが送信されました。',
-        autoClose: false,
+        autoClose: 10000,
         icon: <AiOutlineMail size={20} />,
         style: { padding: '15px' },
       })
     } catch (error: any) {
-      const errorCode = error.code
-      const errorMessage = error.message
+      setError(error.code)
     }
     setLoading(false)
   }
 
   return (
     <>
+      <ErrorModal error={error} setError={setError} />
       <div className='my-4 text-2xl font-bold text-center sm:text-4xl'>
         パスワード再設定
       </div>
@@ -73,8 +76,8 @@ const ForgotPassword: NextPage = () => {
             送信
           </Button>
         </div>
-        <SendEmailTroubleModal resendButton={false} />
       </form>
+      <SendEmailTroubleModal resendButton={false} />
     </>
   )
 }
