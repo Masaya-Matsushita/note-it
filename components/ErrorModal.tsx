@@ -90,10 +90,13 @@ export const ErrorModal: FC<Props> = ({
 
       case 'auth/account-exists-with-different-credential':
         setErrorCodeJa(
-          ' このメールアドレスは既に別の方法で認証されています。別の方法をお試しください。'
+          ' このメールアドレスは既に別の方法で認証されています。別の方法でログインしてください。'
         )
         return
 
+      case 'auth /credential-already-in-use':
+        setErrorCodeJa('アカウントが既に存在します。')
+        return
       default:
         if (method === 'signin') {
           setErrorCodeJa(

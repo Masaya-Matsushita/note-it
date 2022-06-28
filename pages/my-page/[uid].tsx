@@ -26,13 +26,18 @@ const Mypage: NextPage = () => {
     }
   }
 
+  // usersにuserのドキュメントを作成
   const createUserDoc = async () => {
     const user = auth.currentUser
-    console.log(user)
     if (user) {
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-      })
+      const docSnap = await getDoc(doc(db, 'users', user.uid))
+      if (docSnap.exists()) {
+        return
+      } else {
+        console.log('no such document')
+      }
+    }
+  }
     }
   }
 
