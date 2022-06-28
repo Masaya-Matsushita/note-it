@@ -1,7 +1,8 @@
 import { Button, LoadingOverlay } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { signOut } from 'firebase/auth'
-import { auth } from 'firebaseConfig/firebase'
+import { doc, setDoc } from 'firebase/firestore'
+import db, { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -25,6 +26,16 @@ const Mypage: NextPage = () => {
     }
   }
 
+  const createUserDoc = async () => {
+    const user = auth.currentUser
+    console.log(user)
+    if (user) {
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+      })
+    }
+  }
+
   useEffect(() => {
     const user = auth.currentUser
     // パスワードログインかつメール未認証のとき、no-verifiedページへ
@@ -34,6 +45,7 @@ const Mypage: NextPage = () => {
     ) {
       router.push('/no-verified')
     } else {
+      createUserDoc()
       setPageLoading(false)
     }
   }, [])
@@ -51,7 +63,6 @@ const Mypage: NextPage = () => {
       {visible ? (
         <div>
           <ErrorModal error={error} setError={setError} />
-          <div>{router.query.uid}</div>
           <Button onClick={logout} loading={loading}>
             サインアウト
           </Button>
