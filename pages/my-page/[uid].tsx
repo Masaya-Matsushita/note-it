@@ -1,11 +1,12 @@
-import { Button, LoadingOverlay } from '@mantine/core'
+import { Button, LoadingOverlay, Modal } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { signOut } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
@@ -13,6 +14,8 @@ const Mypage: NextPage = () => {
   const [pageLoading, setPageLoading] = useState(true)
   const [visible, setVisible] = useState(false)
   const [error, setError] = useState('')
+  const [opened, setOpened] = useState(true)
+  const [userImage, setUserImage] = useState('/UnknownIcon.png')
 
   // ログアウト処理
   const logout = async (): Promise<void> => {
@@ -38,6 +41,15 @@ const Mypage: NextPage = () => {
       }
     }
   }
+
+  const changeUserImage: ComponentProps<'input'>['onChange'] = (e) => {
+    if (e.target.files) {
+      const file = e.target.files[0]
+      if (!file) {
+        return
+      }
+      // const blobPath = URL.createObjectURL(file)
+      // setUserImage(blobPath)
     }
   }
 
@@ -67,6 +79,32 @@ const Mypage: NextPage = () => {
       {/* ユーザーが未認証の時は表示されない */}
       {visible ? (
         <div>
+          <Modal
+            opened={opened}
+            onClose={() => setOpened(false)}
+            closeOnClickOutside={false}
+            closeOnEscape={false}
+            title='Introduce yourself!'
+          >
+            <label htmlFor='userImage'>
+              <input
+                id='userImage'
+                type='file'
+                accept='image/*,.png,.jpg,.jpeg,.gif'
+                onChange={(e) => changeUserImage(e)}
+                className='hidden'
+              />
+              画像追加
+            </label>
+            <div className='relative w-32 h-32'>
+              <Image
+                src={userImage}
+                alt='user'
+                layout='fill'
+                className='rounded-full border-white border-solid'
+              />
+            </div>
+          </Modal>
           <ErrorModal error={error} setError={setError} />
           <Button onClick={logout} loading={loading}>
             サインアウト
