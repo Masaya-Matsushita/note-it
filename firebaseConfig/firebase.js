@@ -4,10 +4,11 @@ import {
   setPersistence,
   browserSessionPersistence,
 } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
 import { GoogleAuthProvider } from 'firebase/auth'
 import { TwitterAuthProvider } from 'firebase/auth'
 import { GithubAuthProvider } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 // Firebaseの構成
 const firebaseConfig = {
@@ -24,10 +25,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 setPersistence(auth, browserSessionPersistence)
-const db = getFirestore(app)
 const googleProvider = new GoogleAuthProvider()
 const twitterProvider = new TwitterAuthProvider()
 const githubProvider = new GithubAuthProvider()
+const db = getFirestore(app)
+const storage = getStorage(app)
 
-export { auth, googleProvider, twitterProvider, githubProvider }
+export { auth, googleProvider, twitterProvider, githubProvider, storage }
 export default db

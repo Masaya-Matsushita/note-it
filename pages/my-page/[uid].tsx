@@ -2,7 +2,8 @@ import { Button, LoadingOverlay, Modal } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
-import db, { auth } from 'firebaseConfig/firebase'
+import { ref, uploadBytes } from 'firebase/storage'
+import db, { auth, storage } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { ComponentProps, useEffect, useState } from 'react'
@@ -46,17 +47,28 @@ const Mypage: NextPage = () => {
   const changeUserImage: ComponentProps<'input'>['onChange'] = (e) => {
     if (e.target.files) {
       const file = e.target.files[0]
-      if (!file) {
-        return
-      }
       const blobPath = URL.createObjectURL(file)
       setUserImage(blobPath)
+    } else {
+      return
     }
   }
 
   // userのドキュメントを作成する
   const setUserProfile = () => {
     setOpened(false)
+  }
+
+  const test: ComponentProps<'input'>['onChange'] = (e) => {
+    if (e.target.files) {
+      const file = e.target.files[0]
+      const iconImagesRef = ref(storage, 'images/icon.jpg')
+      uploadBytes(iconImagesRef, file).then((snapshot) => {
+        console.log('uploaded a blob or file!')
+      })
+    } else {
+      return
+    }
   }
 
   useEffect(() => {
@@ -117,6 +129,11 @@ const Mypage: NextPage = () => {
           <Button onClick={logout} loading={loading}>
             サインアウト
           </Button>
+          <input
+            type='file'
+            accept='image/*,.png,.jpg,.jpeg,.gif'
+            onChange={(e) => test(e)}
+          />
         </div>
       ) : null}
     </div>
