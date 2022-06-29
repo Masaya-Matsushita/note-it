@@ -10,6 +10,7 @@ import { ErrorModal } from 'components/ErrorModal'
 const NoVerified: NextPage = () => {
   const router = useRouter()
   const [error, setError] = useState('')
+  const [method, setMethod] = useState('')
 
   const toMyPage = () => {
     // ボタンを押す度にuserを初期化、再定義したい
@@ -24,12 +25,18 @@ const NoVerified: NextPage = () => {
       }
     } catch (error: any) {
       setError(error.message)
+      setMethod('updateUser')
     }
   }
 
   return (
     <>
-      <ErrorModal error={error} setError={setError} />
+      <ErrorModal
+        error={error}
+        setError={setError}
+        method={method}
+        setMethod={setMethod}
+      />
       <div className='my-4 text-2xl font-bold text-center sm:text-4xl'>
         メールアドレスが未認証です
       </div>
