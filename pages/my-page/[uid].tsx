@@ -4,9 +4,9 @@ import { signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { ComponentProps, useEffect, useState } from 'react'
+import { IoMdAddCircle } from 'react-icons/io'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
@@ -14,7 +14,7 @@ const Mypage: NextPage = () => {
   const [pageLoading, setPageLoading] = useState(true)
   const [visible, setVisible] = useState(false)
   const [error, setError] = useState('')
-  const [opened, setOpened] = useState(true)
+  const [opened, setOpened] = useState(false)
   const [userImage, setUserImage] = useState('/UnknownIcon.png')
 
   // ログアウト処理
@@ -29,7 +29,7 @@ const Mypage: NextPage = () => {
     }
   }
 
-  // usersにuserのドキュメントを作成
+  // userのドキュメントが存在しなければ作成させる
   const createUserDoc = async () => {
     const user = auth.currentUser
     if (user) {
@@ -37,20 +37,26 @@ const Mypage: NextPage = () => {
       if (docSnap.exists()) {
         return
       } else {
-        console.log('no such document')
+        setOpened(true)
       }
     }
   }
 
+  // アイコン画像をプレビュー
   const changeUserImage: ComponentProps<'input'>['onChange'] = (e) => {
     if (e.target.files) {
       const file = e.target.files[0]
       if (!file) {
         return
       }
-      // const blobPath = URL.createObjectURL(file)
-      // setUserImage(blobPath)
+      const blobPath = URL.createObjectURL(file)
+      setUserImage(blobPath)
     }
+  }
+
+  // userのドキュメントを作成する
+  const setUserProfile = () => {
+    setOpened(false)
   }
 
   useEffect(() => {
@@ -84,26 +90,28 @@ const Mypage: NextPage = () => {
             onClose={() => setOpened(false)}
             closeOnClickOutside={false}
             closeOnEscape={false}
-            title='Introduce yourself!'
+            withCloseButton={false}
           >
-            <label htmlFor='userImage'>
-              <input
-                id='userImage'
-                type='file'
-                accept='image/*,.png,.jpg,.jpeg,.gif'
-                onChange={(e) => changeUserImage(e)}
-                className='hidden'
-              />
-              画像追加
-            </label>
-            <div className='relative w-32 h-32'>
-              <Image
+            <div>アイコンと名前を設定してください。</div>
+            <div>あとからでも変更できます。</div>
+            <div className='relative'>
+              <img
                 src={userImage}
-                alt='user'
-                layout='fill'
-                className='rounded-full border-white border-solid'
+                alt='user icon'
+                className='w-24 h-24 rounded-full'
               />
+              <label htmlFor='userImage' className='absolute -top-1 left-16'>
+                <input
+                  id='userImage'
+                  type='file'
+                  accept='image/*,.png,.jpg,.jpeg,.gif'
+                  onChange={(e) => changeUserImage(e)}
+                  className='hidden'
+                />
+                <IoMdAddCircle size={36} />
+              </label>
             </div>
+            <Button onClick={setUserProfile}>完了</Button>
           </Modal>
           <ErrorModal error={error} setError={setError} />
           <Button onClick={logout} loading={loading}>
