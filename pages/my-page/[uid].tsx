@@ -2,7 +2,7 @@ import { Button, LoadingOverlay, Modal } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
-import { ref, uploadBytes } from 'firebase/storage'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import db, { auth, storage } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -59,13 +59,18 @@ const Mypage: NextPage = () => {
     setOpened(false)
   }
 
-  const test: ComponentProps<'input'>['onChange'] = (e) => {
+  const test: ComponentProps<'input'>['onChange'] = async (e) => {
     if (e.target.files) {
+      const user = auth.currentUser
+      const iconUsersRef = ref(storage, `users/${user?.uid}/icon`)
       const file = e.target.files[0]
-      const iconImagesRef = ref(storage, 'images/icon.jpg')
-      uploadBytes(iconImagesRef, file).then((snapshot) => {
-        console.log('uploaded a blob or file!')
-      })
+      try {
+        await uploadBytes(iconUsersRef, file)
+        const iconUrl = await getDownloadURL(iconUsersRef)
+        setUserImage(iconUrl)
+      } catch (error) {
+        console.error('error', error)
+      }
     } else {
       return
     }
@@ -134,6 +139,7 @@ const Mypage: NextPage = () => {
             accept='image/*,.png,.jpg,.jpeg,.gif'
             onChange={(e) => test(e)}
           />
+          <img src={userImage} alt='icon' className='w-32 h-32' />
         </div>
       ) : null}
     </div>
