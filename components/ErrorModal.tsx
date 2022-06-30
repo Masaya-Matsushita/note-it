@@ -81,7 +81,9 @@ export const ErrorModal: FC<Props> = ({
         return
 
       case 'auth/user-not-verified':
-        setErrorCodeJa('メールアドレスが未認証です。')
+        setErrorCodeJa(
+          'メールアドレスが未認証です。タイミングによっては反映されていないことがあります。'
+        )
         return
 
       case 'auth/user-cancelled':
@@ -90,10 +92,13 @@ export const ErrorModal: FC<Props> = ({
 
       case 'auth/account-exists-with-different-credential':
         setErrorCodeJa(
-          ' このメールアドレスは既に別の方法で認証されています。別の方法をお試しください。'
+          ' このメールアドレスは既に別の方法で認証されています。別の方法でログインしてください。'
         )
         return
 
+      case 'auth /credential-already-in-use':
+        setErrorCodeJa('アカウントが既に存在します。')
+        return
       default:
         if (method === 'signin') {
           setErrorCodeJa(
@@ -109,12 +114,16 @@ export const ErrorModal: FC<Props> = ({
   }
 
   // error,methodを初期値に戻す＆モーダルを閉じる
+  // no-verifiedページの場合、ページリロード処理
   const handleClose = () => {
     setError('')
     if (setMethod) {
       setMethod('')
     }
     setOpened(false)
+    if (method === 'updateUser') {
+      location.reload()
+    }
   }
 
   // errorに値が入ると実行

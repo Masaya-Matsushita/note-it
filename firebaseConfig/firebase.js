@@ -1,14 +1,14 @@
 import { initializeApp } from 'firebase/app'
-// import { getAnalytics } from 'firebase/analytics'
 import {
   getAuth,
   setPersistence,
   browserSessionPersistence,
 } from 'firebase/auth'
-// import { getFirestore } from 'firebase/firestore'
 import { GoogleAuthProvider } from 'firebase/auth'
 import { TwitterAuthProvider } from 'firebase/auth'
 import { GithubAuthProvider } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 // Firebaseの構成
 const firebaseConfig = {
@@ -23,13 +23,13 @@ const firebaseConfig = {
 
 // Firebaseを初期化
 const app = initializeApp(firebaseConfig)
-// const analytics = getAnalytics(app)
 const auth = getAuth(app)
 setPersistence(auth, browserSessionPersistence)
-// const db = getFirestore(app)
 const googleProvider = new GoogleAuthProvider()
 const twitterProvider = new TwitterAuthProvider()
 const githubProvider = new GithubAuthProvider()
+const db = getFirestore(app)
+const storage = getStorage(app)
 
-export { auth, googleProvider, twitterProvider, githubProvider }
-// export default db
+export { auth, googleProvider, twitterProvider, githubProvider, storage }
+export default db

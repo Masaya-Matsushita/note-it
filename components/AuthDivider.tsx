@@ -14,7 +14,7 @@ export const AuthDivider: FC<Props> = ({ label }) => {
       {/* provider認証のラベル */}
       <div className='mb-6 text-center xxs:text-lg xs:mb-10 lg:mb-12 lg:text-xl'>
         お持ちのアカウントで
-        <span className='pl-1 font-bold text-blue-200'>{label}</span>
+        <span className='pl-1 font-bold text-blue-400'>{label}</span>
       </div>
     </div>
   )
