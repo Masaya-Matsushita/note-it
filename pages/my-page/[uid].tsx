@@ -1,7 +1,7 @@
 import { Button, LoadingOverlay, Modal } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { signOut } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import db, { auth, storage } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
@@ -43,37 +43,32 @@ const Mypage: NextPage = () => {
     }
   }
 
-  // アイコン画像をプレビュー
-  const changeUserImage: ComponentProps<'input'>['onChange'] = (e) => {
-    if (e.target.files) {
-      const file = e.target.files[0]
-      const blobPath = URL.createObjectURL(file)
-      setUserImage(blobPath)
-    } else {
+  // アイコンをアップロード＆URLを取得して表示
+  const changeUserImage: ComponentProps<'input'>['onChange'] = async (e) => {
+    if (!e.target.files) {
       return
+    }
+    const file = e.target.files[0]
+    const user = auth.currentUser
+    const iconUsersRef = ref(storage, `users/${user?.uid}/icon`)
+    try {
+      await uploadBytes(iconUsersRef, file)
+      const iconUrl = await getDownloadURL(iconUsersRef)
+      setUserImage(iconUrl)
+    } catch (error) {
+      console.error('error', error)
     }
   }
 
   // userのドキュメントを作成する
-  const setUserProfile = () => {
-    setOpened(false)
-  }
-
-  const test: ComponentProps<'input'>['onChange'] = async (e) => {
-    if (e.target.files) {
-      const user = auth.currentUser
-      const iconUsersRef = ref(storage, `users/${user?.uid}/icon`)
-      const file = e.target.files[0]
-      try {
-        await uploadBytes(iconUsersRef, file)
-        const iconUrl = await getDownloadURL(iconUsersRef)
-        setUserImage(iconUrl)
-      } catch (error) {
-        console.error('error', error)
-      }
-    } else {
-      return
+  const setUserProfile = async () => {
+    const user = auth.currentUser
+    if (user) {
+      await setDoc(doc(db, 'users', user.uid), {
+        iconURL: userImage,
+      })
     }
+    setOpened(false)
   }
 
   useEffect(() => {
@@ -114,7 +109,7 @@ const Mypage: NextPage = () => {
             <div className='relative'>
               <img
                 src={userImage}
-                alt='user icon'
+                alt='icon'
                 className='w-24 h-24 rounded-full'
               />
               <label htmlFor='userImage' className='absolute -top-1 left-16'>
@@ -134,12 +129,6 @@ const Mypage: NextPage = () => {
           <Button onClick={logout} loading={loading}>
             サインアウト
           </Button>
-          <input
-            type='file'
-            accept='image/*,.png,.jpg,.jpeg,.gif'
-            onChange={(e) => test(e)}
-          />
-          <img src={userImage} alt='icon' className='w-32 h-32' />
         </div>
       ) : null}
     </div>
