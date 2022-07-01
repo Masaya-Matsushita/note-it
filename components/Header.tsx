@@ -44,9 +44,9 @@ export const Header = () => {
   }, [])
 
   return (
-    <div className='flex justify-between items-center pt-4 pb-2 bg-dark-700'>
+    <div className='flex justify-between items-center mb-4 h-16 bg-dark-700 sm:h-20'>
       <ErrorModal error={error} setError={setError} />
-      <div className='text-2xl'>Note It</div>
+      <div className='ml-6 text-2xl sm:ml-12'>Note It</div>
       {userIcon ? (
         <div>
           <UserProfileModal opened={opened} setOpened={setOpened} />
@@ -56,11 +56,12 @@ export const Header = () => {
                 <img
                   src={userIcon}
                   alt='userIcon'
-                  className='mr-1 w-10 h-10 rounded-full sm:w-12 sm:h-12'
+                  className='mr-1 w-10 h-10 rounded-full sm:mr-2 sm:w-12 sm:h-12'
                 />
                 <AiOutlineDown />
               </div>
             }
+            className='mt-2 mr-6 sm:mr-12'
           >
             <Menu.Label>Menu</Menu.Label>
             <Menu.Item
