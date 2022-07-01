@@ -14,7 +14,7 @@ export const Header = () => {
           setUserIcon(docSnap.data().iconURL)
         }
       } else {
-        // User is signed out
+        setUserIcon('')
       }
     })
   }

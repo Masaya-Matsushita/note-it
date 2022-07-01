@@ -1,7 +1,7 @@
 import { Button, LoadingOverlay } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { UserProfileModal } from 'components/UserProfileModal'
-import { signOut } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
@@ -42,17 +42,18 @@ const Mypage: NextPage = () => {
   }
 
   useEffect(() => {
-    const user = auth.currentUser
-    // パスワードログインかつメール未認証のとき、no-verifiedページへ
-    if (
-      user?.providerData[0].providerId === 'password' &&
-      user?.emailVerified === false
-    ) {
-      router.push('/no-verified')
-    } else {
-      checkUserExists()
-      setPageLoading(false)
-    }
+    onAuthStateChanged(auth, (user) => {
+      // パスワードログインかつメール未認証のとき、no-verifiedページへ
+      if (
+        user?.providerData[0].providerId === 'password' &&
+        user?.emailVerified === false
+      ) {
+        router.push('/no-verified')
+      } else {
+        checkUserExists()
+        setPageLoading(false)
+      }
+    })
   }, [])
 
   useEffect(() => {

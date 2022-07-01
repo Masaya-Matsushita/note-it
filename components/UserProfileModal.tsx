@@ -1,4 +1,5 @@
 import { Button, Card, Modal, TextInput } from '@mantine/core'
+import { onAuthStateChanged } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import db, { auth, storage } from 'firebaseConfig/firebase'
@@ -54,13 +55,15 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
       })
     }
     setOpened(false)
+    location.reload()
   }
 
   useEffect(() => {
-    const user = auth.currentUser
-    if (typeof user?.displayName === 'string') {
-      setUserName(user?.displayName)
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (typeof user?.displayName === 'string') {
+        setUserName(user?.displayName)
+      }
+    })
   }, [])
 
   return (

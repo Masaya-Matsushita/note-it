@@ -6,6 +6,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { ErrorModal } from 'components/ErrorModal'
+import { onAuthStateChanged } from 'firebase/auth'
 
 const NoVerified: NextPage = () => {
   const router = useRouter()
@@ -13,20 +14,19 @@ const NoVerified: NextPage = () => {
   const [method, setMethod] = useState('')
 
   const toMyPage = () => {
-    // ボタンを押す度にuserを初期化、再定義したい
-    // リロードすると再定義できる
-    try {
-      const user = auth.currentUser
-      // 認証済でmy-pageへ遷移
-      if (user?.emailVerified === true) {
-        router.push(`my-page/${user.uid}`)
-      } else {
-        throw new Error('auth/user-not-verified')
+    onAuthStateChanged(auth, (user) => {
+      try {
+        // 認証済でmy-pageへ遷移
+        if (user?.emailVerified === true) {
+          router.push(`my-page/${user.uid}`)
+        } else {
+          throw new Error('auth/user-not-verified')
+        }
+      } catch (error: any) {
+        setError(error.message)
+        setMethod('updateUser')
       }
-    } catch (error: any) {
-      setError(error.message)
-      setMethod('updateUser')
-    }
+    })
   }
 
   return (
