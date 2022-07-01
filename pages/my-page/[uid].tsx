@@ -7,7 +7,7 @@ import db, { auth, storage } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { ComponentProps, useEffect, useState } from 'react'
-import { AiOutlinePlus } from 'react-icons/ai'
+import { Plus } from 'tabler-icons-react'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
@@ -17,6 +17,12 @@ const Mypage: NextPage = () => {
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
   const [userImage, setUserImage] = useState('/UnknownIcon.png')
+  const [userName, setUserName] = useState('')
+
+  // ユーザーネームを入力
+  const changeUserName: ComponentProps<'input'>['onChange'] = (e) => {
+    setUserName(e.target.value)
+  }
 
   // ログアウト処理
   const logout = async (): Promise<void> => {
@@ -65,6 +71,7 @@ const Mypage: NextPage = () => {
     const user = auth.currentUser
     if (user) {
       await setDoc(doc(db, 'users', user.uid), {
+        userName: userName,
         iconURL: userImage,
       })
     }
@@ -81,6 +88,9 @@ const Mypage: NextPage = () => {
       router.push('/no-verified')
     } else {
       createUserDoc()
+      if (typeof user?.displayName === 'string') {
+        setUserName(user?.displayName)
+      }
       setPageLoading(false)
     }
   }, [])
@@ -108,7 +118,7 @@ const Mypage: NextPage = () => {
               アイコンと名前を設定してください。
             </div>
             <div className='mb-4 text-center'>あとからでも変更できます。</div>
-            <Card className='flex justify-around'>
+            <Card className='flex flex-col items-center mx-16'>
               <div className='relative'>
                 <img
                   src={userImage}
@@ -117,7 +127,7 @@ const Mypage: NextPage = () => {
                 />
                 <label
                   htmlFor='userImage'
-                  className='absolute -top-1 left-14 sm:left-16'
+                  className='absolute left-14 sm:left-16'
                 >
                   <input
                     id='userImage'
@@ -126,14 +136,23 @@ const Mypage: NextPage = () => {
                     onChange={(e) => changeUserImage(e)}
                     className='hidden'
                   />
-                  <div className='flex justify-center items-center w-6 h-6 bg-blue-500 rounded-full'>
-                    <AiOutlinePlus />
+                  <div className='flex justify-center items-center w-6 h-6 bg-blue-500 rounded-full sm:w-8 sm:h-8'>
+                    <Plus size={20} strokeWidth={3} color={'white'} />
                   </div>
                 </label>
               </div>
-              <TextInput label='Name' required className='mt-1 max-w-48' />
+              <TextInput
+                placeholder='User Name'
+                required
+                value={userName}
+                onChange={(e) => changeUserName(e)}
+                className='mt-4'
+              />
             </Card>
-            <Button onClick={setUserProfile} className='block mt-8 ml-auto'>
+            <Button
+              onClick={setUserProfile}
+              className='block mx-auto mt-8 w-48'
+            >
               完了
             </Button>
           </Modal>
