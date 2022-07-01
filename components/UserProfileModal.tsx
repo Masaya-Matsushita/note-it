@@ -1,6 +1,6 @@
-import { Button, Card, Modal, TextInput } from '@mantine/core'
+import { Button, Card, Modal, Skeleton, TextInput } from '@mantine/core'
 import { onAuthStateChanged } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import db, { auth, storage } from 'firebaseConfig/firebase'
 import {
@@ -20,7 +20,7 @@ type Props = {
 
 export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
   const [error, setError] = useState('')
-  const [userIcon, setUserIcon] = useState('/UnknownIcon.png')
+  const [userIcon, setUserIcon] = useState('')
   const [userName, setUserName] = useState('')
 
   // ユーザーネームを入力
@@ -45,8 +45,8 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
     }
   }
 
-  // userのドキュメントを作成する
-  const createUserProfile = async () => {
+  // userのドキュメントを作成/更新、リロード
+  const setUserProfile = async () => {
     const user = auth.currentUser
     if (user) {
       await setDoc(doc(db, 'users', user.uid), {
@@ -59,9 +59,20 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
   }
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (typeof user?.displayName === 'string') {
-        setUserName(user?.displayName)
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const docSnap = await getDoc(doc(db, 'users', user.uid))
+        if (docSnap.exists()) {
+          // 更新の場合は現在のプロフィールを表示
+          setUserIcon(docSnap.data().iconURL)
+          setUserName(docSnap.data().userName)
+        } else {
+          // 新規作成の場合はデフォルトを表示
+          setUserIcon('/UnknownIcon.png')
+          if (user.displayName) {
+            setUserName(user.displayName)
+          }
+        }
       }
     })
   }, [])
@@ -77,27 +88,30 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
       <div className='text-lg text-center'>
         アイコンと名前を設定してください。
       </div>
-      <div className='mb-4 text-center'>あとからでも変更できます。</div>
-      <Card className='flex flex-col items-center mx-16'>
-        <div className='relative'>
-          <img
-            src={userIcon}
-            alt='icon'
-            className='w-20 h-20 rounded-full sm:w-24 sm:h-24'
-          />
-          <label htmlFor='userIcon' className='absolute left-14 sm:left-16'>
-            <input
-              id='userIcon'
-              type='file'
-              accept='image/*,.png,.jpg,.jpeg,.gif'
-              onChange={(e) => changeUserImage(e)}
-              className='hidden'
+      <Card className='flex flex-col items-center mx-16 mt-4'>
+        {userIcon ? (
+          <div className='relative'>
+            <img
+              src={userIcon}
+              alt='icon'
+              className='w-20 h-20 rounded-full sm:w-24 sm:h-24'
             />
-            <div className='flex justify-center items-center w-6 h-6 bg-blue-500 rounded-full sm:w-8 sm:h-8'>
-              <Plus size={20} strokeWidth={3} color={'white'} />
-            </div>
-          </label>
-        </div>
+            <label htmlFor='userIcon' className='absolute left-14 sm:left-16'>
+              <input
+                id='userIcon'
+                type='file'
+                accept='image/*,.png,.jpg,.jpeg,.gif'
+                onChange={(e) => changeUserImage(e)}
+                className='hidden'
+              />
+              <div className='flex justify-center items-center w-6 h-6 bg-blue-500 rounded-full sm:w-8 sm:h-8'>
+                <Plus size={20} strokeWidth={3} color={'white'} />
+              </div>
+            </label>
+          </div>
+        ) : (
+          <Skeleton className='w-20 h-20 rounded-full sm:w-24 sm:h-24' />
+        )}
         <TextInput
           placeholder='User Name'
           required
@@ -111,7 +125,7 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
           エラーが発生しました。入力内容をご確認ください。(画像サイズは最大5MBです)
         </div>
       ) : null}
-      <Button onClick={createUserProfile} className='block mx-auto mt-8 w-48'>
+      <Button onClick={setUserProfile} className='block mx-auto mt-8 w-48'>
         完了
       </Button>
     </Modal>

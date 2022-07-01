@@ -12,7 +12,6 @@ const Mypage: NextPage = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
-  const [visible, setVisible] = useState(false)
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
 
@@ -56,17 +55,12 @@ const Mypage: NextPage = () => {
     })
   }, [])
 
-  useEffect(() => {
-    if (!pageLoading) {
-      setVisible(true)
-    }
-  }, [pageLoading])
-
   return (
     <div>
-      <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
       {/* ユーザーが未認証の時は表示されない */}
-      {visible ? (
+      {pageLoading ? (
+        <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
+      ) : (
         <div>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
@@ -74,7 +68,7 @@ const Mypage: NextPage = () => {
             サインアウト
           </Button>
         </div>
-      ) : null}
+      )}
     </div>
   )
 }
