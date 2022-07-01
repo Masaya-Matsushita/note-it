@@ -1,4 +1,4 @@
-import { Button, LoadingOverlay } from '@mantine/core'
+import { LoadingOverlay } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { UserProfileModal } from 'components/UserProfileModal'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
@@ -10,22 +10,9 @@ import { useEffect, useState } from 'react'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
-
-  // ログアウト処理
-  const logout = async (): Promise<void> => {
-    try {
-      setLoading(true)
-      await signOut(auth)
-      setLoading(false)
-      router.push('/login')
-    } catch (error: any) {
-      setError(error.code)
-    }
-  }
 
   // userのドキュメントが存在しなければ作成させる
   const checkUserExists = async () => {
@@ -64,9 +51,6 @@ const Mypage: NextPage = () => {
         <div>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
-          <Button onClick={logout} loading={loading}>
-            サインアウト
-          </Button>
         </div>
       )}
     </div>
