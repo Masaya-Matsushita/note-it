@@ -19,7 +19,7 @@ type Props = {
 
 export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
   const [error, setError] = useState('')
-  const [userImage, setUserImage] = useState('/UnknownIcon.png')
+  const [userIcon, setUserIcon] = useState('/UnknownIcon.png')
   const [userName, setUserName] = useState('')
 
   // ユーザーネームを入力
@@ -38,7 +38,7 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
     try {
       await uploadBytes(iconUsersRef, file)
       const iconUrl = await getDownloadURL(iconUsersRef)
-      setUserImage(iconUrl)
+      setUserIcon(iconUrl)
     } catch (error: any) {
       setError(error.message)
     }
@@ -50,7 +50,7 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
     if (user) {
       await setDoc(doc(db, 'users', user.uid), {
         userName: userName,
-        iconURL: userImage,
+        iconURL: userIcon,
       })
     }
     setOpened(false)
@@ -78,13 +78,13 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
       <Card className='flex flex-col items-center mx-16'>
         <div className='relative'>
           <img
-            src={userImage}
+            src={userIcon}
             alt='icon'
             className='w-20 h-20 rounded-full sm:w-24 sm:h-24'
           />
-          <label htmlFor='userImage' className='absolute left-14 sm:left-16'>
+          <label htmlFor='userIcon' className='absolute left-14 sm:left-16'>
             <input
-              id='userImage'
+              id='userIcon'
               type='file'
               accept='image/*,.png,.jpg,.jpeg,.gif'
               onChange={(e) => changeUserImage(e)}
