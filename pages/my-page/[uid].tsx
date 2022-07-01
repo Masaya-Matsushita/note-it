@@ -1,4 +1,4 @@
-import { Button, LoadingOverlay, Modal } from '@mantine/core'
+import { Button, Card, LoadingOverlay, Modal, TextInput } from '@mantine/core'
 import { ErrorModal } from 'components/ErrorModal'
 import { signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
@@ -7,7 +7,7 @@ import db, { auth, storage } from 'firebaseConfig/firebase'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { ComponentProps, useEffect, useState } from 'react'
-import { IoMdAddCircle } from 'react-icons/io'
+import { AiOutlinePlus } from 'react-icons/ai'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
@@ -104,26 +104,38 @@ const Mypage: NextPage = () => {
             closeOnEscape={false}
             withCloseButton={false}
           >
-            <div>アイコンと名前を設定してください。</div>
-            <div>あとからでも変更できます。</div>
-            <div className='relative'>
-              <img
-                src={userImage}
-                alt='icon'
-                className='w-24 h-24 rounded-full'
-              />
-              <label htmlFor='userImage' className='absolute -top-1 left-16'>
-                <input
-                  id='userImage'
-                  type='file'
-                  accept='image/*,.png,.jpg,.jpeg,.gif'
-                  onChange={(e) => changeUserImage(e)}
-                  className='hidden'
-                />
-                <IoMdAddCircle size={36} />
-              </label>
+            <div className='text-lg text-center'>
+              アイコンと名前を設定してください。
             </div>
-            <Button onClick={setUserProfile}>完了</Button>
+            <div className='mb-4 text-center'>あとからでも変更できます。</div>
+            <Card className='flex justify-around'>
+              <div className='relative'>
+                <img
+                  src={userImage}
+                  alt='icon'
+                  className='w-20 h-20 rounded-full sm:w-24 sm:h-24'
+                />
+                <label
+                  htmlFor='userImage'
+                  className='absolute -top-1 left-14 sm:left-16'
+                >
+                  <input
+                    id='userImage'
+                    type='file'
+                    accept='image/*,.png,.jpg,.jpeg,.gif'
+                    onChange={(e) => changeUserImage(e)}
+                    className='hidden'
+                  />
+                  <div className='flex justify-center items-center w-6 h-6 bg-blue-500 rounded-full'>
+                    <AiOutlinePlus />
+                  </div>
+                </label>
+              </div>
+              <TextInput label='Name' required className='mt-1 max-w-48' />
+            </Card>
+            <Button onClick={setUserProfile} className='block mt-8 ml-auto'>
+              完了
+            </Button>
           </Modal>
           <ErrorModal error={error} setError={setError} />
           <Button onClick={logout} loading={loading}>
