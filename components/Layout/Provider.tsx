@@ -1,6 +1,6 @@
+import { FC, ReactNode } from 'react'
 import { MantineProvider } from '@mantine/core'
 import { NotificationsProvider } from '@mantine/notifications'
-import { FC, ReactNode } from 'react'
 
 type Props = { children: ReactNode }
 

@@ -1,12 +1,12 @@
-import { Button } from '@mantine/core'
-import { ResendVerifyEmailModal } from 'components/ResendVerifyEmailModal'
-import { SendEmailTroubleModal } from 'components/SendEmailTroubleModal'
-import { auth } from 'firebaseConfig/firebase'
+import { ResendVerifyEmailModal } from 'components/Modal/ResendVerifyEmailModal'
+import { SendEmailTroubleModal } from 'components/Modal/SendEmailTroubleModal'
+import { ErrorModal } from 'components/Modal/ErrorModal'
+import { useState } from 'react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { ErrorModal } from 'components/ErrorModal'
 import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from 'firebaseConfig/firebase'
+import { Button } from '@mantine/core'
 
 const NoVerified: NextPage = () => {
   const router = useRouter()

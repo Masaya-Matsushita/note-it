@@ -1,6 +1,6 @@
+import { NextRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
-import { NextRouter } from 'next/router'
 
 // 未ログインのときloginへ、ログイン済のときmy-pageへ
 export const useRedirectOnAuthState = (router: NextRouter) => {

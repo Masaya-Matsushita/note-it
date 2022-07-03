@@ -1,7 +1,7 @@
-import { Button, Modal } from '@mantine/core'
-import { FcHighPriority } from 'react-icons/fc'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { NextRouter } from 'next/router'
+import { Button, Modal } from '@mantine/core'
+import { FcHighPriority } from 'react-icons/fc'
 
 type Props = {
   router?: NextRouter

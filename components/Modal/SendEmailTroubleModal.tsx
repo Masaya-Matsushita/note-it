@@ -1,8 +1,8 @@
-import { Button, Modal } from '@mantine/core'
-import { showNotification } from '@mantine/notifications'
+import { FC, useState } from 'react'
 import { sendEmailVerification } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
-import { FC, useState } from 'react'
+import { Button, Modal } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { AiOutlineMail } from 'react-icons/ai'
 import { BiHelpCircle } from 'react-icons/bi'
 

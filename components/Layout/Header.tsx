@@ -1,13 +1,13 @@
-import { Menu } from '@mantine/core'
+import { ErrorModal } from 'components/Modal/ErrorModal'
+import { UserProfileModal } from 'components/Modal/UserProfileModal'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Menu } from '@mantine/core'
 import { AiOutlineDown } from 'react-icons/ai'
 import { Logout, Settings } from 'tabler-icons-react'
-import { ErrorModal } from './ErrorModal'
-import { UserProfileModal } from './UserProfileModal'
 
 export const Header = () => {
   const router = useRouter()

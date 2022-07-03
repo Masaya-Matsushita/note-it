@@ -1,8 +1,3 @@
-import { Button, Card, Modal, Skeleton, TextInput } from '@mantine/core'
-import { onAuthStateChanged } from 'firebase/auth'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import db, { auth, storage } from 'firebaseConfig/firebase'
 import {
   ComponentProps,
   Dispatch,
@@ -11,6 +6,11 @@ import {
   useEffect,
   useState,
 } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import db, { auth, storage } from 'firebaseConfig/firebase'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { Button, Card, Modal, Skeleton, TextInput } from '@mantine/core'
 import { Plus } from 'tabler-icons-react'
 
 type Props = {

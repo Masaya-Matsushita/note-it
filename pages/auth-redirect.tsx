@@ -1,5 +1,7 @@
-import { LoadingOverlay } from '@mantine/core'
-import { ErrorModal } from 'components/ErrorModal'
+import { ErrorModal } from 'components/Modal/ErrorModal'
+import { useEffect, useState } from 'react'
+import { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
 import {
   auth,
@@ -7,9 +9,7 @@ import {
   googleProvider,
   twitterProvider,
 } from 'firebaseConfig/firebase'
-import { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { LoadingOverlay } from '@mantine/core'
 
 const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()

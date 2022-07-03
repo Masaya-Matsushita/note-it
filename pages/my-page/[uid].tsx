@@ -1,12 +1,12 @@
-import { LoadingOverlay } from '@mantine/core'
-import { ErrorModal } from 'components/ErrorModal'
-import { UserProfileModal } from 'components/UserProfileModal'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
-import db, { auth } from 'firebaseConfig/firebase'
+import { ErrorModal } from 'components/Modal/ErrorModal'
+import { UserProfileModal } from 'components/Modal/UserProfileModal'
+import { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
+import db, { auth } from 'firebaseConfig/firebase'
+import { LoadingOverlay } from '@mantine/core'
 
 const Mypage: NextPage = () => {
   const router = useRouter()

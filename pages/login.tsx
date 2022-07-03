@@ -1,11 +1,18 @@
+import { AuthDivider } from 'components/Login/AuthDivider'
+import { AuthProvider } from 'components/Login/AuthProvider'
+import { ErrorModal } from 'components/Modal/ErrorModal'
+import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
+import { ComponentProps, useEffect, useState } from 'react'
 import { NextPage } from 'next'
-import { auth } from 'firebaseConfig/firebase'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth'
+import { auth } from 'firebaseConfig/firebase'
 import {
   TextInput,
   Button,
@@ -18,13 +25,6 @@ import {
 import { showNotification } from '@mantine/notifications'
 import { AiOutlineDatabase, AiOutlineKey, AiOutlineMail } from 'react-icons/ai'
 import { RiBallPenLine } from 'react-icons/ri'
-import { useRouter } from 'next/router'
-import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
-import { AuthDivider } from 'components/AuthDivider'
-import { AuthProvider } from 'components/AuthProvider'
-import Link from 'next/link'
-import { ComponentProps, useEffect, useState } from 'react'
-import { ErrorModal } from 'components/ErrorModal'
 
 type AuthValues = {
   name: string
