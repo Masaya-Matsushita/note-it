@@ -11,7 +11,9 @@ export const Layout: FC<Props> = ({ children }) => {
       <BrowserTab />
       <Header />
       {/* ボディ全体に適用するレイアウト */}
-      <div className='p-4 mx-auto max-w-4xl min-h-screen'>{children}</div>
+      <div className='p-4 mx-auto max-w-5xl min-h-screen xs:px-12 sm:px-20'>
+        {children}
+      </div>
       <Footer />
     </div>
   )

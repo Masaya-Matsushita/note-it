@@ -18,7 +18,7 @@ const Mypage: NextPage = () => {
     []
   )
 
-  // userのドキュメントが存在しなければ作成させる
+  // userのドキュメントが存在するか判断
   const checkUserExists = async () => {
     const user = auth.currentUser
     if (user) {
@@ -31,12 +31,16 @@ const Mypage: NextPage = () => {
     }
   }
 
+  // typesとbooksを取得しdataListへ追加
   const createDataList = async () => {
+    setDataList([])
     const user = auth.currentUser
     if (user) {
+      // userのtypesを取得
       const typesSnap = await getDocs(
         collection(db, 'users', user.uid, 'types')
       )
+      // 各typesのbooksを取得
       typesSnap.forEach(async (type) => {
         const booksSnap = await getDocs(
           collection(db, 'users', user.uid, 'types', type.id, 'books')
@@ -45,10 +49,12 @@ const Mypage: NextPage = () => {
         booksSnap.forEach((book) => {
           books.push(book.data().title)
         })
+        // typeとbooksを整形してdataListへ追加
         setDataList((prev) => {
           return [...prev, { type: type.data().type, books: books }]
         })
       })
+      setPageLoading(false)
     }
   }
 
@@ -62,7 +68,6 @@ const Mypage: NextPage = () => {
         router.push('/no-verified')
       } else {
         checkUserExists()
-        setPageLoading(false)
       }
     })
   }, [])
@@ -73,11 +78,11 @@ const Mypage: NextPage = () => {
       {pageLoading ? (
         <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
       ) : (
-        <div>
+        <div className='min-h-screen'>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
-          <div className='mb-2 text-2xl'>My Books</div>
-          <div className='grow border border-dark-400 border-solid'></div>
+          <div className='text-3xl'>My Books</div>
+          <div className='grow my-2 border border-dark-400 border-solid'></div>
           {dataList.length ? (
             dataList.map((data) => {
               return (
@@ -86,13 +91,22 @@ const Mypage: NextPage = () => {
                   disableIconRotation
                   multiple
                   initialItem={0}
+                  classNames={{
+                    // icon: 'text-red-500',
+                    // label: 'text-red-500',
+                    itemTitle: 'h-10',
+                    contentInner: 'pt-0',
+                    control: 'hover:bg-dark-800',
+                  }}
                   key={data.type}
                 >
                   <Accordion.Item label={data.type}>
                     {data.books.map((book) => {
                       return (
-                        <Card shadow='sm' p='lg' mt='lg' key={book}>
-                          <div className='text-lg'>{book}</div>
+                        <Card className='p-4 mt-4' key={book}>
+                          <div className='text-lg md:ml-2 md:text-xl'>
+                            {book}
+                          </div>
                         </Card>
                       )
                     })}

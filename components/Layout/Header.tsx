@@ -44,9 +44,9 @@ export const Header = () => {
   }, [])
 
   return (
-    <div className='flex justify-between items-center mb-4 h-16 bg-dark-700 sm:h-20'>
+    <div className='flex justify-between items-center mb-4 h-[72px] bg-dark-700 sm:h-24'>
       <ErrorModal error={error} setError={setError} />
-      <div className='ml-6 text-2xl sm:ml-12'>Note It</div>
+      <div className='ml-6 text-2xl sm:ml-12 sm:text-3xl'>Note It</div>
       {userIcon ? (
         <div>
           <UserProfileModal opened={opened} setOpened={setOpened} />
