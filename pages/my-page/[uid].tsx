@@ -76,6 +76,43 @@ const Mypage: NextPage = () => {
         <div>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
+          <div className='mb-2 text-2xl'>My Books</div>
+          <div className='grow border border-dark-400 border-solid'></div>
+          {dataList.length ? (
+            dataList.map((data) => {
+              return (
+                <Accordion
+                  offsetIcon={false}
+                  disableIconRotation
+                  multiple
+                  initialItem={0}
+                  key={data.type}
+                >
+                  <Accordion.Item label={data.type}>
+                    {data.books.map((book) => {
+                      return (
+                        <Card shadow='sm' p='lg' mt='lg' key={book}>
+                          <div className='text-lg'>{book}</div>
+                        </Card>
+                      )
+                    })}
+                  </Accordion.Item>
+                </Accordion>
+              )
+            })
+          ) : (
+            <div>
+              <div className='mt-4 text-center'>データがありません</div>
+              <div className='mt-2 text-center'>右下のボタンから新規作成</div>
+            </div>
+          )}
+          <Button
+            className='sticky bottom-0 left-full mr-2 w-16 h-16 rounded-full'
+            compact
+            onClick={() => console.log('hello')}
+          >
+            <Plus size={48} />
+          </Button>
         </div>
       )}
     </div>
