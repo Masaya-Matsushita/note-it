@@ -14,9 +14,12 @@ const Mypage: NextPage = () => {
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
-  const [dataList, setDataList] = useState<{ type: string; books: string[] }[]>(
-    []
-  )
+  const [dataList, setDataList] = useState<
+    {
+      types: { id: string; type: string }
+      books: { id: string; title: string }[]
+    }[]
+  >([])
 
   // userのドキュメントが存在するか判断
   const checkUserExists = async () => {
@@ -45,16 +48,29 @@ const Mypage: NextPage = () => {
         const booksSnap = await getDocs(
           collection(db, 'users', user.uid, 'types', type.id, 'books')
         )
-        let books: string[] = []
+        let books: { id: string; title: string }[] = []
         booksSnap.forEach((book) => {
-          books.push(book.data().title)
+          books.push({ id: book.id, title: book.data().title })
         })
-        // typeとbooksを整形してdataListへ追加
+        // typesとbooksを整形してdataListへ追加
         setDataList((prev) => {
-          return [...prev, { type: type.data().type, books: books }]
+          return [
+            ...prev,
+            { types: { id: type.id, type: type.data().type }, books: books },
+          ]
         })
       })
       setPageLoading(false)
+    }
+  }
+
+  // typeId,bookIdを保存し、booksページへ
+  const toBooksPage = (typeId: string, bookId: string) => {
+    const user = auth.currentUser
+    if (user) {
+      sessionStorage.setItem('typeId', typeId)
+      sessionStorage.setItem('bookId', bookId)
+      router.push(`/my-page/${user.uid}/books/${bookId}`)
     }
   }
 
@@ -98,14 +114,18 @@ const Mypage: NextPage = () => {
                     contentInner: 'pt-0',
                     control: 'hover:bg-dark-800',
                   }}
-                  key={data.type}
+                  key={data.types.id}
                 >
-                  <Accordion.Item label={data.type}>
+                  <Accordion.Item label={data.types.type}>
                     {data.books.map((book) => {
                       return (
-                        <Card className='p-4 mt-4' key={book}>
+                        <Card
+                          className='p-4 mt-4'
+                          key={book.id}
+                          onClick={() => toBooksPage(data.types.id, book.id)}
+                        >
                           <div className='text-lg md:ml-2 md:text-xl'>
-                            {book}
+                            {book.title}
                           </div>
                         </Card>
                       )
