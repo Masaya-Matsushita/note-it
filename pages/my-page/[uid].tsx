@@ -18,12 +18,23 @@ const Mypage: NextPage = () => {
   const checkUserExists = async () => {
     const user = auth.currentUser
     if (user) {
-      const docSnap = await getDoc(doc(db, 'users', user.uid))
-      if (docSnap.exists()) {
-        return
+      const userSnap = await getDoc(doc(db, 'users', user.uid))
+      if (userSnap.exists()) {
+        createDataList()
       } else {
         setOpened(true)
       }
+    }
+  }
+
+  const createDataList = async () => {
+    const user = auth.currentUser
+    if (user) {
+      const typesSnap = await getDocs(
+        collection(db, 'users', user.uid, 'types')
+      )
+      typesSnap.forEach(async (type) => {
+      })
     }
   }
 
