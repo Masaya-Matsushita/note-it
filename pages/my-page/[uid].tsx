@@ -4,15 +4,19 @@ import { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
-import { LoadingOverlay } from '@mantine/core'
+import { Accordion, Button, Card, LoadingOverlay } from '@mantine/core'
+import { Plus } from 'tabler-icons-react'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
+  const [dataList, setDataList] = useState<{ type: string; books: string[] }[]>(
+    []
+  )
 
   // userのドキュメントが存在しなければ作成させる
   const checkUserExists = async () => {
@@ -34,6 +38,16 @@ const Mypage: NextPage = () => {
         collection(db, 'users', user.uid, 'types')
       )
       typesSnap.forEach(async (type) => {
+        const booksSnap = await getDocs(
+          collection(db, 'users', user.uid, 'types', type.id, 'books')
+        )
+        let books: string[] = []
+        booksSnap.forEach((book) => {
+          books.push(book.data().title)
+        })
+        setDataList((prev) => {
+          return [...prev, { type: type.data().type, books: books }]
+        })
       })
     }
   }
