@@ -70,8 +70,8 @@ export const BookList: FC<Props> = ({ badgeAndBooksList }) => {
         })
       ) : (
         <div>
-          <div className='mt-4 text-center'>データがありません</div>
-          <div className='mt-2 text-center'>右下のボタンから新規作成</div>
+          <div className='mt-4 text-center'>Booksがありません。</div>
+          <div className='mt-2 text-center'>右下のボタンから新規作成。</div>
         </div>
       )}
     </div>
