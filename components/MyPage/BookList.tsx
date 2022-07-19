@@ -11,8 +11,8 @@ type Props = {
 export const BookList: FC<Props> = ({ badgeAndBooksList }) => {
   const router = useRouter()
 
-  // typeId,bookIdを保存し、booksページへ
-  const toBooksPage = (targetBook: Book) => {
+  // typeId,bookIdを保存し、bookページへ
+  const toBookPage = (targetBook: Book) => {
     const user = auth.currentUser
     if (user) {
       sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
@@ -55,7 +55,7 @@ export const BookList: FC<Props> = ({ badgeAndBooksList }) => {
                           title: book.title,
                           overview: book.overview,
                         }
-                        toBooksPage(targetBook)
+                        toBookPage(targetBook)
                       }}
                     >
                       <div className='text-lg md:ml-2 md:text-xl'>

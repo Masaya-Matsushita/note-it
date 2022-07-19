@@ -1,3 +1,4 @@
+import { Loader } from '@mantine/core'
 import { BookDetail } from 'components/Book/BookDetail'
 import { NoteList } from 'components/Book/NoteList'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -63,9 +64,11 @@ const Book: NextPage = () => {
       {bookAndNotes ? (
         <div className='mx-auto max-w-3xl'>
           <BookDetail book={bookAndNotes.book} />
-          <NoteList notes={bookAndNotes.notes} />
+          <NoteList bookAndNotes={bookAndNotes} />
         </div>
-      ) : null}
+      ) : (
+        <Loader size='xl' className='fixed inset-0 m-auto' />
+      )}
     </>
   )
 }

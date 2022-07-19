@@ -1,17 +1,38 @@
 import { Card } from '@mantine/core'
+import { auth } from 'firebaseConfig/firebase'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { Notes } from 'types'
+import { BookAndNotes } from 'types'
 
 type Props = {
-  notes: Notes
+  bookAndNotes: BookAndNotes
 }
 
-export const NoteList: FC<Props> = ({ notes }) => {
+type TargetNote = {
+  badgeId: string
+  bookId: string
+  title: string
+  noteId: string
+}
+
+export const NoteList: FC<Props> = ({ bookAndNotes }) => {
+  const router = useRouter()
+
+  const toNotePage = (targetNote: TargetNote) => {
+    const user = auth.currentUser
+    if (user) {
+      sessionStorage.setItem('targetNote', JSON.stringify(targetNote))
+      router.push(
+        `/my-page/${user.uid}/books/${targetNote.bookId}/notes/${targetNote.noteId}`
+      )
+    }
+  }
+
   return (
     <div>
       <div className='mb-1 ml-4 text-2xl font-semibold'>Notes</div>
       <div className='grow mx-2 border border-dark-400 border-solid'></div>
-      {notes.length ? (
+      {bookAndNotes.notes.length ? (
         <div>
           <div className='flex justify-between mt-4 mb-1'>
             <div className='ml-8 text-sm text-dark-300 xs:ml-16 xs:text-base'>
@@ -21,11 +42,20 @@ export const NoteList: FC<Props> = ({ notes }) => {
               Page
             </div>
           </div>
-          {notes.map((note) => {
+          {bookAndNotes.notes.map((note) => {
             return (
               <Card
                 className='group p-2 mx-4 mb-4 hover:bg-dark-600 hover:cursor-pointer xs:p-4 xs:mx-8'
                 key={note.id}
+                onClick={() => {
+                  const targetNote = {
+                    badgeId: bookAndNotes.book.badgeId,
+                    bookId: bookAndNotes.book.bookId,
+                    title: bookAndNotes.book.title,
+                    noteId: note.id,
+                  }
+                  toNotePage(targetNote)
+                }}
               >
                 <div className='flex justify-between xs:text-lg md:ml-2'>
                   <div className='ml-4'>{note.label}</div>

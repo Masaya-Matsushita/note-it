@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
-import { LoadingOverlay } from '@mantine/core'
+import { Loader } from '@mantine/core'
 import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
@@ -88,7 +88,7 @@ const Mypage: NextPage = () => {
     <div>
       {/* ユーザーが未認証の時は表示されない */}
       {pageLoading ? (
-        <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
+        <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <div className='min-h-screen'>
           <ErrorModal error={error} setError={setError} />
