@@ -22,7 +22,7 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
     if (user) {
       sessionStorage.setItem('targetNote', JSON.stringify(targetNote))
       router.push(
-        `/my-page/${user.uid}/books/${targetNote.bookId}/notes/${targetNote.noteId}`
+        `/my-page/${user.uid}/${targetNote.bookId}/${targetNote.noteId}`
       )
     }
   }

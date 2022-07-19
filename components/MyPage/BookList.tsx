@@ -15,7 +15,7 @@ export const BookList: FC<Props> = ({ badgeAndBooksList, router }) => {
     const user = auth.currentUser
     if (user) {
       sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
-      router.push(`/my-page/${user.uid}/books/${targetBook.bookId}`)
+      router.push(`/my-page/${user.uid}/${targetBook.bookId}`)
     }
   }
 
