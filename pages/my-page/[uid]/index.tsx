@@ -33,7 +33,7 @@ const Mypage: NextPage = () => {
     }
   }
 
-  // typesとbooksを取得しdataListへ追加
+  // badgesとbooksを取得しbadgeAndBooksListへ追加
   const createBadgeAndBooksList = async () => {
     setBadgeAndBooksList([])
     const user = auth.currentUser
@@ -55,7 +55,7 @@ const Mypage: NextPage = () => {
             overview: book.data().overview,
           })
         })
-        // badgesとbooksを整形してdataListへ追加
+        // badgesとbooksを整形してbadgeAndBooksListへ追加
         setBadgeAndBooksList((prev) => {
           return [
             ...prev,

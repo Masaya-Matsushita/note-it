@@ -45,7 +45,7 @@ export const BookList: FC<Props> = ({ badgeAndBooksList }) => {
                 {badgeAndBooks.books.map((book) => {
                   return (
                     <Card
-                      className='p-4 mt-4'
+                      className='p-4 mt-4 hover:bg-dark-600 hover:cursor-pointer'
                       key={book.id}
                       onClick={() => {
                         const targetBook = {
