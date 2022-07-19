@@ -84,6 +84,7 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
       closeOnClickOutside={false}
       closeOnEscape={false}
       withCloseButton={false}
+      className='mt-16'
     >
       <div className='text-lg text-center'>
         アイコンと名前を設定してください。

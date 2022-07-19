@@ -136,7 +136,7 @@ export const ErrorModal: FC<Props> = ({
       opened={opened}
       onClose={handleClose}
       title='認証エラー'
-      className='mt-12'
+      className='mt-16'
     >
       <div className='flex'>
         <FcHighPriority size={24} />

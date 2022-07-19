@@ -22,7 +22,7 @@ export const BookList: FC<Props> = ({ badgeAndBooksList }) => {
 
   return (
     <div>
-      <div className='text-3xl'>My Books</div>
+      <div className='mt-6 text-3xl'>My Books</div>
       <div className='grow my-2 border border-dark-400 border-solid'></div>
       {badgeAndBooksList.length ? (
         badgeAndBooksList.map((badgeAndBooks) => {

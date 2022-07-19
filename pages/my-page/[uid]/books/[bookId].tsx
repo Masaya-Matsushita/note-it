@@ -61,7 +61,7 @@ const Book: NextPage = () => {
   return (
     <>
       {bookAndNotes ? (
-        <div>
+        <div className='mx-auto max-w-3xl'>
           <BookDetail book={bookAndNotes.book} />
           <NoteList notes={bookAndNotes.notes} />
         </div>

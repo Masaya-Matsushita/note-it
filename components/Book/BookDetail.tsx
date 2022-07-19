@@ -9,9 +9,11 @@ type Props = {
 export const BookDetail: FC<Props> = ({ book }) => {
   return (
     <div>
-      <div className='inline mr-2 text-3xl font-bold'>{book.title}</div>
-      <Badge size='lg'>{book.badge}</Badge>
-      <div className='mx-4 mt-2 mb-8 text-lg text-dark-300 sm:text-xl'>
+      <div className='flex items-end mt-6'>
+        <div className='mr-2 text-3xl font-bold'>{book.title}</div>
+        <Badge size='lg'>{book.badge}</Badge>
+      </div>
+      <div className='mx-4 mt-2 mb-8 min-h-[32px] text-lg text-dark-300 sm:text-xl'>
         {book.overview}
       </div>
     </div>

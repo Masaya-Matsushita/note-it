@@ -48,7 +48,12 @@ export const ResendVerifyEmailModal = (): JSX.Element => {
         >
           リンクが期限切れの場合
         </span>
-        <Modal opened={opened} onClose={handleClose} withCloseButton={false}>
+        <Modal
+          opened={opened}
+          onClose={handleClose}
+          withCloseButton={false}
+          className='mt-16'
+        >
           <div>
             <div className='mb-2 ml-2 text-xl'>リンクが期限切れの場合</div>
             <div className='grow mb-6 border border-dark-400 border-solid'></div>

@@ -49,7 +49,12 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
       >
         メールが届かない場合
       </span>
-      <Modal opened={opened} onClose={handleClose} withCloseButton={false}>
+      <Modal
+        opened={opened}
+        onClose={handleClose}
+        withCloseButton={false}
+        className='mt-16'
+      >
         <div className='mb-2 ml-2 text-xl'>主な考えられる原因</div>
         <div className='grow mb-2 border border-dark-400 border-solid'></div>
         <ol className='space-y-1'>
