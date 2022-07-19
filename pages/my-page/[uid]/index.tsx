@@ -9,17 +9,21 @@ import db, { auth } from 'firebaseConfig/firebase'
 import { Accordion, Button, Card, LoadingOverlay } from '@mantine/core'
 import { Plus } from 'tabler-icons-react'
 
+type Types = '学校' | '試験' | '研究' | '資格' | '研鑽' | '教養' | '趣味' | 'その他'
+
+type DataList = {
+  types: { id: string; type: Types }
+  books: { id: string; title: string; overview: string }[]
+}[]
+
+type Books = { id: string; title: string; overview: string }[]
+
 const Mypage: NextPage = () => {
   const router = useRouter()
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
-  const [dataList, setDataList] = useState<
-    {
-      types: { id: string; type: string }
-      books: { id: string; title: string; overview: string }[]
-    }[]
-  >([])
+  const [dataList, setDataList] = useState<DataList>([])
 
   // userのドキュメントが存在するか判断
   const checkUserExists = async () => {
@@ -48,7 +52,7 @@ const Mypage: NextPage = () => {
         const booksSnap = await getDocs(
           collection(db, 'users', user.uid, 'types', type.id, 'books')
         )
-        let books: { id: string; title: string; overview: string }[] = []
+        let books: Books = []
         booksSnap.forEach((book) => {
           books.push({
             id: book.id,
@@ -78,14 +82,14 @@ const Mypage: NextPage = () => {
   ) => {
     const user = auth.currentUser
     if (user) {
-      const bookData = {
+      const targetBook = {
         typeId: typeId,
         type: type,
         bookId: bookId,
         title: title,
         overview: overview,
       }
-      sessionStorage.setItem('bookData', JSON.stringify(bookData))
+      sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
       router.push(`/my-page/${user.uid}/books/${bookId}`)
     }
   }
