@@ -72,28 +72,6 @@ const Mypage: NextPage = () => {
     }
   }
 
-  // typeId,bookIdを保存し、booksページへ
-  const toBooksPage = (
-    typeId: string,
-    type: string,
-    bookId: string,
-    title: string,
-    overview: string
-  ) => {
-    const user = auth.currentUser
-    if (user) {
-      const targetBook = {
-        typeId: typeId,
-        type: type,
-        bookId: bookId,
-        title: title,
-        overview: overview,
-      }
-      sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
-      router.push(`/my-page/${user.uid}/books/${bookId}`)
-    }
-  }
-
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       // パスワードログインかつメール未認証のとき、no-verifiedページへ
@@ -117,57 +95,7 @@ const Mypage: NextPage = () => {
         <div className='min-h-screen'>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
-          <div className='text-3xl'>My Books</div>
-          <div className='grow my-2 border border-dark-400 border-solid'></div>
-          {dataList.length ? (
-            dataList.map((data) => {
-              return (
-                <Accordion
-                  offsetIcon={false}
-                  disableIconRotation
-                  multiple
-                  initialItem={0}
-                  classNames={{
-                    // icon: 'text-red-500',
-                    // label: 'text-red-500',
-                    itemTitle: 'h-10',
-                    contentInner: 'pt-0',
-                    control: 'hover:bg-dark-800',
-                  }}
-                  key={data.types.id}
-                >
-                  <Accordion.Item label={data.types.type}>
-                    {data.books.map((book) => {
-                      return (
-                        <Card
-                          className='p-4 mt-4'
-                          key={book.id}
-                          onClick={() =>
-                            toBooksPage(
-                              data.types.id,
-                              data.types.type,
-                              book.id,
-                              book.title,
-                              book.overview
-                            )
-                          }
-                        >
-                          <div className='text-lg md:ml-2 md:text-xl'>
-                            {book.title}
-                          </div>
-                        </Card>
-                      )
-                    })}
-                  </Accordion.Item>
-                </Accordion>
-              )
-            })
-          ) : (
-            <div>
-              <div className='mt-4 text-center'>データがありません</div>
-              <div className='mt-2 text-center'>右下のボタンから新規作成</div>
-            </div>
-          )}
+          <BookList badgeAndBooksList={badgeAndBooksList} />
           <Button
             className='sticky bottom-0 left-full mr-2 w-16 h-16 rounded-full'
             compact
