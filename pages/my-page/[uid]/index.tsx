@@ -6,17 +6,10 @@ import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
-import { Accordion, Button, Card, LoadingOverlay } from '@mantine/core'
+import { Button, LoadingOverlay } from '@mantine/core'
 import { Plus } from 'tabler-icons-react'
-
-type Types = '学校' | '試験' | '研究' | '資格' | '研鑽' | '教養' | '趣味' | 'その他'
-
-type DataList = {
-  types: { id: string; type: Types }
-  books: { id: string; title: string; overview: string }[]
-}[]
-
-type Books = { id: string; title: string; overview: string }[]
+import { BookList } from 'components/MyPage/BookList'
+import { Books, BadgeAndBooksList } from 'types'
 
 const Mypage: NextPage = () => {
   const router = useRouter()

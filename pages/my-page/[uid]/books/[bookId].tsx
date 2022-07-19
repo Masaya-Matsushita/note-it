@@ -5,19 +5,7 @@ import db, { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-
-type BookData = {
-  book: {
-    typeId: string
-    type: string
-    bookId: string
-    title: string
-    overview: string
-  }
-  notes: { id: string; label: string; page: number }[]
-}
-
-type Notes = { id: string; label: string; page: number }[]
+import { Book, BookAndNotes, Notes } from 'types'
 
 const Books: NextPage = () => {
   const router = useRouter()
