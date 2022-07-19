@@ -1,16 +1,15 @@
 import { Accordion, Card } from '@mantine/core'
 import { auth } from 'firebaseConfig/firebase'
-import { useRouter } from 'next/router'
+import { NextRouter } from 'next/router'
 import { FC } from 'react'
 import { Book, BadgeAndBooksList } from 'types'
 
 type Props = {
   badgeAndBooksList: BadgeAndBooksList
+  router: NextRouter
 }
 
-export const BookList: FC<Props> = ({ badgeAndBooksList }) => {
-  const router = useRouter()
-
+export const BookList: FC<Props> = ({ badgeAndBooksList, router }) => {
   // typeId,bookIdを保存し、bookページへ
   const toBookPage = (targetBook: Book) => {
     const user = auth.currentUser

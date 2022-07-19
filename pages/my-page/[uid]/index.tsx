@@ -93,8 +93,8 @@ const Mypage: NextPage = () => {
         <div className='min-h-screen'>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
-          <BookList badgeAndBooksList={badgeAndBooksList} />
-          <ToCreateBookButton />
+          <BookList badgeAndBooksList={badgeAndBooksList} router={router} />
+          <ToCreateBookButton router={router} />
         </div>
       )}
     </div>

@@ -1,11 +1,12 @@
 import { Card } from '@mantine/core'
 import { auth } from 'firebaseConfig/firebase'
-import { useRouter } from 'next/router'
+import { NextRouter } from 'next/router'
 import { FC } from 'react'
 import { BookAndNotes } from 'types'
 
 type Props = {
   bookAndNotes: BookAndNotes
+  router: NextRouter
 }
 
 type TargetNote = {
@@ -15,9 +16,7 @@ type TargetNote = {
   noteId: string
 }
 
-export const NoteList: FC<Props> = ({ bookAndNotes }) => {
-  const router = useRouter()
-
+export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
   const toNotePage = (targetNote: TargetNote) => {
     const user = auth.currentUser
     if (user) {

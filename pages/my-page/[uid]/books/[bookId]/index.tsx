@@ -64,7 +64,7 @@ const Book: NextPage = () => {
       {bookAndNotes ? (
         <div className='mx-auto max-w-3xl'>
           <BookDetail book={bookAndNotes.book} />
-          <NoteList bookAndNotes={bookAndNotes} />
+          <NoteList bookAndNotes={bookAndNotes} router={router} />
         </div>
       ) : (
         <Loader size='xl' className='fixed inset-0 m-auto' />
