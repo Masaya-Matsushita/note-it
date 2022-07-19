@@ -6,17 +6,19 @@ import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
-import { Button, LoadingOverlay } from '@mantine/core'
-import { Plus } from 'tabler-icons-react'
+import { LoadingOverlay } from '@mantine/core'
 import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
+import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
-  const [badgeAndBooksList, setBadgeAndBooksList] = useState<BadgeAndBooksList>([])
+  const [badgeAndBooksList, setBadgeAndBooksList] = useState<BadgeAndBooksList>(
+    []
+  )
 
   // userのドキュメントが存在するか判断
   const checkUserExists = async () => {
@@ -57,7 +59,10 @@ const Mypage: NextPage = () => {
         setBadgeAndBooksList((prev) => {
           return [
             ...prev,
-            { badge: { id: badge.id, badge: badge.data().badge }, books: books },
+            {
+              badge: { id: badge.id, badge: badge.data().badge },
+              books: books,
+            },
           ]
         })
       })
@@ -89,13 +94,7 @@ const Mypage: NextPage = () => {
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
           <BookList badgeAndBooksList={badgeAndBooksList} />
-          <Button
-            className='sticky bottom-0 left-full mr-2 w-16 h-16 rounded-full'
-            compact
-            onClick={() => console.log('hello')}
-          >
-            <Plus size={48} />
-          </Button>
+          <ToCreateBookButton />
         </div>
       )}
     </div>
