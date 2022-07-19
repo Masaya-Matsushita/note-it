@@ -18,7 +18,7 @@ service cloud.firestore {
         allow write: if verifyFields(['type']);
         // booksへの書き込み
         match /books/{bookId} {
-          allow write: if verifyFields(['title'], ['overview']);
+          allow write: if verifyFields(['title', 'overview']);
           // notesへの書き込み
           match /notes/{noteId} {
             allow write: if verifyFields(['page', 'label', 'content'], ['cloze_1', 'cloze_2', 'cloze_3']);

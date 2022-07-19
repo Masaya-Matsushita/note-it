@@ -17,7 +17,7 @@ const Mypage: NextPage = () => {
   const [dataList, setDataList] = useState<
     {
       types: { id: string; type: string }
-      books: { id: string; title: string }[]
+      books: { id: string; title: string; overview: string }[]
     }[]
   >([])
 
@@ -48,9 +48,13 @@ const Mypage: NextPage = () => {
         const booksSnap = await getDocs(
           collection(db, 'users', user.uid, 'types', type.id, 'books')
         )
-        let books: { id: string; title: string }[] = []
+        let books: { id: string; title: string; overview: string }[] = []
         booksSnap.forEach((book) => {
-          books.push({ id: book.id, title: book.data().title })
+          books.push({
+            id: book.id,
+            title: book.data().title,
+            overview: book.data().overview,
+          })
         })
         // typesとbooksを整形してdataListへ追加
         setDataList((prev) => {
@@ -65,11 +69,23 @@ const Mypage: NextPage = () => {
   }
 
   // typeId,bookIdを保存し、booksページへ
-  const toBooksPage = (typeId: string, bookId: string) => {
+  const toBooksPage = (
+    typeId: string,
+    type: string,
+    bookId: string,
+    title: string,
+    overview: string
+  ) => {
     const user = auth.currentUser
     if (user) {
-      sessionStorage.setItem('typeId', typeId)
-      sessionStorage.setItem('bookId', bookId)
+      const bookData = {
+        typeId: typeId,
+        type: type,
+        bookId: bookId,
+        title: title,
+        overview: overview,
+      }
+      sessionStorage.setItem('bookData', JSON.stringify(bookData))
       router.push(`/my-page/${user.uid}/books/${bookId}`)
     }
   }
@@ -122,7 +138,15 @@ const Mypage: NextPage = () => {
                         <Card
                           className='p-4 mt-4'
                           key={book.id}
-                          onClick={() => toBooksPage(data.types.id, book.id)}
+                          onClick={() =>
+                            toBooksPage(
+                              data.types.id,
+                              data.types.type,
+                              book.id,
+                              book.title,
+                              book.overview
+                            )
+                          }
                         >
                           <div className='text-lg md:ml-2 md:text-xl'>
                             {book.title}
