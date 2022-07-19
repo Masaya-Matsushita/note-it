@@ -9,53 +9,51 @@ import { Book, BookAndNotes, Notes } from 'types'
 
 const Books: NextPage = () => {
   const router = useRouter()
-  const [bookData, setBookData] = useState<BookData>()
+  const [BookAndNotes, setBookAndNotes] = useState<BookAndNotes>()
 
-  const createBookData = async () => {
-    onAuthStateChanged(auth, async (user) => {
-      const jsonTargetBook = sessionStorage.getItem('targetBook')
-      if (user && jsonTargetBook) {
-        const targetBook = JSON.parse(jsonTargetBook)
-        // getDocsが何回も呼ばれている気がする
-        // console.log('called')
-        const noteSnap = await getDocs(
-          collection(
-            db,
-            'users',
-            user.uid,
-            'types',
-            targetBook.typeId,
-            'books',
-            targetBook.bookId,
-            'notes'
-          )
-        )
-        const notes: Notes = []
-        noteSnap.forEach((note) => {
-          notes.push({
-            id: note.id,
-            label: note.data().label,
-            page: note.data().page,
-          })
-        })
-        setBookData({ book: targetBook, notes: notes })
-      }
-    })
-  }
+  // const createBookAndNotes = async () => {
+  //   onAuthStateChanged(auth, async (user) => {
+  //     const jsonTargetBook = sessionStorage.getItem('targetBook')
+  //     if (user && jsonTargetBook) {
+  //       const targetBook = JSON.parse(jsonTargetBook)
+  //       const noteSnap = await getDocs(
+  //         collection(
+  //           db,
+  //           'users',
+  //           user.uid,
+  //           'badges',
+  //           targetBook.badgeId,
+  //           'books',
+  //           targetBook.bookId,
+  //           'notes'
+  //         )
+  //       )
+  //       const notes: Notes = []
+  //       noteSnap.forEach((note) => {
+  //         notes.push({
+  //           id: note.id,
+  //           label: note.data().label,
+  //           page: note.data().page,
+  //         })
+  //       })
+  //       setBookAndNotes({ book: targetBook, notes: notes })
+  //     }
+  //   })
+  // }
 
-  useEffect(() => {
-    createBookData()
-  })
+  // useEffect(() => {
+  //   createBookAndNotes()
+  // })
 
   return (
     <>
-      {bookData ? (
+      {BookAndNotes ? (
         <div>
-          <Badge>{bookData.book.type}</Badge>
-          <h1>{bookData.book.title}</h1>
-          <div>{bookData.book.overview}</div>
+          <Badge>{BookAndNotes.book.badge}</Badge>
+          <h1>{BookAndNotes.book.title}</h1>
+          <div>{BookAndNotes.book.overview}</div>
           <h3>Notes</h3>
-          {bookData.notes.map((note) => {
+          {BookAndNotes.notes.map((note) => {
             return (
               <Card className='p-4 mt-4' key={note.id}>
                 <div className='flex justify-between text-lg md:ml-2 md:text-xl'>

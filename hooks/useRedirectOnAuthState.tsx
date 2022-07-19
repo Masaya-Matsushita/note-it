@@ -7,6 +7,8 @@ export const useRedirectOnAuthState = (router: NextRouter) => {
   const redirectOnAuthState = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log('check');
+        
         switch (router.pathname) {
           case '/login':
           case '/forgot-password':

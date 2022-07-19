@@ -16,7 +16,7 @@ const Mypage: NextPage = () => {
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
-  const [dataList, setDataList] = useState<DataList>([])
+  const [badgeAndBooksList, setBadgeAndBooksList] = useState<BadgeAndBooksList>([])
 
   // userのドキュメントが存在するか判断
   const checkUserExists = async () => {
@@ -24,7 +24,7 @@ const Mypage: NextPage = () => {
     if (user) {
       const userSnap = await getDoc(doc(db, 'users', user.uid))
       if (userSnap.exists()) {
-        createDataList()
+        createBadgeAndBooksList()
       } else {
         setOpened(true)
       }
@@ -32,18 +32,18 @@ const Mypage: NextPage = () => {
   }
 
   // typesとbooksを取得しdataListへ追加
-  const createDataList = async () => {
-    setDataList([])
+  const createBadgeAndBooksList = async () => {
+    setBadgeAndBooksList([])
     const user = auth.currentUser
     if (user) {
-      // userのtypesを取得
-      const typesSnap = await getDocs(
-        collection(db, 'users', user.uid, 'types')
+      // userのbadgesを取得
+      const badgesSnap = await getDocs(
+        collection(db, 'users', user.uid, 'badges')
       )
-      // 各typesのbooksを取得
-      typesSnap.forEach(async (type) => {
+      // 各badgesのbooksを取得
+      badgesSnap.forEach(async (badge) => {
         const booksSnap = await getDocs(
-          collection(db, 'users', user.uid, 'types', type.id, 'books')
+          collection(db, 'users', user.uid, 'badges', badge.id, 'books')
         )
         let books: Books = []
         booksSnap.forEach((book) => {
@@ -53,11 +53,11 @@ const Mypage: NextPage = () => {
             overview: book.data().overview,
           })
         })
-        // typesとbooksを整形してdataListへ追加
-        setDataList((prev) => {
+        // badgesとbooksを整形してdataListへ追加
+        setBadgeAndBooksList((prev) => {
           return [
             ...prev,
-            { types: { id: type.id, type: type.data().type }, books: books },
+            { badge: { id: badge.id, badge: badge.data().badge }, books: books },
           ]
         })
       })
