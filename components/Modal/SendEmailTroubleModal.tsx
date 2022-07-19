@@ -1,8 +1,8 @@
-import { Button, Modal } from '@mantine/core'
-import { showNotification } from '@mantine/notifications'
+import { FC, useState } from 'react'
 import { sendEmailVerification } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
-import { FC, useState } from 'react'
+import { Button, Modal } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { AiOutlineMail } from 'react-icons/ai'
 import { BiHelpCircle } from 'react-icons/bi'
 
@@ -49,7 +49,12 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
       >
         メールが届かない場合
       </span>
-      <Modal opened={opened} onClose={handleClose} withCloseButton={false}>
+      <Modal
+        opened={opened}
+        onClose={handleClose}
+        withCloseButton={false}
+        className='mt-16'
+      >
         <div className='mb-2 ml-2 text-xl'>主な考えられる原因</div>
         <div className='grow mb-2 border border-dark-400 border-solid'></div>
         <ol className='space-y-1'>

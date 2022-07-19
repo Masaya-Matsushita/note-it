@@ -1,6 +1,6 @@
-import Image from 'next/image'
-import { NextRouter } from 'next/router'
 import { FC } from 'react'
+import { NextRouter } from 'next/router'
+import Image from 'next/image'
 
 type Props = { router: NextRouter }
 

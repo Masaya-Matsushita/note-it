@@ -1,7 +1,7 @@
-import { Button, Modal } from '@mantine/core'
-import { FcHighPriority } from 'react-icons/fc'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { NextRouter } from 'next/router'
+import { Button, Modal } from '@mantine/core'
+import { FcHighPriority } from 'react-icons/fc'
 
 type Props = {
   router?: NextRouter
@@ -136,7 +136,7 @@ export const ErrorModal: FC<Props> = ({
       opened={opened}
       onClose={handleClose}
       title='認証エラー'
-      className='mt-12'
+      className='mt-16'
     >
       <div className='flex'>
         <FcHighPriority size={24} />

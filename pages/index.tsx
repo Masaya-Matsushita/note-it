@@ -1,6 +1,6 @@
-import { Button } from '@mantine/core'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import { Button } from '@mantine/core'
 
 const Top: NextPage = () => {
   const router = useRouter()
