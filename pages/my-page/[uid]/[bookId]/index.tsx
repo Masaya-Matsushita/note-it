@@ -26,7 +26,7 @@ const Book: NextPage = () => {
             'users',
             user.uid,
             'badges',
-            targetBook.badgeId,
+            targetBook.badge,
             'books',
             targetBook.bookId,
             'notes'

@@ -38,9 +38,9 @@ export const BookList: FC<Props> = ({ badgeAndBooksList, router }) => {
                 contentInner: 'pt-0',
                 control: 'hover:bg-dark-800',
               }}
-              key={badgeAndBooks.badge.id}
+              key={badgeAndBooks.badge}
             >
-              <Accordion.Item label={badgeAndBooks.badge.badge}>
+              <Accordion.Item label={badgeAndBooks.badge}>
                 {badgeAndBooks.books.map((book) => {
                   return (
                     <Card
@@ -48,8 +48,7 @@ export const BookList: FC<Props> = ({ badgeAndBooksList, router }) => {
                       key={book.id}
                       onClick={() => {
                         const targetBook = {
-                          badgeId: badgeAndBooks.badge.id,
-                          badge: badgeAndBooks.badge.badge,
+                          badge: badgeAndBooks.badge,
                           bookId: book.id,
                           title: book.title,
                           overview: book.overview,

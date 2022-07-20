@@ -2,7 +2,7 @@ import { Card } from '@mantine/core'
 import { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
-import { BookAndNotes } from 'types'
+import { Badge, BookAndNotes } from 'types'
 
 type Props = {
   bookAndNotes: BookAndNotes
@@ -10,7 +10,7 @@ type Props = {
 }
 
 type TargetNote = {
-  badgeId: string
+  badge: Badge
   bookId: string
   title: string
   noteId: string
@@ -48,7 +48,7 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
                 key={note.id}
                 onClick={() => {
                   const targetNote = {
-                    badgeId: bookAndNotes.book.badgeId,
+                    badge: bookAndNotes.book.badge,
                     bookId: bookAndNotes.book.bookId,
                     title: bookAndNotes.book.title,
                     noteId: note.id,

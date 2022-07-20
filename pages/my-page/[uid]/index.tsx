@@ -45,7 +45,7 @@ const Mypage: NextPage = () => {
       // 各badgesのbooksを取得
       badgesSnap.forEach(async (badge) => {
         const booksSnap = await getDocs(
-          collection(db, 'users', user.uid, 'badges', badge.id, 'books')
+          collection(db, 'users', user.uid, 'badges', badge.data().badge, 'books')
         )
         let books: Books = []
         booksSnap.forEach((book) => {
@@ -60,7 +60,7 @@ const Mypage: NextPage = () => {
           return [
             ...prev,
             {
-              badge: { id: badge.id, badge: badge.data().badge },
+              badge: badge.data().badge,
               books: books,
             },
           ]

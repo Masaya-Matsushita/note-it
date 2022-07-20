@@ -1,7 +1,7 @@
 import { Button, Chip, Chips, Textarea, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -39,6 +39,9 @@ const BookForm: NextPage = () => {
   }) => {
     const user = auth.currentUser
     if (user) {
+      await setDoc(doc(db, 'users', user.uid, 'badges', values.chips), {
+        badge: values.chips,
+      })
       await addDoc(
         collection(db, 'users', user.uid, 'badges', values.chips, 'books'),
         {

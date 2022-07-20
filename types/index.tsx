@@ -9,7 +9,6 @@ export type Badge =
   | 'その他'
 
 export type Book = {
-  badgeId: string
   badge: Badge
   bookId: string
   title: string
@@ -21,7 +20,7 @@ export type Books = { id: string; title: string; overview: string }[]
 export type Notes = { id: string; label: string; page: number }[]
 
 export type BadgeAndBooksList = {
-  badge: { id: string; badge: Badge }
+  badge: Badge
   books: Books
 }[]
 
