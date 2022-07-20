@@ -1,8 +1,8 @@
-import { Button, NumberInput, Textarea, TextInput } from '@mantine/core'
+import { Button, NumberInput, Switch, Textarea, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { Book2, Note } from 'tabler-icons-react'
+import { Note } from 'tabler-icons-react'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -16,6 +16,7 @@ const schema = z.object({
     .string()
     .trim()
     .max(500, { message: '500文字以内で入力してください。' }),
+  cloze: z.boolean(),
 })
 
 const NoteForm: NextPage = () => {
@@ -24,17 +25,16 @@ const NoteForm: NextPage = () => {
     schema: zodResolver(schema),
     initialValues: {
       label: '',
-      page: '0',
+      page: 0,
       note: '',
+      cloze: false,
     },
   })
 
   return (
     <div className='mx-auto max-w-lg'>
       <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
-      <div className='mt-1 ml-4 text-dark-400'>
-        - {router.query.book}
-      </div>
+      <div className='mt-1 ml-4 text-dark-400'>- {router.query.book}</div>
       <div>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-500 border-solid xs:px-6'>
@@ -45,7 +45,7 @@ const NoteForm: NextPage = () => {
                 placeholder='ラベル(必須)'
                 size='md'
                 {...form.getInputProps('label')}
-                className='flex-1 mr-8'
+                className='flex-1 mr-4 xs:mr-8'
               />
               <NumberInput
                 min={0}
@@ -65,6 +65,14 @@ const NoteForm: NextPage = () => {
               {...form.getInputProps('note')}
               className='mt-4'
             />
+            <div className='flex justify-end'>
+              <Switch
+                label='括弧抜きを作成'
+                size='md'
+                className='mt-4 mr-4 hover:cursor-pointer'
+                {...form.getInputProps('cloze')}
+              />
+            </div>
           </div>
           <div className='mx-4'>
             <Button
