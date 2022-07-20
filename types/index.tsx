@@ -20,6 +20,7 @@ export type Books = { id: string; title: string; overview: string }[]
 export type Notes = { id: string; label: string; page: number }[]
 
 export type BadgeAndBooksList = {
+  priority: number
   badge: Badge
   books: Books
 }[]

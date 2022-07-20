@@ -42,29 +42,46 @@ const Mypage: NextPage = () => {
       const badgesSnap = await getDocs(
         collection(db, 'users', user.uid, 'badges')
       )
-      // 各badgesのbooksを取得
+      let badgeAndBooksArray: BadgeAndBooksList = []
+      // 各badgeのbooksを取得
       badgesSnap.forEach(async (badge) => {
         const booksSnap = await getDocs(
-          collection(db, 'users', user.uid, 'badges', badge.data().badge, 'books')
+          collection(
+            db,
+            'users',
+            user.uid,
+            'badges',
+            badge.data().badge,
+            'books'
+          )
         )
+        // 取得したbooksを配列booksへ
         let books: Books = []
         booksSnap.forEach((book) => {
-          books.push({
-            id: book.id,
-            title: book.data().title,
-            overview: book.data().overview,
-          })
-        })
-        // badgesとbooksを整形してbadgeAndBooksListへ追加
-        setBadgeAndBooksList((prev) => {
-          return [
-            ...prev,
+          books = [
+            ...books,
             {
-              badge: badge.data().badge,
-              books: books,
+              id: book.id,
+              title: book.data().title,
+              overview: book.data().overview,
             },
           ]
         })
+        // 取得したbadgesとbooksをまとめて配列へ
+        badgeAndBooksArray = [
+          ...badgeAndBooksArray,
+          {
+            priority: badge.data().priority,
+            badge: badge.data().badge,
+            books: books,
+          },
+        ]
+        // badgeのpriorityの値で並べ替え
+        badgeAndBooksArray.sort((a, b) => {
+          return a.priority - b.priority
+        })
+        // badgeAndBooksListへ追加
+        setBadgeAndBooksList(badgeAndBooksArray)
       })
       setPageLoading(false)
     }

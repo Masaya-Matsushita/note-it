@@ -33,22 +33,19 @@ const Book: NextPage = () => {
           )
         )
         // notesを整形・並べ替えしてbookAndNotesへ追加
-        const notes: Notes = []
+        let notes: Notes = []
         noteSnap.forEach((note) => {
-          notes.push({
-            id: note.id,
-            label: note.data().label,
-            page: note.data().page,
-          })
+          notes = [
+            ...notes,
+            {
+              id: note.id,
+              label: note.data().label,
+              page: note.data().page,
+            },
+          ]
         })
         notes.sort((a, b) => {
-          if (a.page < b.page) {
-            return -1
-          } else if (a.page > b.page) {
-            return 1
-          } else {
-            return 0
-          }
+          return a.page - b.page
         })
         setBookAndNotes({ book: targetBook, notes: notes })
       }

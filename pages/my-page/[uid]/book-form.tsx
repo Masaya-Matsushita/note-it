@@ -27,7 +27,7 @@ const BookForm: NextPage = () => {
     schema: zodResolver(schema),
     initialValues: {
       title: '',
-      chips: '学校',
+      chips: '1,学校',
       overview: '',
     },
   })
@@ -39,18 +39,20 @@ const BookForm: NextPage = () => {
   }) => {
     const user = auth.currentUser
     if (user) {
-      await setDoc(doc(db, 'users', user.uid, 'badges', values.chips), {
-        badge: values.chips,
+      const chipsArray = values.chips.split(',')
+      await setDoc(doc(db, 'users', user.uid, 'badges', chipsArray[1]), {
+        priority: Number(chipsArray[0]),
+        badge: chipsArray[1],
       })
       await addDoc(
-        collection(db, 'users', user.uid, 'badges', values.chips, 'books'),
+        collection(db, 'users', user.uid, 'badges', chipsArray[1], 'books'),
         {
           title: values.title,
           overview: values.overview,
         }
       )
       showNotification({
-        message: '登録しました！',
+        message: '登録完了！',
         autoClose: 3000,
         icon: <Check size={20} />,
       })
@@ -72,14 +74,14 @@ const BookForm: NextPage = () => {
             />
             <div className='mt-4 mb-1 text-sm font-medium'>Badge</div>
             <Chips {...form.getInputProps('chips')}>
-              <Chip value='学校'>学校</Chip>
-              <Chip value='試験'>試験</Chip>
-              <Chip value='研究'>研究</Chip>
-              <Chip value='資格'>資格</Chip>
-              <Chip value='研鑽'>研鑽</Chip>
-              <Chip value='教養'>教養</Chip>
-              <Chip value='趣味'>趣味</Chip>
-              <Chip value='その他'>その他</Chip>
+              <Chip value='1,学校'>学校</Chip>
+              <Chip value='2,試験'>試験</Chip>
+              <Chip value='3,研究'>研究</Chip>
+              <Chip value='4,資格'>資格</Chip>
+              <Chip value='5,研鑽'>研鑽</Chip>
+              <Chip value='6,教養'>教養</Chip>
+              <Chip value='7,趣味'>趣味</Chip>
+              <Chip value='8,その他'>その他</Chip>
             </Chips>
             <Textarea
               label='Overview'
