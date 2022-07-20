@@ -1,13 +1,8 @@
-import {
-  Button,
-  NumberInput,
-  Textarea,
-  TextInput,
-} from '@mantine/core'
+import { Button, NumberInput, Textarea, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { Book2 } from 'tabler-icons-react'
+import { Book2, Note } from 'tabler-icons-react'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -36,18 +31,19 @@ const NoteForm: NextPage = () => {
 
   return (
     <div className='mx-auto max-w-lg'>
-      <div className='ml-2 max-w-lg text-2xl'>Note作成</div>
-      <div className='mt-1 ml-4 text-sm text-dark-400'>
-        # {router.query.book}
+      <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
+      <div className='mt-1 ml-4 text-dark-400'>
+        - {router.query.book}
       </div>
       <div>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <div className='px-2 pt-4 pb-6 mt-3 mb-6 rounded-md border-dark-500 border-solid xs:px-4'>
+          <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-500 border-solid xs:px-6'>
             <div className='flex mr-4'>
               <TextInput
                 required
                 label='Label'
                 placeholder='ラベル(必須)'
+                size='md'
                 {...form.getInputProps('label')}
                 className='flex-1 mr-8'
               />
@@ -56,6 +52,7 @@ const NoteForm: NextPage = () => {
                 required
                 label='Page'
                 placeholder='0'
+                size='md'
                 {...form.getInputProps('page')}
                 className='w-20'
               />
@@ -64,6 +61,7 @@ const NoteForm: NextPage = () => {
               required
               label='Note'
               placeholder='必須'
+              size='md'
               {...form.getInputProps('note')}
               className='mt-4'
             />
@@ -71,8 +69,8 @@ const NoteForm: NextPage = () => {
           <div className='mx-4'>
             <Button
               type='submit'
-              className='w-full'
-              leftIcon={<Book2 size={16} strokeWidth={1.5} />}
+              className='w-full h-10 text-base'
+              leftIcon={<Note size={18} />}
             >
               作成
             </Button>

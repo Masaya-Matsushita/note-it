@@ -62,17 +62,18 @@ const BookForm: NextPage = () => {
 
   return (
     <div className='mx-auto max-w-lg'>
-      <div className='ml-2 max-w-lg text-2xl'>Book登録</div>
+      <div className='ml-2 max-w-lg text-3xl'>Book登録</div>
       <div>
         <form onSubmit={form.onSubmit((values) => setBook(values))}>
-          <div className='px-2 pt-4 pb-6 my-6 rounded-md border-dark-500 border-solid xs:px-4'>
+          <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-500 border-solid xs:px-6'>
             <TextInput
               required
               label='Title'
               placeholder='タイトル(必須)'
+              size='md'
               {...form.getInputProps('title')}
             />
-            <div className='mt-4 mb-1 text-sm font-medium'>Badge</div>
+            <div className='mt-4 mb-2 font-medium'>Badge</div>
             <Chips {...form.getInputProps('chips')}>
               <Chip value='1,学校'>学校</Chip>
               <Chip value='2,試験'>試験</Chip>
@@ -86,6 +87,7 @@ const BookForm: NextPage = () => {
             <Textarea
               label='Overview'
               placeholder='概要、メモなど'
+              size='md'
               {...form.getInputProps('overview')}
               className='mt-4 mb-1'
             />
@@ -93,8 +95,8 @@ const BookForm: NextPage = () => {
           <div className='mx-4'>
             <Button
               type='submit'
-              className='w-full'
-              leftIcon={<Book2 size={16} strokeWidth={1.5} />}
+              className='w-full h-10 text-base'
+              leftIcon={<Book2 size={18} />}
             >
               登録
             </Button>
