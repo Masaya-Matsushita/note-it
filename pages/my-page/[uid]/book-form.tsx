@@ -1,7 +1,11 @@
 import { Button, Chip, Chips, Textarea, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
+import { showNotification } from '@mantine/notifications'
+import { addDoc, collection } from 'firebase/firestore'
+import db, { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
-import { Book2 } from 'tabler-icons-react'
+import { useRouter } from 'next/router'
+import { Book2, Check } from 'tabler-icons-react'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -18,6 +22,7 @@ const schema = z.object({
 })
 
 const BookForm: NextPage = () => {
+  const router = useRouter()
   const form = useForm({
     schema: zodResolver(schema),
     initialValues: {
@@ -27,11 +32,34 @@ const BookForm: NextPage = () => {
     },
   })
 
+  const setBook = async (values: {
+    title: string
+    chips: string
+    overview: string
+  }) => {
+    const user = auth.currentUser
+    if (user) {
+      await addDoc(
+        collection(db, 'users', user.uid, 'badges', values.chips, 'books'),
+        {
+          title: values.title,
+          overview: values.overview,
+        }
+      )
+      showNotification({
+        message: '登録しました！',
+        autoClose: 3000,
+        icon: <Check size={20} />,
+      })
+      router.push(`/my-page/${user.uid}`)
+    }
+  }
+
   return (
     <div className='mx-auto max-w-lg'>
       <div className='ml-2 max-w-lg text-2xl'>Book登録</div>
       <div>
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form onSubmit={form.onSubmit((values) => setBook(values))}>
           <div className='px-2 pt-4 pb-6 my-6 rounded-md border-dark-500 border-solid xs:px-4'>
             <TextInput
               required
