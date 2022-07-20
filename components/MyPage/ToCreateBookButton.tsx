@@ -18,7 +18,7 @@ export const ToCreateBookButton: FC<Props> = ({ router }) => {
 
   return (
     <Button
-      className='sticky bottom-0 left-full mr-2 w-16 h-16 rounded-full'
+      className='sticky bottom-16 left-full mr-2 w-16 h-16 rounded-full'
       compact
       onClick={() => toBookForm()}
     >

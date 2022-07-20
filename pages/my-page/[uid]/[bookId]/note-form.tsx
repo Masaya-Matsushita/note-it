@@ -34,10 +34,10 @@ const NoteForm: NextPage = () => {
   return (
     <div className='mx-auto max-w-lg'>
       <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
-      <div className='mt-1 ml-4 text-dark-400'>- {router.query.book}</div>
+      <div className='mt-2 ml-4 text-dark-400'>- {router.query.book}</div>
       <div>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-500 border-solid xs:px-6'>
+          <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-12'>
             <div className='flex mr-4'>
               <TextInput
                 required
@@ -45,7 +45,7 @@ const NoteForm: NextPage = () => {
                 placeholder='ラベル(必須)'
                 size='md'
                 {...form.getInputProps('label')}
-                className='flex-1 mr-4 xs:mr-8'
+                className='flex-1 mr-4 xs:mr-6'
               />
               <NumberInput
                 min={0}
@@ -64,6 +64,7 @@ const NoteForm: NextPage = () => {
               size='md'
               {...form.getInputProps('note')}
               className='mt-4'
+              classNames={{input: 'h-32'}}
             />
             <div className='flex justify-end'>
               <Switch

@@ -83,7 +83,6 @@ const Mypage: NextPage = () => {
         // badgeAndBooksListへ追加
         setBadgeAndBooksList(badgeAndBooksArray)
       })
-      setPageLoading(false)
     }
   }
 
@@ -97,24 +96,25 @@ const Mypage: NextPage = () => {
         router.push('/no-verified')
       } else {
         checkUserExists()
+        setPageLoading(false)
       }
     })
   }, [])
 
   return (
-    <div>
+    <>
       {/* ユーザーが未認証の時は表示されない */}
       {pageLoading ? (
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
-        <div className='min-h-screen'>
+        <>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
           <BookList badgeAndBooksList={badgeAndBooksList} router={router} />
           <ToCreateBookButton router={router} />
-        </div>
+        </>
       )}
-    </div>
+    </>
   )
 }
 
