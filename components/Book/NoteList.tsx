@@ -27,6 +27,16 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
     }
   }
 
+  const toNoteForm = () => {
+    const user = auth.currentUser
+    if (user) {
+      router.push({
+        pathname: `/my-page/${user.uid}/${bookAndNotes.book.bookId}/note-form`,
+        query: { book: bookAndNotes.book.title },
+      })
+    }
+  }
+
   return (
     <div>
       <div className='mb-1 ml-4 text-2xl font-semibold'>Notes</div>
@@ -65,14 +75,20 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
               </Card>
             )
           })}
-          <Card className='py-1 mx-4 text-sm font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'>
+          <Card
+            className='py-1 mx-4 text-sm font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'
+            onClick={() => toNoteForm()}
+          >
             + 追加
           </Card>
         </div>
       ) : (
         <div>
           <div className='mt-8 mb-4 text-center'>Noteがありません。</div>
-          <Card className='block py-2 mx-auto w-52 font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer'>
+          <Card
+            className='block py-2 mx-auto w-52 font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer'
+            onClick={() => toNoteForm()}
+          >
             + 作成
           </Card>
         </div>
