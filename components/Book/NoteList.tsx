@@ -30,10 +30,7 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
   const toNoteForm = () => {
     const user = auth.currentUser
     if (user) {
-      router.push({
-        pathname: `/my-page/${user.uid}/${bookAndNotes.book.bookId}/note-form`,
-        query: { book: bookAndNotes.book.title },
-      })
+      router.push(`/my-page/${user.uid}/${bookAndNotes.book.bookId}/note-form`)
     }
   }
 
