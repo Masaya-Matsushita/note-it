@@ -79,7 +79,9 @@ const NoteForm: NextPage = () => {
   //   }
   // }
 
-  const [str, setStr] = useState('プロを目指す人のためのTypeScript入門')
+  const [str, setStr] = useState(
+    'ドキュメントに有効な ID がなく、Cloud Firestore が ID を自動的に生成するように設定したほうが都合のよい場合もあります。'
+  )
   const [blazeList, setBlazeList] = useState<
     {
       start: number
@@ -106,12 +108,30 @@ const NoteForm: NextPage = () => {
     }
   }
 
+  // useEffect(() => {
+  //   if (blazeList.length) {
+  //     displayStr()
+  //   }
+  // }, [blazeList])
+
   const displayStr = () => {
     let strArray = str.split('')
-    let blazeLength = 0
+    let gap = 0
     for (let i = 0; i < blazeList.length; i++) {
-      strArray.splice(blazeList[i].start - blazeLength, blazeList[i].range)
-      blazeLength += blazeList[i].range
+      const underberArray = Array(blazeList[i].range)
+      const underber = underberArray.join('＿')
+      strArray.splice(
+        blazeList[i].start + gap,
+        blazeList[i].range,
+        ' ',
+        '(',
+        ' ',
+        underber,
+        ' ',
+        ')',
+        ' '
+      )
+      gap += 7 - blazeList[i].range
     }
     setStr(strArray.join(''))
   }
@@ -131,7 +151,7 @@ const NoteForm: NextPage = () => {
             )
           })}
         </div>
-        <div>{str}</div>
+        <div className='text-lg'>{str}</div>
       </div>
       {/* <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
       <div className='mt-2 ml-4 text-dark-400'>- {targetBook?.title}</div>
