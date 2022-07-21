@@ -88,6 +88,7 @@ const NoteForm: NextPage = () => {
       range: number
     }[]
   >([])
+  const [blazeListIndex, setBlazeListIndex] = useState(0)
 
   const createBlazeList = () => {
     try {
@@ -108,49 +109,36 @@ const NoteForm: NextPage = () => {
     }
   }
 
-  // useEffect(() => {
-  //   if (blazeList.length) {
-  //     displayStr()
-  //   }
-  // }, [blazeList])
+  useEffect(() => {
+    if (blazeList.length) {
+      displayStr()
+    }
+  }, [blazeList])
 
   const displayStr = () => {
     let strArray = str.split('')
-    let gap = 0
-    for (let i = 0; i < blazeList.length; i++) {
-      const underberArray = Array(blazeList[i].range)
-      const underber = underberArray.join('＿')
-      strArray.splice(
-        blazeList[i].start + gap,
-        blazeList[i].range,
-        ' ',
-        '(',
-        ' ',
-        underber,
-        ' ',
-        ')',
-        ' '
-      )
-      gap += 7 - blazeList[i].range
-    }
+    const underberArray = Array(blazeList[blazeListIndex].range)
+    underberArray.fill('＿')
+    const underber = underberArray.join('')
+    strArray.splice(
+      blazeList[blazeListIndex].start,
+      blazeList[blazeListIndex].range,
+      ' ',
+      '(',
+      ' ',
+      underber,
+      ' ',
+      ')',
+      ' '
+    )
+    setBlazeListIndex((prev) => prev + 1)
     setStr(strArray.join(''))
   }
 
   return (
     <div className='mx-auto max-w-lg'>
       <button onClick={() => createBlazeList()}>btn</button>
-      <button onClick={() => displayStr()}>btn2</button>
       <div>
-        <div>
-          {blazeList.map((blaze) => {
-            return (
-              <div key={blaze.start}>
-                <div>{blaze.start}</div>
-                <div>{blaze.range}</div>
-              </div>
-            )
-          })}
-        </div>
         <div className='text-lg'>{str}</div>
       </div>
       {/* <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
