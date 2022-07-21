@@ -1,7 +1,10 @@
 import {
   Button,
+  Card,
   Modal,
   NumberInput,
+  Popover,
+  Stepper,
   Switch,
   Textarea,
   TextInput,
@@ -13,6 +16,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Check, Note } from 'tabler-icons-react'
+import { BsArrowCounterclockwise } from 'react-icons/bs'
 import { Book } from 'types'
 
 const NoteForm: NextPage = () => {
@@ -21,7 +25,9 @@ const NoteForm: NextPage = () => {
   const [label, setLabel] = useState('')
   const [page, setPage] = useState(0)
   const [note, setNote] = useState('')
-  const [opened, setOpened] = useState(false)
+  const [clozeNote, setClozeNote] = useState('')
+  const [opened, setOpened] = useState(true)
+  const [popover, setPopover] = useState(false)
 
   //マウント時にsessionStorageからデータを取得
   useEffect(() => {
@@ -62,79 +68,127 @@ const NoteForm: NextPage = () => {
     }
   }
 
-  // const [str, setStr] = useState(
-  //   'ドキュメントに有効な ID がなく、Cloud Firestore が ID を自動的に生成するように設定したほうが都合のよい場合もあります。'
-  // )
-  // const [blazeList, setBlazeList] = useState<
-  //   {
-  //     start: number
-  //     range: number
-  //   }[]
-  // >([])
-  // const [blazeListIndex, setBlazeListIndex] = useState(0)
+  const [clozeList, setClozeList] = useState<
+    {
+      start: number
+      range: number
+    }[]
+  >([])
+  const [clozeListIndex, setClozeListIndex] = useState(0)
 
-  // const createBlazeList = () => {
-  //   try {
-  //     const selObj = window.getSelection()?.getRangeAt(0)
-  //     if (selObj) {
-  //       setBlazeList((prev) => {
-  //         return [
-  //           ...prev,
-  //           {
-  //             start: selObj.startOffset,
-  //             range: selObj.endOffset - selObj.startOffset,
-  //           },
-  //         ]
-  //       })
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
+  useEffect(() => {
+    if (opened) {
+      setClozeNote(note)
+    } else {
+      setClozeNote('')
+    }
+  }, [opened])
 
-  // useEffect(() => {
-  //   if (blazeList.length) {
-  //     displayStr()
-  //   }
-  // }, [blazeList])
+  const createClozeList = () => {
+    try {
+      const selectedRange = window.getSelection()?.getRangeAt(0)
+      if (selectedRange) {
+        setClozeList((prev) => {
+          return [
+            ...prev,
+            {
+              start: selectedRange.startOffset,
+              range: selectedRange.endOffset - selectedRange.startOffset,
+            },
+          ]
+        })
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
-  // const displayStr = () => {
-  //   let strArray = str.split('')
-  //   const underberArray = Array(blazeList[blazeListIndex].range)
-  //   underberArray.fill('＿')
-  //   const underber = underberArray.join('')
-  //   strArray.splice(
-  //     blazeList[blazeListIndex].start,
-  //     blazeList[blazeListIndex].range,
-  //     ' ',
-  //     '(',
-  //     ' ',
-  //     underber,
-  //     ' ',
-  //     ')',
-  //     ' '
-  //   )
-  //   setBlazeListIndex((prev) => prev + 1)
-  //   setStr(strArray.join(''))
-  // }
+  useEffect(() => {
+    if (clozeList.length) {
+      patchCloze()
+    }
+  }, [clozeList])
+
+  const patchCloze = () => {
+    let clozeNoteArr = clozeNote.split('')
+    const blank = Array(clozeList[clozeListIndex].range)
+    blank.fill('＿')
+    clozeNoteArr.splice(
+      clozeList[clozeListIndex].start,
+      clozeList[clozeListIndex].range,
+      ' ',
+      '(',
+      ' ',
+      blank.join(''),
+      ' ',
+      ')',
+      ' '
+    )
+    setClozeListIndex((prev) => prev + 1)
+    setClozeNote(clozeNoteArr.join(''))
+  }
 
   return (
     <div className='mx-auto max-w-xl'>
-      {/* <button onClick={() => createBlazeList()}>btn</button>
-      <div className='text-lg'>{str}</div> */}
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
         closeOnClickOutside={false}
         closeOnEscape={false}
         withCloseButton={false}
-        title='括弧抜きを作成'
+        className='mt-48'
       >
+        <div className='text-lg'>括弧抜きを作成</div>
+        <Popover
+          opened={popover}
+          onClose={() => setPopover(false)}
+          trapFocus={false}
+          target={
+            <div
+              className='block mb-4 ml-[300px] text-dark-300 underline hover:cursor-pointer'
+              onMouseEnter={() => setPopover(true)}
+              onMouseLeave={() => setPopover(false)}
+            >
+              ？ 作成方法
+            </div>
+          }
+          width={260}
+          placement='end'
+          position='top'
+          withArrow
+        >
+          <Stepper orientation='vertical' active={0}>
+            <Stepper.Step label='note の括弧抜きする範囲を選択' />
+            <Stepper.Step label='「括弧抜きする」をクリック' />
+            <Stepper.Step label='複数作成したい場合は１, 2 を繰り返し' />
+          </Stepper>
+        </Popover>
+        <Card className='mb-2 min-h-[100px]'>{clozeNote}</Card>
+        <div className='flex justify-center mb-8'>
+          <Button
+            className='mr-2 h-8 text-dark-100 bg-dark-500'
+            leftIcon={<BsArrowCounterclockwise />}
+          >
+            1つ戻す
+          </Button>
+          <Button
+            onClick={() => createClozeList()}
+            className='ml-2 h-8 text-dark-100 bg-dark-500'
+          >
+            括弧抜きする
+          </Button>
+        </div>
         <div className='flex justify-between'>
-          <Button color='red' onClick={() => setOpened(false)}>
+          <Button
+            color='red'
+            onClick={() => setOpened(false)}
+            className='flex-1 mr-2'
+          >
             Cansel
           </Button>
-          <Button>OK</Button>
+          <Button leftIcon={<Note size={18} />} className='flex-1 mr-2'>
+            完了
+          </Button>
         </div>
       </Modal>
       <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
