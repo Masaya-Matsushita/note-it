@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import { Book2, Check } from 'tabler-icons-react'
 import { z } from 'zod'
 
+// formのバリデーションを定義
 const schema = z.object({
   title: z
     .string()
@@ -23,6 +24,8 @@ const schema = z.object({
 
 const BookForm: NextPage = () => {
   const router = useRouter()
+
+  // formの初期値を定義
   const form = useForm({
     schema: zodResolver(schema),
     initialValues: {
@@ -32,18 +35,21 @@ const BookForm: NextPage = () => {
     },
   })
 
-  const setBook = async (values: {
+  // badge,bookをデータベースに登録
+  const addBook = async (values: {
     title: string
     chips: string
     overview: string
   }) => {
     const user = auth.currentUser
     if (user) {
+      // badgeを登録
       const chipsArray = values.chips.split(',')
       await setDoc(doc(db, 'users', user.uid, 'badges', chipsArray[1]), {
         priority: Number(chipsArray[0]),
         badge: chipsArray[1],
       })
+      // bookを登録
       await addDoc(
         collection(db, 'users', user.uid, 'badges', chipsArray[1], 'books'),
         {
@@ -51,6 +57,7 @@ const BookForm: NextPage = () => {
           overview: values.overview,
         }
       )
+      // 登録後、ページ遷移
       showNotification({
         message: '登録完了！',
         autoClose: 3000,
@@ -61,10 +68,10 @@ const BookForm: NextPage = () => {
   }
 
   return (
-    <div className='mx-auto max-w-lg'>
+    <div className='mx-auto max-w-xl'>
       <div className='ml-2 max-w-lg text-3xl'>Book登録</div>
       <div>
-        <form onSubmit={form.onSubmit((values) => setBook(values))}>
+        <form onSubmit={form.onSubmit((values) => addBook(values))}>
           <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-600 border-solid xs:px-6'>
             <TextInput
               required
