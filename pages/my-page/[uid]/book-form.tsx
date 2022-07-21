@@ -65,7 +65,7 @@ const BookForm: NextPage = () => {
       <div className='ml-2 max-w-lg text-3xl'>Book登録</div>
       <div>
         <form onSubmit={form.onSubmit((values) => setBook(values))}>
-          <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-600 border-solid xs:px-10'>
+          <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-600 border-solid xs:px-6'>
             <TextInput
               required
               label='Title'

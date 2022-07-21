@@ -84,7 +84,7 @@ const NoteForm: NextPage = () => {
       <div className='mt-2 ml-4 text-dark-400'>- {targetBook?.title}</div>
       <div>
         <form onSubmit={form.onSubmit((values) => setNote(values))}>
-          <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-10'>
+          <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
             <div className='flex mr-4'>
               <TextInput
                 required
