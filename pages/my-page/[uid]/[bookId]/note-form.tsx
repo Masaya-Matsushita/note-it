@@ -6,7 +6,6 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
 import { addDoc, collection } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
@@ -15,36 +14,14 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Check, Note } from 'tabler-icons-react'
 import { Book } from 'types'
-import { z } from 'zod'
-
-// formのバリデーションを定義
-const schema = z.object({
-  label: z
-    .string()
-    .trim()
-    .max(50, { message: '50文字以内で入力してください。' }),
-  page: z.number().min(0),
-  note: z
-    .string()
-    .trim()
-    .max(500, { message: '500文字以内で入力してください。' }),
-})
 
 const NoteForm: NextPage = () => {
   const router = useRouter()
   const [targetBook, setTargetBook] = useState<Book | undefined>()
-  const [opened, setOpened] = useState(false)
+  const [label, setLabel] = useState('')
+  const [page, setPage] = useState(0)
   const [note, setNote] = useState('')
-
-  // formの初期値を定義
-  const form = useForm({
-    schema: zodResolver(schema),
-    initialValues: {
-      label: '',
-      page: 0,
-      note: '',
-    },
-  })
+  const [opened, setOpened] = useState(false)
 
   //マウント時にsessionStorageからデータを取得
   useEffect(() => {
@@ -55,13 +32,9 @@ const NoteForm: NextPage = () => {
   }, [])
 
   // noteをデータベースに登録
-  const addNote = async (values: {
-    label: string
-    page: number
-    note: string
-  }) => {
+  const addNote = async () => {
     const user = auth.currentUser
-    if (user && targetBook) {
+    if (user && targetBook && label.length <= 50 && note.length <= 500) {
       await addDoc(
         collection(
           db,
@@ -74,9 +47,9 @@ const NoteForm: NextPage = () => {
           'notes'
         ),
         {
-          label: values.label,
-          page: values.page,
-          note: values.note,
+          label: String(label),
+          page: Number(page),
+          note: String(note),
         }
       )
       // 登録後、ページ遷移
@@ -166,56 +139,59 @@ const NoteForm: NextPage = () => {
       </Modal>
       <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
       <div className='mt-2 ml-4 text-dark-400'>- {targetBook?.title}</div>
-      <form onSubmit={form.onSubmit((values) => addNote(values))}>
-        <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
-          <div className='flex mr-4'>
-            <TextInput
-              required
-              label='Label'
-              placeholder='ラベル(必須)'
-              size='md'
-              {...form.getInputProps('label')}
-              className='flex-1 mr-4 xs:mr-6'
-            />
-            <NumberInput
-              min={0}
-              required
-              label='Page'
-              placeholder='0'
-              size='md'
-              {...form.getInputProps('page')}
-              className='w-20'
-            />
-          </div>
-          <Textarea
+      <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
+        <div className='flex mr-4'>
+          <TextInput
             required
-            label='Note'
-            placeholder='必須'
+            label='Label'
+            placeholder='ラベル(必須)'
             size='md'
-            {...form.getInputProps('note')}
-            className='mt-4'
-            classNames={{ input: 'h-32' }}
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            error={label.length > 50 ? '50文字以内で入力してください。' : null}
+            className='flex-1 mr-4 xs:mr-6'
           />
-          <div className='flex justify-end'>
-            <Switch
-              label='括弧抜きを作成'
-              size='md'
-              checked={opened}
-              onChange={(e) => setOpened(e.currentTarget.checked)}
-              className='mt-4 mr-4 hover:cursor-pointer'
-            />
-          </div>
+          <NumberInput
+            min={0}
+            required
+            label='Page'
+            placeholder='0'
+            size='md'
+            value={page}
+            onChange={(num) => (num ? setPage(num) : null)}
+            className='w-20'
+          />
         </div>
-        <div className='mx-4'>
-          <Button
-            type='submit'
-            className='w-full h-10 text-base'
-            leftIcon={<Note size={18} />}
-          >
-            作成
-          </Button>
+        <Textarea
+          required
+          label='Note'
+          placeholder='必須'
+          size='md'
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          error={note.length > 500 ? '500文字以内で入力してください。' : null}
+          className='mt-4'
+          classNames={{ input: 'h-32' }}
+        />
+        <div className='flex justify-end'>
+          <Switch
+            label='括弧抜きを作成'
+            size='md'
+            checked={opened}
+            onChange={(e) => setOpened(e.currentTarget.checked)}
+            className='mt-4 mr-4 hover:cursor-pointer'
+          />
         </div>
-      </form>
+      </div>
+      <div className='mx-4'>
+        <Button
+          className='w-full h-10 text-base'
+          leftIcon={<Note size={18} />}
+          onClick={() => addNote()}
+        >
+          作成
+        </Button>
+      </div>
     </div>
   )
 }
