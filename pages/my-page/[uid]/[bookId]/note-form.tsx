@@ -5,82 +5,135 @@ import { addDoc, collection } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { Check, Note } from 'tabler-icons-react'
+import test from 'node:test'
+import { ReactEventHandler, useEffect, useState } from 'react'
+import { Check, Divide, Note } from 'tabler-icons-react'
 import { Book } from 'types'
 import { z } from 'zod'
 
-const schema = z.object({
-  label: z
-    .string()
-    .trim()
-    .min(2, { message: '2~50文字で入力してください。' })
-    .max(50, { message: '2~50文字で入力してください。' }),
-  page: z.number().min(0),
-  note: z
-    .string()
-    .trim()
-    .max(500, { message: '500文字以内で入力してください。' }),
-  cloze: z.boolean(),
-})
+// const schema = z.object({
+//   label: z
+//     .string()
+//     .trim()
+//     .min(2, { message: '2~50文字で入力してください。' })
+//     .max(50, { message: '2~50文字で入力してください。' }),
+//   page: z.number().min(0),
+//   note: z
+//     .string()
+//     .trim()
+//     .max(500, { message: '500文字以内で入力してください。' }),
+//   cloze: z.boolean(),
+// })
 
 const NoteForm: NextPage = () => {
-  const router = useRouter()
-  const [targetBook, setTargetBook] = useState<Book | undefined>()
-  const form = useForm({
-    schema: zodResolver(schema),
-    initialValues: {
-      label: '',
-      page: 0,
-      note: '',
-      cloze: false,
-    },
-  })
+  // const router = useRouter()
+  // const [targetBook, setTargetBook] = useState<Book | undefined>()
+  // const form = useForm({
+  //   schema: zodResolver(schema),
+  //   initialValues: {
+  //     label: '',
+  //     page: 0,
+  //     note: '',
+  //     cloze: false,
+  //   },
+  // })
 
-  useEffect(() => {
-    const jsonTargetBook = sessionStorage.getItem('targetBook')
-    if (jsonTargetBook) {
-      setTargetBook(JSON.parse(jsonTargetBook))
-    }
-  }, [])
+  // useEffect(() => {
+  //   const jsonTargetBook = sessionStorage.getItem('targetBook')
+  //   if (jsonTargetBook) {
+  //     setTargetBook(JSON.parse(jsonTargetBook))
+  //   }
+  // }, [])
 
-  const setNote = async (values: {
-    label: string
-    page: number
-    note: string
-    cloze: boolean
-  }) => {
-    const user = auth.currentUser
-    if (user && targetBook) {
-      await addDoc(
-        collection(
-          db,
-          'users',
-          user.uid,
-          'badges',
-          targetBook.badge,
-          'books',
-          targetBook.bookId,
-          'notes'
-        ),
-        {
-          label: values.label,
-          page: values.page,
-          note: values.note,
-        }
-      )
-      showNotification({
-        message: '作成完了！',
-        autoClose: 3000,
-        icon: <Check size={20} />,
-      })
-      router.push(`/my-page/${user.uid}/${targetBook.bookId}`)
+  // const setNote = async (values: {
+  //   label: string
+  //   page: number
+  //   note: string
+  //   cloze: boolean
+  // }) => {
+  //   const user = auth.currentUser
+  //   if (user && targetBook) {
+  //     await addDoc(
+  //       collection(
+  //         db,
+  //         'users',
+  //         user.uid,
+  //         'badges',
+  //         targetBook.badge,
+  //         'books',
+  //         targetBook.bookId,
+  //         'notes'
+  //       ),
+  //       {
+  //         label: values.label,
+  //         page: values.page,
+  //         note: values.note,
+  //       }
+  //     )
+  //     showNotification({
+  //       message: '作成完了！',
+  //       autoClose: 3000,
+  //       icon: <Check size={20} />,
+  //     })
+  //     router.push(`/my-page/${user.uid}/${targetBook.bookId}`)
+  //   }
+  // }
+
+  const [str, setStr] = useState('プロを目指す人のためのTypeScript入門')
+  const [blazeList, setBlazeList] = useState<
+    {
+      start: number
+      range: number
+    }[]
+  >([])
+
+  const createBlazeList = () => {
+    try {
+      const selObj = window.getSelection()?.getRangeAt(0)
+      if (selObj) {
+        setBlazeList((prev) => {
+          return [
+            ...prev,
+            {
+              start: selObj.startOffset,
+              range: selObj.endOffset - selObj.startOffset,
+            },
+          ]
+        })
+      }
+    } catch (error) {
+      console.error(error)
     }
+  }
+
+  const displayStr = () => {
+    let strArray = str.split('')
+    let blazeLength = 0
+    for (let i = 0; i < blazeList.length; i++) {
+      strArray.splice(blazeList[i].start - blazeLength, blazeList[i].range)
+      blazeLength += blazeList[i].range
+    }
+    setStr(strArray.join(''))
   }
 
   return (
     <div className='mx-auto max-w-lg'>
-      <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
+      <button onClick={() => createBlazeList()}>btn</button>
+      <button onClick={() => displayStr()}>btn2</button>
+      <div>
+        <div>
+          {blazeList.map((blaze) => {
+            return (
+              <div key={blaze.start}>
+                <div>{blaze.start}</div>
+                <div>{blaze.range}</div>
+              </div>
+            )
+          })}
+        </div>
+        <div>{str}</div>
+      </div>
+      {/* <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
       <div className='mt-2 ml-4 text-dark-400'>- {targetBook?.title}</div>
       <div>
         <form onSubmit={form.onSubmit((values) => setNote(values))}>
@@ -132,7 +185,7 @@ const NoteForm: NextPage = () => {
             </Button>
           </div>
         </form>
-      </div>
+      </div> */}
     </div>
   )
 }
