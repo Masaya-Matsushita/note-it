@@ -1,4 +1,5 @@
 import { Button } from '@mantine/core'
+import { NoteDisplay } from 'components/Note/NoteDisplay'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, DocumentData, getDoc } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
@@ -12,6 +13,7 @@ const Note: NextPage = () => {
   const [noteData, setNoteData] = useState<DocumentData>()
   const [hideCloze, setHideCloze] = useState(false)
 
+  // noteを取得
   const getNoteData = () => {
     onAuthStateChanged(auth, async (user) => {
       const jsonTargetNote = sessionStorage.getItem('targetNote')
@@ -40,6 +42,7 @@ const Note: NextPage = () => {
     getNoteData()
   }, [])
 
+  // bookページへ遷移
   const toBookPage = () => {
     const user = auth.currentUser
     if (user) {
@@ -51,7 +54,6 @@ const Note: NextPage = () => {
     <>
       {noteData ? (
         <div className='mx-auto max-w-xl'>
-          {/* <div>{bookId}</div> */}
           <div className='mt-4 ml-2 text-3xl font-bold'>{noteData.label}</div>
           <div className='flex justify-end items-center mr-4 mb-4 xs:mr-8'>
             <div className='text-xl'>Page :</div>
@@ -59,40 +61,11 @@ const Note: NextPage = () => {
               {noteData.page}
             </div>
           </div>
-          {noteData.clozeNote ? (
-            <div>
-              <div className='flex ml-2 xs:ml-6'>
-                <div
-                  className={
-                    hideCloze
-                      ? 'text-lg text-dark-300 py-2 px-6 rounded-t-md'
-                      : 'bg-dark-700 font-bold py-2 px-6 rounded-t-md text-lg'
-                  }
-                  onClick={() => setHideCloze(false)}
-                >
-                  括弧抜き
-                </div>
-                <div
-                  className={
-                    hideCloze
-                      ? 'bg-dark-700 font-bold py-2 px-6 rounded-t-md text-lg'
-                      : 'text-lg text-dark-300 py-2 px-6 rounded-t-md'
-                  }
-                  onClick={() => setHideCloze(true)}
-                >
-                  平文
-                </div>
-              </div>
-              <div className='grow mb-2 border border-dark-600 border-solid xs:mx-4'></div>
-              <div className='p-4 mx-2 mb-12 text-lg tracking-wider leading-7 bg-dark-600 rounded-md xs:p-6 xs:mx-6'>
-                {hideCloze ? noteData.note : noteData.clozeNote}
-              </div>
-            </div>
-          ) : (
-            <div className='p-4 mx-2 mb-12 text-lg tracking-wider leading-7 bg-dark-600 rounded-md xs:p-6 xs:mx-6'>
-              {noteData.note}
-            </div>
-          )}
+          <NoteDisplay
+            noteData={noteData}
+            hideCloze={hideCloze}
+            setHideCloze={setHideCloze}
+          />
           <div className='mx-2 xs:mx-6'>
             <Button className='w-full' onClick={() => toBookPage()}>
               戻る

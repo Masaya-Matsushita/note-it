@@ -34,8 +34,6 @@ export const BookList: FC<Props> = ({ badgeAndBooksList, router }) => {
               multiple
               initialItem={0}
               classNames={{
-                // icon: 'text-red-500',
-                // label: 'text-red-500',
                 itemTitle: 'h-10',
                 contentInner: 'pt-0',
                 control: 'hover:bg-dark-800',

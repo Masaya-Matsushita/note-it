@@ -1,4 +1,3 @@
-import { ErrorModal } from 'components/Modal/ErrorModal'
 import { UserProfileModal } from 'components/Modal/UserProfileModal'
 import { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
@@ -14,7 +13,6 @@ import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
 const Mypage: NextPage = () => {
   const router = useRouter()
   const [pageLoading, setPageLoading] = useState(true)
-  const [error, setError] = useState('')
   const [opened, setOpened] = useState(false)
   const [badgeAndBooksList, setBadgeAndBooksList] = useState<BadgeAndBooksList>(
     []
@@ -35,7 +33,6 @@ const Mypage: NextPage = () => {
 
   // badgesとbooksを取得しbadgeAndBooksListへ追加
   const createBadgeAndBooksList = async () => {
-    setBadgeAndBooksList([])
     const user = auth.currentUser
     if (user) {
       // userのbadgesを取得
@@ -108,7 +105,6 @@ const Mypage: NextPage = () => {
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <>
-          <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
           <BookList badgeAndBooksList={badgeAndBooksList} router={router} />
           <ToCreateBookButton router={router} />

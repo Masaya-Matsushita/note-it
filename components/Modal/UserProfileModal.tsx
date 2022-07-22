@@ -49,13 +49,17 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
   const setUserProfile = async () => {
     const user = auth.currentUser
     if (user) {
-      await setDoc(doc(db, 'users', user.uid), {
-        userName: userName,
-        iconURL: userIcon,
-      })
+      if (userName) {
+        await setDoc(doc(db, 'users', user.uid), {
+          userName: userName,
+          iconURL: userIcon,
+        })
+        setOpened(false)
+        location.reload()
+      } else {
+        setError('username not entered')
+      }
     }
-    setOpened(false)
-    location.reload()
   }
 
   useEffect(() => {
@@ -84,17 +88,17 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
       closeOnClickOutside={false}
       closeOnEscape={false}
       withCloseButton={false}
-      className='mt-16'
+      className='mx-2 mt-16'
     >
-      <div className='text-lg text-center'>
+      <div className='mt-4 mb-6 text-xl text-center'>
         アイコンと名前を設定してください。
       </div>
-      <Card className='flex flex-col items-center mx-16 mt-4'>
+      <Card className='flex flex-col items-center mx-16'>
         {userIcon ? (
           <div className='relative'>
             <img
               src={userIcon}
-              alt='icon'
+              alt='アイコンの描画に失敗しました。'
               className='w-20 h-20 rounded-full sm:w-24 sm:h-24'
             />
             <label htmlFor='userIcon' className='absolute left-14 sm:left-16'>
@@ -115,15 +119,16 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
         )}
         <TextInput
           placeholder='User Name'
-          required
           value={userName}
           onChange={(e) => changeUserName(e)}
           className='mt-4'
         />
       </Card>
       {error !== '' ? (
-        <div className='mt-2 text-sm font-bold text-red-500'>
-          エラーが発生しました。入力内容をご確認ください。(画像サイズは最大5MBです)
+        <div className='mt-2 text-sm font-bold text-center text-red-500'>
+          {error === 'username not entered'
+            ? 'ユーザーネームが未入力です。'
+            : 'エラーが発生しました。入力内容をご確認ください。(画像サイズは最大5MBです'}
         </div>
       ) : null}
       <Button onClick={setUserProfile} className='block mx-auto mt-8 w-48'>
