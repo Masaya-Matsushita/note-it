@@ -15,19 +15,28 @@ import db, { auth } from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Check, Note } from 'tabler-icons-react'
+import { Ballpen, Check, Note } from 'tabler-icons-react'
 import { BsArrowCounterclockwise } from 'react-icons/bs'
 import { Book } from 'types'
 
 const NoteForm: NextPage = () => {
   const router = useRouter()
   const [targetBook, setTargetBook] = useState<Book | undefined>()
+  const [opened, setOpened] = useState(true)
+  const [popover, setPopover] = useState(false)
   const [label, setLabel] = useState('')
   const [page, setPage] = useState(0)
   const [note, setNote] = useState('')
+  const [cloze, setCloze] = useState(false)
+  const [showClozeNote, setShowClozeNote] = useState(false)
   const [clozeNote, setClozeNote] = useState('')
-  const [opened, setOpened] = useState(true)
-  const [popover, setPopover] = useState(false)
+  const [clozeList, setClozeList] = useState<
+    {
+      start: number
+      range: number
+    }[]
+  >([])
+  const [clozeListIndex, setClozeListIndex] = useState(0)
 
   //マウント時にsessionStorageからデータを取得
   useEffect(() => {
@@ -56,6 +65,7 @@ const NoteForm: NextPage = () => {
           label: String(label),
           page: Number(page),
           note: String(note),
+          cloze: Boolean(cloze)
         }
       )
       // 登録後、ページ遷移
@@ -68,23 +78,25 @@ const NoteForm: NextPage = () => {
     }
   }
 
-  const [clozeList, setClozeList] = useState<
-    {
-      start: number
-      range: number
-    }[]
-  >([])
-  const [clozeListIndex, setClozeListIndex] = useState(0)
-
   useEffect(() => {
-    if (opened) {
+    if (cloze) {
       setClozeNote(note)
     } else {
       setClozeNote('')
+      setClozeList([])
+      setClozeListIndex(0)
     }
-  }, [opened])
+  }, [cloze])
 
-  const createClozeList = () => {
+  const resetClozeList = () => {
+    if (clozeList.length) {
+      setClozeNote(note)
+      setClozeList([])
+      setClozeListIndex(0)
+    }
+  }
+
+  const pushClozeList = () => {
     try {
       const selectedRange = window.getSelection()?.getRangeAt(0)
       if (selectedRange) {
@@ -97,6 +109,7 @@ const NoteForm: NextPage = () => {
             },
           ]
         })
+        setClozeListIndex(clozeList.length)
       }
     } catch (error) {
       console.error(error)
@@ -105,11 +118,11 @@ const NoteForm: NextPage = () => {
 
   useEffect(() => {
     if (clozeList.length) {
-      patchCloze()
+      updateClozeNote()
     }
   }, [clozeList])
 
-  const patchCloze = () => {
+  const updateClozeNote = () => {
     let clozeNoteArr = clozeNote.split('')
     const blank = Array(clozeList[clozeListIndex].range)
     blank.fill('＿')
@@ -124,7 +137,6 @@ const NoteForm: NextPage = () => {
       ')',
       ' '
     )
-    setClozeListIndex((prev) => prev + 1)
     setClozeNote(clozeNoteArr.join(''))
   }
 
@@ -136,59 +148,77 @@ const NoteForm: NextPage = () => {
         closeOnClickOutside={false}
         closeOnEscape={false}
         withCloseButton={false}
-        className='mt-48'
+        className='mt-24'
       >
-        <div className='text-lg'>括弧抜きを作成</div>
-        <Popover
-          opened={popover}
-          onClose={() => setPopover(false)}
-          trapFocus={false}
-          target={
-            <div
-              className='block mb-4 ml-[300px] text-dark-300 underline hover:cursor-pointer'
-              onMouseEnter={() => setPopover(true)}
-              onMouseLeave={() => setPopover(false)}
+        <div className='mb-2 text-xl'>括弧抜きを追加</div>
+        <div className='grow mb-2 border border-dark-400 border-solid'></div>
+        <div className='p-2'>
+          <div className=' mt-[3px] text-dark-300'>
+            追加後はnoteの編集が行えません。先にnoteの編集を完了させてください。
+          </div>
+          <Popover
+            opened={popover}
+            onClose={() => setPopover(false)}
+            target={
+              <div
+                onClick={() => setPopover((prev) => !prev)}
+                className='mb-2 text-dark-300 underline hover:cursor-pointer'
+              >
+                ？ 追加方法
+              </div>
+            }
+            width={260}
+            placement='end'
+            position='top'
+            className='block ml-[150px] text-right xxs:ml-40 xs:ml-72'
+            classNames={{popover: 'border-dark-500 border-solid'}}
+            withArrow
+          >
+            <Stepper orientation='vertical' active={0}>
+              <Stepper.Step label='note の括弧抜きする範囲を選択' />
+              <Stepper.Step label='「括弧抜きする」をクリック' />
+              <Stepper.Step label='複数作成したい場合は１, 2 を繰り返し' />
+            </Stepper>
+          </Popover>
+          <div className='ml-2 text-dark-200'>Note</div>
+          <Card className='mb-4 min-h-[120px]'>{clozeNote}</Card>
+          <div className='flex justify-center mb-12'>
+            <Button
+              leftIcon={<BsArrowCounterclockwise />}
+              onClick={() => resetClozeList()}
+              className='mr-2 text-dark-100 bg-dark-500 hover:bg-dark-600'
             >
-              ？ 作成方法
-            </div>
-          }
-          width={260}
-          placement='end'
-          position='top'
-          withArrow
-        >
-          <Stepper orientation='vertical' active={0}>
-            <Stepper.Step label='note の括弧抜きする範囲を選択' />
-            <Stepper.Step label='「括弧抜きする」をクリック' />
-            <Stepper.Step label='複数作成したい場合は１, 2 を繰り返し' />
-          </Stepper>
-        </Popover>
-        <Card className='mb-2 min-h-[100px]'>{clozeNote}</Card>
-        <div className='flex justify-center mb-8'>
-          <Button
-            className='mr-2 h-8 text-dark-100 bg-dark-500'
-            leftIcon={<BsArrowCounterclockwise />}
-          >
-            1つ戻す
-          </Button>
-          <Button
-            onClick={() => createClozeList()}
-            className='ml-2 h-8 text-dark-100 bg-dark-500'
-          >
-            括弧抜きする
-          </Button>
-        </div>
-        <div className='flex justify-between'>
-          <Button
-            color='red'
-            onClick={() => setOpened(false)}
-            className='flex-1 mr-2'
-          >
-            Cansel
-          </Button>
-          <Button leftIcon={<Note size={18} />} className='flex-1 mr-2'>
-            完了
-          </Button>
+              リセット
+            </Button>
+            <Button
+              onClick={() => pushClozeList()}
+              className='ml-2 text-dark-100 bg-dark-500 hover:bg-dark-600'
+            >
+              括弧抜きする
+            </Button>
+          </div>
+          <div className='flex justify-between'>
+            <Button
+              color='red'
+              onClick={() => {
+                setCloze(false)
+                setOpened(false)
+              }}
+              className='flex-1 mr-2'
+            >
+              Cansel
+            </Button>
+            <Button
+              leftIcon={<Ballpen size={18} />}
+              onClick={() => {
+                setShowClozeNote(true)
+                setOpened(false)
+              }}
+              className='flex-1 mr-2'
+            >
+              OK
+            </Button>
+          </div>
         </div>
       </Modal>
       <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
@@ -224,18 +254,34 @@ const NoteForm: NextPage = () => {
           value={note}
           onChange={(e) => setNote(e.target.value)}
           error={note.length > 500 ? '500文字以内で入力してください。' : null}
+          disabled={cloze}
+          description={
+            cloze
+              ? 'もう一度編集する場合は、「括弧抜きを追加」をoffにしてください。'
+              : ''
+          }
           className='mt-4'
           classNames={{ input: 'h-32' }}
         />
         <div className='flex justify-end'>
           <Switch
-            label='括弧抜きを作成'
+            label='括弧抜きを追加'
             size='md'
-            checked={opened}
-            onChange={(e) => setOpened(e.currentTarget.checked)}
+            checked={cloze}
+            onChange={(e) => {
+              setCloze(e.target.checked)
+              setOpened(e.target.checked)
+              setShowClozeNote(false)
+            }}
             className='mt-4 mr-4 hover:cursor-pointer'
           />
         </div>
+        {showClozeNote ? (
+          <div>
+            <div className='mb-2 text-sm font-semibold'>括弧抜き</div>
+            <Card className='mb-4 min-h-[100px]'>{clozeNote}</Card>
+          </div>
+        ) : null}
       </div>
       <div className='mx-4'>
         <Button
