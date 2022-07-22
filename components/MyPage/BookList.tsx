@@ -3,6 +3,7 @@ import { ItemMenu } from 'components/Parts/ItemMenu'
 import { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
+import { Book2 } from 'tabler-icons-react'
 import { Book, BadgeAndBooksList } from 'types'
 
 type Props = {
@@ -77,9 +78,17 @@ export const BookList: FC<Props> = ({ badgeAndBooksList, router }) => {
           )
         })
       ) : (
-        <div>
-          <div className='mt-4 text-center'>Booksがありません。</div>
-          <div className='mt-2 text-center'>右下のボタンから新規作成。</div>
+        <div className='mt-8 xs:flex xs:justify-center xs:items-center xs:mt-16'>
+          <Book2
+            size={'160px'}
+            strokeWidth={1.5}
+            color={'#2b2c31'}
+            className='block mx-auto xs:mr-4 xs:ml-0'
+          />
+          <div className='text-lg text-center text-dark-400 xs:ml-4 xs:text-xl xs:text-left'>
+            <div>Bookがありません。</div>
+            <div>右下のボタンから新規作成。</div>
+          </div>
         </div>
       )}
     </div>

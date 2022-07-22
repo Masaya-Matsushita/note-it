@@ -2,6 +2,7 @@ import { ItemMenu } from 'components/Parts/ItemMenu'
 import { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
+import { Note } from 'tabler-icons-react'
 import { Badge, BookAndNotes } from 'types'
 
 type Props = {
@@ -108,9 +109,19 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
         </div>
       ) : (
         <div>
-          <div className='mt-8 mb-4 text-center'>Noteがありません。</div>
+          <div className='mt-8 xs:mt-16'>
+            <Note
+              size={'160px'}
+              strokeWidth={1.5}
+              color={'#2b2c31'}
+              className='block mx-auto'
+            />
+            <div className='text-lg text-center text-dark-400 xs:text-xl'>
+              <div>Noteがありません。</div>
+            </div>
+          </div>
           <div
-            className='py-2 mx-auto w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer'
+            className='py-2 mx-auto mt-8 w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:mt-12'
             onClick={() => toNoteForm()}
           >
             + 作成
