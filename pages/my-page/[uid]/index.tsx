@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
-import { LoadingOverlay } from '@mantine/core'
+import { Loader } from '@mantine/core'
 import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
@@ -42,31 +42,47 @@ const Mypage: NextPage = () => {
       const badgesSnap = await getDocs(
         collection(db, 'users', user.uid, 'badges')
       )
-      // 各badgesのbooksを取得
+      let badgeAndBooksArray: BadgeAndBooksList = []
+      // 各badgeのbooksを取得
       badgesSnap.forEach(async (badge) => {
         const booksSnap = await getDocs(
-          collection(db, 'users', user.uid, 'badges', badge.id, 'books')
+          collection(
+            db,
+            'users',
+            user.uid,
+            'badges',
+            badge.data().badge,
+            'books'
+          )
         )
+        // 取得したbooksを配列booksへ
         let books: Books = []
         booksSnap.forEach((book) => {
-          books.push({
-            id: book.id,
-            title: book.data().title,
-            overview: book.data().overview,
-          })
-        })
-        // badgesとbooksを整形してbadgeAndBooksListへ追加
-        setBadgeAndBooksList((prev) => {
-          return [
-            ...prev,
+          books = [
+            ...books,
             {
-              badge: { id: badge.id, badge: badge.data().badge },
-              books: books,
+              id: book.id,
+              title: book.data().title,
+              overview: book.data().overview,
             },
           ]
         })
+        // 取得したbadgesとbooksをまとめて配列へ
+        badgeAndBooksArray = [
+          ...badgeAndBooksArray,
+          {
+            priority: badge.data().priority,
+            badge: badge.data().badge,
+            books: books,
+          },
+        ]
+        // badgeのpriorityの値で並べ替え
+        badgeAndBooksArray.sort((a, b) => {
+          return a.priority - b.priority
+        })
+        // badgeAndBooksListへ追加
+        setBadgeAndBooksList(badgeAndBooksArray)
       })
-      setPageLoading(false)
     }
   }
 
@@ -80,24 +96,25 @@ const Mypage: NextPage = () => {
         router.push('/no-verified')
       } else {
         checkUserExists()
+        setPageLoading(false)
       }
     })
   }, [])
 
   return (
-    <div>
+    <>
       {/* ユーザーが未認証の時は表示されない */}
       {pageLoading ? (
-        <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
+        <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
-        <div className='min-h-screen'>
+        <>
           <ErrorModal error={error} setError={setError} />
           <UserProfileModal opened={opened} setOpened={setOpened} />
-          <BookList badgeAndBooksList={badgeAndBooksList} />
-          <ToCreateBookButton />
-        </div>
+          <BookList badgeAndBooksList={badgeAndBooksList} router={router} />
+          <ToCreateBookButton router={router} />
+        </>
       )}
-    </div>
+    </>
   )
 }
 

@@ -1,3 +1,4 @@
+import { Loader } from '@mantine/core'
 import { BookDetail } from 'components/Book/BookDetail'
 import { NoteList } from 'components/Book/NoteList'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -25,29 +26,26 @@ const Book: NextPage = () => {
             'users',
             user.uid,
             'badges',
-            targetBook.badgeId,
+            targetBook.badge,
             'books',
             targetBook.bookId,
             'notes'
           )
         )
         // notesを整形・並べ替えしてbookAndNotesへ追加
-        const notes: Notes = []
+        let notes: Notes = []
         noteSnap.forEach((note) => {
-          notes.push({
-            id: note.id,
-            label: note.data().label,
-            page: note.data().page,
-          })
+          notes = [
+            ...notes,
+            {
+              id: note.id,
+              label: note.data().label,
+              page: note.data().page,
+            },
+          ]
         })
         notes.sort((a, b) => {
-          if (a.page < b.page) {
-            return -1
-          } else if (a.page > b.page) {
-            return 1
-          } else {
-            return 0
-          }
+          return a.page - b.page
         })
         setBookAndNotes({ book: targetBook, notes: notes })
       }
@@ -63,9 +61,11 @@ const Book: NextPage = () => {
       {bookAndNotes ? (
         <div className='mx-auto max-w-3xl'>
           <BookDetail book={bookAndNotes.book} />
-          <NoteList notes={bookAndNotes.notes} />
+          <NoteList bookAndNotes={bookAndNotes} router={router} />
         </div>
-      ) : null}
+      ) : (
+        <Loader size='xl' className='fixed inset-0 m-auto' />
+      )}
     </>
   )
 }
