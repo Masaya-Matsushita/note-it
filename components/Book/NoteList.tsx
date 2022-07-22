@@ -1,4 +1,4 @@
-import { Card } from '@mantine/core'
+import { ItemMenu } from 'components/Parts/ItemMenu'
 import { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
@@ -36,58 +36,85 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
 
   return (
     <div>
-      <div className='mb-1 ml-4 text-2xl font-semibold'>Notes</div>
-      <div className='grow mx-2 border border-dark-400 border-solid'></div>
+      <div className='mb-1 ml-2 text-2xl font-semibold'>Notes</div>
+      <div className='grow border border-dark-400 border-solid'></div>
       {bookAndNotes.notes.length ? (
-        <div>
-          <div className='flex justify-between mt-4 mb-1'>
-            <div className='ml-8 text-sm text-dark-300 xs:ml-16 xs:text-base'>
-              Label
-            </div>
-            <div className='mr-12 text-sm text-dark-300 xs:mr-[72px] xs:text-base'>
-              Page
-            </div>
+        <div className='mx-2'>
+          <div className='flex mt-4 mb-1 text-sm text-dark-300 xs:text-base'>
+            <div className='ml-2 w-[72px]'>Page</div>
+            <div>Label</div>
           </div>
           {bookAndNotes.notes.map((note) => {
             return (
-              <Card
-                className='group p-2 mx-4 mb-4 hover:bg-dark-600 hover:cursor-pointer xs:p-4 xs:mx-8'
-                key={note.id}
-                onClick={() => {
-                  const targetNote = {
-                    badge: bookAndNotes.book.badge,
-                    bookId: bookAndNotes.book.bookId,
-                    title: bookAndNotes.book.title,
-                    noteId: note.id,
-                  }
-                  toNotePage(targetNote)
-                }}
-              >
-                <div className='flex justify-between xs:text-lg md:ml-2'>
-                  <div className='ml-4'>{note.label}</div>
-                  <div className='py-1 px-2 mr-4 text-dark-200 bg-dark-800 group-hover:bg-dark-700 rounded-md'>
+              <div key={note.id}>
+                <div className='flex justify-between items-center mb-2 text-dark-100 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer sm:text-xl'>
+                  <div
+                    onClick={() => {
+                      const targetNote = {
+                        badge: bookAndNotes.book.badge,
+                        bookId: bookAndNotes.book.bookId,
+                        title: bookAndNotes.book.title,
+                        noteId: note.id,
+                      }
+                      toNotePage(targetNote)
+                    }}
+                    className='py-2 pl-4 w-20'
+                  >
                     {note.page}
                   </div>
+                  <div
+                    onClick={() => {
+                      const targetNote = {
+                        badge: bookAndNotes.book.badge,
+                        bookId: bookAndNotes.book.bookId,
+                        title: bookAndNotes.book.title,
+                        noteId: note.id,
+                      }
+                      toNotePage(targetNote)
+                    }}
+                    className='flex-1 py-2'
+                  >
+                    {innerWidth < 300 && note.label.length > 8
+                      ? note.label.slice(0, 8) + '...'
+                      : innerWidth < 320 && note.label.length > 11
+                      ? note.label.slice(0, 11) + '...'
+                      : innerWidth < 370 && note.label.length > 15
+                      ? note.label.slice(0, 15) + '...'
+                      : innerWidth < 460 && note.label.length > 20
+                      ? note.label.slice(0, 20) + '...'
+                      : innerWidth < 550 && note.label.length > 30
+                      ? note.label.slice(0, 30) + '...'
+                      : innerWidth < 680 && note.label.length > 40
+                      ? note.label.slice(0, 40) + '...'
+                      : note.label}
+                  </div>
+                  <ItemMenu
+                    label={
+                      note.label.length > 20
+                        ? note.label.slice(0, 20) + '...'
+                        : note.label
+                    }
+                  />
                 </div>
-              </Card>
+              </div>
             )
           })}
-          <Card
-            className='py-1 mx-4 text-sm font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'
+          <div
+            className='py-1 mx-4 mt-4 text-sm text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'
             onClick={() => toNoteForm()}
           >
             + 追加
-          </Card>
+          </div>
         </div>
       ) : (
         <div>
           <div className='mt-8 mb-4 text-center'>Noteがありません。</div>
-          <Card
-            className='block py-2 mx-auto w-52 font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer'
+          <div
+            className='py-2 mx-auto w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer'
             onClick={() => toNoteForm()}
           >
             + 作成
-          </Card>
+          </div>
         </div>
       )}
     </div>

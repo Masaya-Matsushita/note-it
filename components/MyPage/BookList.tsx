@@ -1,8 +1,8 @@
-import { Accordion, Menu } from '@mantine/core'
+import { Accordion } from '@mantine/core'
+import { ItemMenu } from 'components/Parts/ItemMenu'
 import { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
-import { Pencil, Trash } from 'tabler-icons-react'
 import { Book, BadgeAndBooksList } from 'types'
 
 type Props = {
@@ -62,22 +62,13 @@ export const BookList: FC<Props> = ({ badgeAndBooksList, router }) => {
                       >
                         {book.title}
                       </div>
-                      <Menu
-                        control={<div>...</div>}
-                        classNames={{
-                          root: 'w-12 text-center h-14 text-dark-400 text-4xl mr-4',
-                        }}
-                      >
-                        <Menu.Label>
-                          {book.title.length > 20
+                      <ItemMenu
+                        label={
+                          book.title.length > 20
                             ? book.title.slice(0, 20) + '...'
-                            : book.title}
-                        </Menu.Label>
-                        <Menu.Item icon={<Pencil size={14} />}>編集</Menu.Item>
-                        <Menu.Item color='red' icon={<Trash size={14} />}>
-                          削除
-                        </Menu.Item>
-                      </Menu>
+                            : book.title
+                        }
+                      />
                     </div>
                   )
                 })}
