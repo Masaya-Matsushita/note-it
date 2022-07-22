@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react'
 import { Ballpen, Check, Note } from 'tabler-icons-react'
 import { BsArrowCounterclockwise } from 'react-icons/bs'
 import { Book } from 'types'
+import { ErrorModal } from 'components/Modal/ErrorModal'
 
 const NoteForm: NextPage = () => {
   const router = useRouter()
@@ -27,6 +28,7 @@ const NoteForm: NextPage = () => {
   const [label, setLabel] = useState('')
   const [page, setPage] = useState(0)
   const [note, setNote] = useState('')
+  const [error, setError] = useState('')
   const [cloze, setCloze] = useState(false)
   const [showClozeNote, setShowClozeNote] = useState(false)
   const [clozeNote, setClozeNote] = useState('')
@@ -42,32 +44,38 @@ const NoteForm: NextPage = () => {
   // noteをデータベースに登録
   const addNote = async () => {
     const user = auth.currentUser
+    // フォームのバリデーション
     if (user && targetBook && label.length <= 50 && note.length <= 500) {
-      await addDoc(
-        collection(
-          db,
-          'users',
-          user.uid,
-          'badges',
-          targetBook.badge,
-          'books',
-          targetBook.bookId,
-          'notes'
-        ),
-        {
-          label: String(label),
-          page: Number(page),
-          note: String(note),
-          clozeNote: String(clozeNote),
-        }
-      )
-      // 登録後、ページ遷移
-      showNotification({
-        message: '作成完了！',
-        autoClose: 3000,
-        icon: <Check size={20} />,
-      })
-      router.push(`/my-page/${user.uid}/${targetBook.bookId}`)
+      if (label.length > 0 && note.length > 0 && page !== null) {
+        // データベースに登録
+        await addDoc(
+          collection(
+            db,
+            'users',
+            user.uid,
+            'badges',
+            targetBook.badge,
+            'books',
+            targetBook.bookId,
+            'notes'
+          ),
+          {
+            label: String(label),
+            page: Number(page),
+            note: String(note),
+            clozeNote: String(clozeNote),
+          }
+        )
+        // 登録後、ページ遷移
+        showNotification({
+          message: '作成完了！',
+          autoClose: 3000,
+          icon: <Check size={20} />,
+        })
+        router.push(`/my-page/${user.uid}/${targetBook.bookId}`)
+      } else {
+        setError('note/required-form')
+      }
     }
   }
 
@@ -114,6 +122,7 @@ const NoteForm: NextPage = () => {
 
   return (
     <div className='mx-auto max-w-xl'>
+      <ErrorModal error={error} setError={setError} />
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
@@ -235,9 +244,7 @@ const NoteForm: NextPage = () => {
           error={note.length > 500 ? '500文字以内で入力してください。' : null}
           disabled={cloze}
           description={
-            cloze
-              ? '編集する場合は「括弧抜きを追加」をoffにしてください。'
-              : ''
+            cloze ? '編集する場合は「括弧抜きを追加」をoffにしてください。' : ''
           }
           className='mt-4'
           classNames={{ input: 'h-32' }}

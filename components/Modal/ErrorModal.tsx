@@ -31,6 +31,9 @@ export const ErrorModal: FC<Props> = ({
     setOpened(true)
     // errorを日本語に翻訳
     switch (error) {
+      case 'note/required-form':
+        setErrorCodeJa('未入力の箇所があります。')
+        return
       case 'auth/email-already-in-use':
         if (method === 'signup') {
           setErrorCodeJa('このメールアドレスは使用されています。')
@@ -135,7 +138,7 @@ export const ErrorModal: FC<Props> = ({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title='認証エラー'
+      title={error === 'note/required-form' ? 'エラー' : '認証エラー'}
       className='mt-16'
     >
       <div className='flex'>
