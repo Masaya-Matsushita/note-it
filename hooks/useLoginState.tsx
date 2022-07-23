@@ -9,22 +9,21 @@ const initialState = {
   emailValue: '',
 }
 
-// reducerに型が付けられない
-// type State = typeof initialState
+type State = Partial<typeof initialState>
 
-// type Action = {
-//   type:
-//     | 'setEmail'
-//     | 'inputEmail'
-//     | 'loading'
-//     | 'end'
-//     | 'error'
-//     | 'resetError'
-//     | 'checked'
-// } & Partial<State>
+type Action = {
+  type:
+    | 'setEmail'
+    | 'inputEmail'
+    | 'loading'
+    | 'end'
+    | 'error'
+    | 'resetError'
+    | 'checked'
+} & State
 
 // reducer関数
-const reducer: Reducer<any, any> = (state, action) => {
+const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case 'setEmail': {
       return {
@@ -72,8 +71,6 @@ const reducer: Reducer<any, any> = (state, action) => {
         checked: action.checked,
       }
     }
-    default:
-      break
   }
 }
 

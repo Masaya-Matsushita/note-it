@@ -5,9 +5,9 @@ import { FcHighPriority } from 'react-icons/fc'
 
 type Props = {
   router?: NextRouter
-  error: string
+  error?: string
   method?: string
-  dispatch: Dispatch<any>
+  dispatch?: Dispatch<any>
 }
 
 export const ErrorModal: FC<Props> = ({ router, error, method, dispatch }) => {
@@ -112,7 +112,9 @@ export const ErrorModal: FC<Props> = ({ router, error, method, dispatch }) => {
   // error,methodを初期値に戻す＆モーダルを閉じる
   // no-verifiedページの場合、ページリロード処理
   const handleClose = () => {
-    dispatch({ type: 'resetError' })
+    if (dispatch) {
+      dispatch({ type: 'resetError' })
+    }
     setOpened(false)
     if (method === 'updateUser') {
       location.reload()
