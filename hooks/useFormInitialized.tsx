@@ -44,6 +44,16 @@ export const useFormInitialized = () => {
     },
   })
 
+  const emailForm = useForm({
+    initialValues: {
+      email: '',
+    },
+    validate: {
+      email: (value) =>
+        /^\S+@\S+$/.test(value) ? null : 'メールアドレスが正しくありません。',
+    },
+  })
+
   const bookForm = useForm({
     schema: zodResolver(bookSchema),
     initialValues: {
@@ -53,5 +63,5 @@ export const useFormInitialized = () => {
     },
   })
 
-  return { signUpForm, bookForm }
+  return { signUpForm, emailForm, bookForm }
 }

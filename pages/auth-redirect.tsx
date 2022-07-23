@@ -1,5 +1,5 @@
 import { ErrorModal } from 'components/Modal/ErrorModal'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { getRedirectResult, signInWithRedirect } from 'firebase/auth'
@@ -10,12 +10,11 @@ import {
   twitterProvider,
 } from 'firebaseConfig/firebase'
 import { LoadingOverlay } from '@mantine/core'
+import { useAuthRedirectState } from 'hooks/useAuthRedirectState'
 
 const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()
-  const [pageLoading, setPageLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [method, setMethod] = useState('')
+  const { state, dispatch } = useAuthRedirectState()
 
   // 各プロバイダへリダイレクト認証
   const redirectToMypage = (): void => {
@@ -35,14 +34,13 @@ const AuthRedirectWithGoogle: NextPage = () => {
       })
       .catch((error: any) => {
         // pageLoadingを非表示に、ErrorModalを表示
-        setPageLoading(false)
-        setMethod('redirect')
-        setError(error.code)
+        dispatch({ type: 'error', error: error.code, method: 'redirect' })
       })
   }
 
   useEffect(() => {
-    // router起因のエラー対処 'No router instance found. you should only use "next/router" inside the client side of your app.'
+    // router起因のエラー対処
+    // 'No router instance found. you should only use "next/router" inside the client side of your app.'
     if (!router.isReady) {
       return
     }
@@ -53,12 +51,14 @@ const AuthRedirectWithGoogle: NextPage = () => {
     <>
       <ErrorModal
         router={router}
-        error={error}
-        setError={setError}
-        method={method}
-        setMethod={setMethod}
+        error={state.error}
+        method={state.method}
+        dispatch={dispatch}
       />
-      <LoadingOverlay visible={pageLoading} loaderProps={{ size: 'xl' }} />
+      <LoadingOverlay
+        visible={state.pageLoading ? state.pageLoading : true}
+        loaderProps={{ size: 'xl' }}
+      />
     </>
   )
 }
