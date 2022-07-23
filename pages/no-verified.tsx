@@ -6,8 +6,8 @@ import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import { Button, Stepper } from '@mantine/core'
-import { useNoVerifiedState } from 'hooks/useNoVerifiedState'
 import { TitleWrapper } from 'components/Parts/TitleWrapper'
+import { useNoVerifiedState } from 'hooks/StateManagement/useNoVerifiedState'
 
 const NoVerified: NextPage = () => {
   const router = useRouter()

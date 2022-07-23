@@ -10,7 +10,7 @@ import {
   twitterProvider,
 } from 'firebaseConfig/firebase'
 import { LoadingOverlay } from '@mantine/core'
-import { useAuthRedirectState } from 'hooks/useAuthRedirectState'
+import { useAuthRedirectState } from 'hooks/StateManagement/useAuthRedirectState'
 
 const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()

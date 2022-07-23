@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { LoginForm } from 'components/Login/LoginForm'
-import { useLoginState } from 'hooks/useLoginState'
+import { useLoginState } from 'hooks/StateManagement/useLoginState'
 
 const Login: NextPage = () => {
   const router = useRouter()

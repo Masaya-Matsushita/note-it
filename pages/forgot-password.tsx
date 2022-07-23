@@ -7,9 +7,9 @@ import { auth } from 'firebaseConfig/firebase'
 import { showNotification } from '@mantine/notifications'
 import { Button, TextInput } from '@mantine/core'
 import { AiOutlineMail } from 'react-icons/ai'
-import { useForgotPasswordState } from 'hooks/useForgotPasswordState'
 import { useFormInitialized } from 'hooks/useFormInitialized'
 import { TitleWrapper } from 'components/Parts/TitleWrapper'
+import { useForgotPasswordState } from 'hooks/StateManagement/useForgotPasswordState'
 
 const ForgotPassword: NextPage = () => {
   const { state, dispatch } = useForgotPasswordState()
@@ -42,7 +42,7 @@ const ForgotPassword: NextPage = () => {
         subTitle='パスワード再設定のリンクを送信します。メールアドレスをご入力ください。'
       >
         <form
-          className='px-4 mx-auto mt-8 max-w-lg'
+          className='px-4 mx-auto mt-12 max-w-lg'
           onSubmit={emailForm.onSubmit((value) => handleSubmit(value))}
         >
           <TextInput
@@ -53,7 +53,7 @@ const ForgotPassword: NextPage = () => {
             icon={<AiOutlineMail />}
             {...emailForm.getInputProps('email')}
           />
-          <div className='flex flex-col-reverse mt-6 xs:flex-row xs:justify-between'>
+          <div className='flex flex-col-reverse mt-8 xs:flex-row xs:justify-between'>
             <Link href='/login' passHref>
               <a className='mt-5 ml-2 w-full text-center text-dark-100 no-underline xs:mt-2 xs:w-auto sm:text-base'>
                 ← ログインページに戻る

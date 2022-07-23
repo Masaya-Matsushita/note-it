@@ -90,7 +90,7 @@ export const LoginForm: FC<Props> = ({ state, dispatch, router }) => {
   }
 
   return (
-    <Tabs className='pt-8 focus:outline-none' tabPadding='xl'>
+    <Tabs className='pt-8 focus:outline-none sm:mx-8 md:mx-24' tabPadding='xl'>
       <Tabs.Tab
         label='ログイン'
         className='px-4 pb-2 text-xl font-bold text-dark-300 xxs:text-2xl sm:px-6 md:px-8'
