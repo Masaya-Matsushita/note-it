@@ -10,10 +10,14 @@ import { NoteInput } from 'components/NoteForm/NoteInput'
 import { ClozeSwitch } from 'components/NoteForm/ClozeSwitch'
 import { ClozeModal } from 'components/NoteForm/ClozeModal'
 import { AddNoteButton } from 'components/NoteForm/AddNoteButton'
+import { ToBackLink } from 'components/Parts/ToBackLink'
+import { auth } from 'firebaseConfig/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
 const NoteForm: NextPage = () => {
   const router = useRouter()
   const [targetBook, setTargetBook] = useState<Book | undefined>()
+  const [uid, setUid] = useState('')
   const [opened, setOpened] = useState(false)
   const [label, setLabel] = useState('')
   const [page, setPage] = useState(0)
@@ -26,9 +30,12 @@ const NoteForm: NextPage = () => {
   //マウント時にsessionStorageからデータを取得
   useEffect(() => {
     const jsonTargetBook = sessionStorage.getItem('targetBook')
-    if (jsonTargetBook) {
-      setTargetBook(JSON.parse(jsonTargetBook))
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (jsonTargetBook && user) {
+        setUid(user.uid)
+        setTargetBook(JSON.parse(jsonTargetBook))
+      }
+    })
   }, [])
 
   // clozeが切り替わったとき、clozeNoteを変更
@@ -77,12 +84,23 @@ const NoteForm: NextPage = () => {
       </div>
       <AddNoteButton
         targetBook={targetBook}
+        uid={uid}
         router={router}
         label={label}
         page={page}
         note={note}
         clozeNote={clozeNote}
         setError={setError}
+      />
+      <ToBackLink
+        text={
+          targetBook
+            ? targetBook.title.length > 10
+              ? `「${targetBook.title.slice(0, 10)}...」`
+              : `「${targetBook.title}」`
+            : null
+        }
+        href={`/my-page/${uid}/${targetBook?.bookId}`}
       />
     </div>
   )

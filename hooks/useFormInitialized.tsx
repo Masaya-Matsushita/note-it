@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { useForm, zodResolver } from '@mantine/form'
 
 // フォームのバリデーションを定義
-const schema = z.object({
+const signUpShema = z.object({
   name: z
     .string()
     .trim()
@@ -20,15 +20,38 @@ const schema = z.object({
     }),
 })
 
-export const useSignUpFormInitialized = () => {
+const bookSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(2, { message: '2~50文字で入力してください。' })
+    .max(50, { message: '2~50文字で入力してください。' }),
+  chips: z.string(),
+  overview: z
+    .string()
+    .trim()
+    .max(200, { message: '200文字以内で入力してください。' }),
+})
+
+export const useFormInitialized = () => {
   // フォームの初期値、バリデーションを設定
   const signUpForm = useForm({
-    schema: zodResolver(schema),
+    schema: zodResolver(signUpShema),
     initialValues: {
       name: '',
       email: '',
       password: '',
     },
   })
-  return signUpForm
+
+  const bookForm = useForm({
+    schema: zodResolver(bookSchema),
+    initialValues: {
+      title: '',
+      chips: '1,学校',
+      overview: '',
+    },
+  })
+
+  return { signUpForm, bookForm }
 }

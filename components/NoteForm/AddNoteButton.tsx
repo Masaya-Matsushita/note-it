@@ -9,6 +9,7 @@ import { Book } from 'types'
 
 type Props = {
   targetBook: Book | undefined
+  uid: string
   router: NextRouter
   label: string
   page: number
@@ -19,6 +20,7 @@ type Props = {
 
 export const AddNoteButton: FC<Props> = ({
   targetBook,
+  uid,
   router,
   label,
   page,
@@ -28,16 +30,15 @@ export const AddNoteButton: FC<Props> = ({
 }) => {
   // noteをデータベースに登録
   const addNote = async () => {
-    const user = auth.currentUser
     // フォームのバリデーション
-    if (user && targetBook && label.length <= 50 && note.length <= 500) {
+    if (targetBook && label.length <= 50 && note.length <= 500) {
       if (label.length > 0 && note.length > 0 && page !== null) {
         // データベースに登録
         await addDoc(
           collection(
             db,
             'users',
-            user.uid,
+            uid,
             'badges',
             targetBook.badge,
             'books',
@@ -57,7 +58,7 @@ export const AddNoteButton: FC<Props> = ({
           autoClose: 3000,
           icon: <Check size={20} />,
         })
-        router.push(`/my-page/${user.uid}/${targetBook.bookId}`)
+        router.push(`/my-page/${uid}/${targetBook.bookId}`)
       } else {
         setError('note/required-form')
       }
@@ -67,7 +68,7 @@ export const AddNoteButton: FC<Props> = ({
   return (
     <div className='mx-4'>
       <Button
-        className='w-full h-10 text-base'
+        className='w-full h-10 text-base xs:h-12 xs:text-lg'
         leftIcon={<Note size={18} />}
         onClick={() => addNote()}
       >

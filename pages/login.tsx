@@ -1,7 +1,7 @@
 import { AuthDivider } from 'components/Login/AuthDivider'
 import { AuthProvider } from 'components/Login/AuthProvider'
 import { ErrorModal } from 'components/Modal/ErrorModal'
-import { useSignUpFormInitialized } from 'hooks/useSignUpFormInitialized'
+import { useFormInitialized } from 'hooks/useFormInitialized'
 import { ComponentProps, useEffect, useState } from 'react'
 import { NextPage } from 'next'
 import Link from 'next/link'
@@ -34,7 +34,7 @@ type AuthValues = {
 
 const Login: NextPage = () => {
   const router = useRouter()
-  const signUpForm = useSignUpFormInitialized()
+  const { signUpForm } = useFormInitialized()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [method, setMethod] = useState('')

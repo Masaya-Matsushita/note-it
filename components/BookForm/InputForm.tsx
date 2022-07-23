@@ -8,7 +8,7 @@ import { FC } from 'react'
 import { Book2, Check } from 'tabler-icons-react'
 
 type Props = {
-  form: UseFormReturnType<{
+  bookForm: UseFormReturnType<{
     title: string
     chips: string
     overview: string
@@ -22,7 +22,7 @@ type InputValues = {
   overview: string
 }
 
-export const InputForm: FC<Props> = ({ form, router }) => {
+export const InputForm: FC<Props> = ({ bookForm, router }) => {
   // badge,bookをデータベースに登録
   const addBook = async (values: InputValues) => {
     const user = auth.currentUser
@@ -52,17 +52,17 @@ export const InputForm: FC<Props> = ({ form, router }) => {
   }
 
   return (
-    <form onSubmit={form.onSubmit((values) => addBook(values))}>
+    <form onSubmit={bookForm.onSubmit((values) => addBook(values))}>
       <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-600 border-solid xs:px-6'>
         <TextInput
           required
           label='Title'
           placeholder='タイトル(必須)'
           size='md'
-          {...form.getInputProps('title')}
+          {...bookForm.getInputProps('title')}
         />
         <div className='mt-4 mb-2 font-medium'>Badge</div>
-        <Chips {...form.getInputProps('chips')}>
+        <Chips {...bookForm.getInputProps('chips')}>
           <Chip value='1,学校'>学校</Chip>
           <Chip value='2,試験'>試験</Chip>
           <Chip value='3,研究'>研究</Chip>
@@ -76,14 +76,14 @@ export const InputForm: FC<Props> = ({ form, router }) => {
           label='Overview'
           placeholder='概要、メモなど'
           size='md'
-          {...form.getInputProps('overview')}
+          {...bookForm.getInputProps('overview')}
           className='mt-4 mb-1'
         />
       </div>
       <div className='mx-4'>
         <Button
           type='submit'
-          className='w-full h-10 text-base'
+          className='w-full h-10 text-base xs:h-12 xs:text-lg'
           leftIcon={<Book2 size={18} />}
         >
           登録

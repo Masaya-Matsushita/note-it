@@ -14,9 +14,9 @@ const Mypage: NextPage = () => {
   const router = useRouter()
   const [pageLoading, setPageLoading] = useState(true)
   const [opened, setOpened] = useState(false)
-  const [badgeAndBooksList, setBadgeAndBooksList] = useState<BadgeAndBooksList>(
-    []
-  )
+  const [badgeAndBooksList, setBadgeAndBooksList] = useState<
+    BadgeAndBooksList | undefined
+  >()
 
   // userのドキュメントが存在するか判断
   const checkUserExists = async () => {
@@ -78,7 +78,11 @@ const Mypage: NextPage = () => {
           return a.priority - b.priority
         })
         // badgeAndBooksListへ追加
-        setBadgeAndBooksList(badgeAndBooksArray)
+        if (badgeAndBooksArray.length) {
+          setBadgeAndBooksList(badgeAndBooksArray)
+        } else {
+          setBadgeAndBooksList([])
+        }
       })
     }
   }

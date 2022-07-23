@@ -63,7 +63,7 @@ export const ClozeModal: FC<Props> = ({
       closeOnClickOutside={false}
       closeOnEscape={false}
       withCloseButton={false}
-      className='mt-24'
+      className='mt-20'
     >
       <div className='mb-2 text-xl'>括弧抜きを追加</div>
       <div className='grow mb-2 border border-dark-400 border-solid'></div>
@@ -87,10 +87,11 @@ export const ClozeModal: FC<Props> = ({
           width={260}
           placement='end'
           position='top'
-          className='block  text-right  xs:ml-72'
+          className='block text-right xs:ml-72'
           classNames={{
             popover: 'border-dark-500 border-solid',
             target: 'w-24 ml-auto',
+            body: 'p-0'
           }}
           withArrow
         >
