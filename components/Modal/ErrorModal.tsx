@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, FC, useEffect, useState } from 'react'
 import { NextRouter } from 'next/router'
 import { Button, Modal } from '@mantine/core'
 import { FcHighPriority } from 'react-icons/fc'
@@ -6,18 +6,11 @@ import { FcHighPriority } from 'react-icons/fc'
 type Props = {
   router?: NextRouter
   error: string
-  setError: Dispatch<SetStateAction<string>>
   method?: string
-  setMethod?: Dispatch<SetStateAction<string>>
+  dispatch: Dispatch<any>
 }
 
-export const ErrorModal: FC<Props> = ({
-  router,
-  error,
-  setError,
-  method,
-  setMethod,
-}) => {
+export const ErrorModal: FC<Props> = ({ router, error, method, dispatch }) => {
   const [opened, setOpened] = useState(false)
   const [errorCodeJa, setErrorCodeJa] = useState('')
 
@@ -119,10 +112,7 @@ export const ErrorModal: FC<Props> = ({
   // error,methodを初期値に戻す＆モーダルを閉じる
   // no-verifiedページの場合、ページリロード処理
   const handleClose = () => {
-    setError('')
-    if (setMethod) {
-      setMethod('')
-    }
+    dispatch({ type: 'resetError' })
     setOpened(false)
     if (method === 'updateUser') {
       location.reload()
