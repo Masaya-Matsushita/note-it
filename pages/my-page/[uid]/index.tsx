@@ -19,92 +19,81 @@ const Mypage: NextPage = () => {
   >()
 
   // userのドキュメントが存在するか判断
-  const checkUserExists = async () => {
-    const user = auth.currentUser
-    if (user) {
-      const userSnap = await getDoc(doc(db, 'users', user.uid))
-      if (userSnap.exists()) {
-        createBadgeAndBooksList()
-      } else {
-        setOpened(true)
-      }
+  const checkUserExists = async (userId: string) => {
+    const userSnap = await getDoc(doc(db, 'users', userId))
+    if (userSnap.exists()) {
+      createBadgeAndBooksList(userId)
+    } else {
+      setOpened(true)
     }
   }
 
   // badgesとbooksを取得しbadgeAndBooksListへ追加
-  const createBadgeAndBooksList = async () => {
-    const user = auth.currentUser
-    if (user) {
-      // userのbadgesを取得
-      const badgesSnap = await getDocs(
-        collection(db, 'users', user.uid, 'badges')
+  const createBadgeAndBooksList = async (userId: string) => {
+    // userのbadgesを取得
+    const badgesSnap = await getDocs(
+      collection(db, 'users', userId, 'badges')
+    )
+    let badgeAndBooksArray: BadgeAndBooksList = []
+    // 各badgeのbooksを取得
+    badgesSnap.forEach(async (badge) => {
+      const booksSnap = await getDocs(
+        collection(db, 'users', userId, 'badges', badge.id, 'books')
       )
-      let badgeAndBooksArray: BadgeAndBooksList = []
-      // 各badgeのbooksを取得
-      badgesSnap.forEach(async (badge) => {
-        const booksSnap = await getDocs(
-          collection(
-            db,
-            'users',
-            user.uid,
-            'badges',
-            badge.data().badge,
-            'books'
-          )
-        )
-        // 取得したbooksを配列booksへ
-        let books: Books = []
-        booksSnap.forEach((book) => {
-          books = [
-            ...books,
-            {
-              id: book.id,
-              title: book.data().title,
-              overview: book.data().overview,
-            },
-          ]
-        })
-        // 取得したbadgesとbooksをまとめて配列へ
-        badgeAndBooksArray = [
-          ...badgeAndBooksArray,
+      // 取得したbooksを配列booksへ
+      let books: Books = []
+      booksSnap.forEach((book) => {
+        books = [
+          ...books,
           {
-            priority: badge.data().priority,
-            badge: badge.data().badge,
-            books: books,
+            id: book.id,
+            title: book.data().title,
+            overview: book.data().overview,
           },
         ]
-        // badgeのpriorityの値で並べ替え
-        badgeAndBooksArray.sort((a, b) => {
-          return a.priority - b.priority
-        })
-        // badgeAndBooksListへ追加
-        if (badgeAndBooksArray.length) {
-          setBadgeAndBooksList(badgeAndBooksArray)
-        } else {
-          setBadgeAndBooksList([])
-        }
       })
-    }
+      // 取得したbadgesとbooksをまとめて配列へ
+      badgeAndBooksArray = [
+        ...badgeAndBooksArray,
+        {
+          priority: badge.data().priority,
+          badge: badge.data().badge,
+          books: books,
+        },
+      ]
+      // badgeのpriorityの値で並べ替え
+      badgeAndBooksArray.sort((a, b) => {
+        return a.priority - b.priority
+      })
+      // badgeAndBooksListへ追加
+      if (badgeAndBooksArray.length) {
+        setBadgeAndBooksList(badgeAndBooksArray)
+      } else {
+        setBadgeAndBooksList([])
+      }
+    })
   }
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       // パスワードログインかつメール未認証のとき、no-verifiedページへ
-      if (
-        user?.providerData[0].providerId === 'password' &&
-        user?.emailVerified === false
-      ) {
-        router.push('/no-verified')
-      } else {
-        checkUserExists()
-        setPageLoading(false)
+      if (user) {
+        if (
+          user.providerData[0].providerId === 'password' &&
+          user.emailVerified === false
+        ) {
+          router.push('/no-verified')
+        } else {
+          checkUserExists(user.uid)
+          setPageLoading(false)
+        }
       }
     })
   }, [])
 
   return (
     <>
-      {/* ユーザーが未認証の時は表示されない */}
+      {/* ユーザーが未認証の時はLoaderのみ表示 */}
       {pageLoading ? (
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (

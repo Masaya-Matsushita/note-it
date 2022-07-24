@@ -7,7 +7,7 @@ type Props = {
   router?: NextRouter
   error?: string
   method?: string
-  dispatch?: Dispatch<any>
+  dispatch: Dispatch<any>
 }
 
 export const ErrorModal: FC<Props> = ({ router, error, method, dispatch }) => {
