@@ -4,7 +4,7 @@ const initialState = {
   title: '',
   badge: '1,学校',
   overview: '',
-  edit: false,
+  initBadge: '',
 }
 
 type State = Partial<typeof initialState>
@@ -20,8 +20,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
         ...state,
         title: action.title,
         badge: action.badge,
+        initBadge: action.badge,
         overview: action.overview,
-        edit: true
       }
     }
     case 'title': {

@@ -5,11 +5,11 @@ import { useRouter } from 'next/router'
 
 const BookForm: NextPage = () => {
   const router = useRouter()
-  const uid = router.query.uid
+  const uid = String(router.query.uid)
 
   return (
     <div className='mx-auto max-w-xl'>
-      <InputForm router={router} uid={String(uid)} />
+      <InputForm router={router} uid={uid} />
       <ToBackLink text='Home' href={`/my-page/${uid}`} />
     </div>
   )

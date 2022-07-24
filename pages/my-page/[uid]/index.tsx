@@ -57,7 +57,7 @@ const Mypage: NextPage = () => {
         badgeAndBooksArray = [
           ...badgeAndBooksArray,
           {
-            priority: badge.data().priority,
+            priority: Number(badge.id),
             badge: badge.data().badge,
             books: books,
           },
