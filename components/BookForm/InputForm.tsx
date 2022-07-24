@@ -25,25 +25,46 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
   // badge,bookをデータベースに登録/更新
   const handleSubmit = async () => {
     if (state.title && state.badge) {
-      const badgeArray = state.badge.split(',')
-      if (state.initBadge) {
-        // 更新する場合
-        const bookId = String(router.query.id)
-        if (state.initBadge === state.badge) {
-          // badgeの値は更新されない場合
-          await updateDoc(
-            doc(db, 'users', uid, 'badges', badgeArray[0], 'books', bookId),
-            {
-              title: state.title,
-              overview: state.overview,
-            }
-          )
+      if (
+        state.title.length < 2 ||
+        50 < state.title.length ||
+        200 < Number(state.overview?.length)
+      ) {
+        // フォームのバリデーションエラー
+        dispatch({ type: 'error' })
+      } else {
+        const badgeArray = state.badge.split(',')
+        if (state.initBadge) {
+          // 更新する場合
+          const bookId = String(router.query.id)
+          if (state.initBadge === state.badge) {
+            // badgeの値は更新されない場合
+            await updateDoc(
+              doc(db, 'users', uid, 'badges', badgeArray[0], 'books', bookId),
+              {
+                title: state.title,
+                overview: state.overview,
+              }
+            )
+          } else {
+            // badgeの値も更新される場合
+            const initBadgeId = state.initBadge.split(',')[0]
+            await deleteDoc(
+              doc(db, 'users', uid, 'badges', initBadgeId, 'books', bookId)
+            )
+            await setDoc(doc(db, 'users', uid, 'badges', badgeArray[0]), {
+              badge: badgeArray[1],
+            })
+            await addDoc(
+              collection(db, 'users', uid, 'badges', badgeArray[0], 'books'),
+              {
+                title: state.title,
+                overview: state.overview,
+              }
+            )
+          }
         } else {
-          // badgeの値も更新される場合
-          const initBadgeId = state.initBadge.split(',')[0]
-          await deleteDoc(
-            doc(db, 'users', uid, 'badges', initBadgeId, 'books', bookId)
-          )
+          // 登録する場合
           await setDoc(doc(db, 'users', uid, 'badges', badgeArray[0]), {
             badge: badgeArray[1],
           })
@@ -55,26 +76,14 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
             }
           )
         }
-      } else {
-        // 登録する場合
-        await setDoc(doc(db, 'users', uid, 'badges', badgeArray[0]), {
-          badge: badgeArray[1],
+        // ページ遷移（共通)
+        showNotification({
+          message: `${state.initBadge ? '更新' : '登録'}しました`,
+          autoClose: 3000,
+          icon: <Check size={20} />,
         })
-        await addDoc(
-          collection(db, 'users', uid, 'badges', badgeArray[0], 'books'),
-          {
-            title: state.title,
-            overview: state.overview,
-          }
-        )
+        router.push(`/my-page/${uid}`)
       }
-      // ページ遷移（共通)
-      showNotification({
-        message: `${state.initBadge ? '更新' : '登録'}しました`,
-        autoClose: 3000,
-        icon: <Check size={20} />,
-      })
-      router.push(`/my-page/${uid}`)
     }
   }
 
@@ -143,6 +152,14 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
           label='Title'
           placeholder='タイトル(必須)'
           size='md'
+          error={
+            state.error
+              ? Number(state.title?.length) < 2 ||
+                50 < Number(state.title?.length)
+                ? '2~50文字で入力してください。'
+                : false
+              : false
+          }
           value={state.title}
           onChange={(e) =>
             dispatch({ type: 'title', title: e.currentTarget.value })
@@ -166,6 +183,11 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
           label='Overview'
           placeholder='概要、メモなど'
           size='md'
+          error={
+            state.error && 200 < Number(state.overview?.length)
+              ? '200文字以内で入力してください。'
+              : false
+          }
           value={state.overview}
           onChange={(e) =>
             dispatch({ type: 'overview', overview: e.currentTarget.value })

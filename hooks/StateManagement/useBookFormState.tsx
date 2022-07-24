@@ -5,12 +5,13 @@ const initialState = {
   badge: '1,学校',
   overview: '',
   initBadge: '',
+  error: false,
 }
 
 type State = Partial<typeof initialState>
 
 type Action = {
-  type: 'set' | 'title' | 'badge' | 'overview'
+  type: 'set' | 'title' | 'badge' | 'overview' | 'error'
 } & State
 
 const reducer: Reducer<State, Action> = (state, action) => {
@@ -40,6 +41,12 @@ const reducer: Reducer<State, Action> = (state, action) => {
       return {
         ...state,
         overview: action.overview,
+      }
+    }
+    case 'error': {
+      return {
+        ...state,
+        error: true,
       }
     }
   }

@@ -20,19 +20,6 @@ const signUpShema = z.object({
     }),
 })
 
-// const bookSchema = z.object({
-//   title: z
-//     .string()
-//     .trim()
-//     .min(2, { message: '2~50文字で入力してください。' })
-//     .max(50, { message: '2~50文字で入力してください。' }),
-//   chips: z.string(),
-//   overview: z
-//     .string()
-//     .trim()
-//     .max(200, { message: '200文字以内で入力してください。' }),
-// })
-
 export const useFormInitialized = () => {
   // フォームの初期値、バリデーションを設定
   const signUpForm = useForm({
