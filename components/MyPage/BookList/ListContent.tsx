@@ -11,14 +11,12 @@ type Props = {
 
 export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
   const router = useRouter()
-  const uid = router.query.uid
+  const uid = String(router.query.uid)
 
   // targetBookをブラウザに保存し、bookページへ
   const toBookPage = (targetBook: Book, bookId: string) => {
-    if (typeof uid === 'string') {
-      sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
-      router.push(`/my-page/${uid}/${bookId}`)
-    }
+    sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
+    router.push(`/my-page/${uid}/${bookId}`)
   }
 
   // ローディング中

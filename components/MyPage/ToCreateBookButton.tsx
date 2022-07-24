@@ -8,15 +8,13 @@ type Props = {
 }
 
 export const ToCreateBookButton: FC<Props> = ({ router }) => {
-  const uid = router.query.uid
+  const uid = String(router.query.uid)
 
   // ブラウザのtargetBookを空にしてbook-formページへ移動
   const toBookForm = () => {
-    if (typeof uid === 'string') {
-      const emptyTargetBook = { badge: '', title: '', overview: '' }
-      sessionStorage.setItem('targetBook', JSON.stringify(emptyTargetBook))
-      router.push(`/my-page/${uid}/book-form`)
-    }
+    const emptyTargetBook = { badge: '', title: '', overview: '' }
+    sessionStorage.setItem('targetBook', JSON.stringify(emptyTargetBook))
+    router.push(`/my-page/${uid}/book-form`)
   }
 
   return (

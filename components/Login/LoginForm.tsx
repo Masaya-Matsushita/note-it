@@ -24,12 +24,35 @@ import { RiBallPenLine } from 'react-icons/ri'
 import { AuthDivider } from './AuthDivider'
 
 type Props = {
-  state: any
-  dispatch: Dispatch<any>
+  state: {
+    loading: boolean
+    error: string
+    method: string
+    checked: boolean
+    emailValue: string
+  }
+  dispatch: Dispatch<
+    {
+      type:
+        | 'loading'
+        | 'end'
+        | 'error'
+        | 'checked'
+        | 'inputEmail'
+        | 'setEmail'
+        | 'resetError'
+    } & Partial<{
+      loading: boolean
+      error: string
+      method: string
+      checked: boolean
+      emailValue: string
+    }>
+  >
   router: NextRouter
 }
 
-type AuthValues = {
+type SignUpValues = {
   name: string
   email: string
   password: string
@@ -62,7 +85,7 @@ export const LoginForm: FC<Props> = ({ state, dispatch, router }) => {
   }
 
   // email & passwordで新規登録
-  const emailSignUp = async (values: AuthValues) => {
+  const emailSignUp = async (values: SignUpValues) => {
     try {
       dispatch({ type: 'loading' })
       await createUserWithEmailAndPassword(auth, values.email, values.password)

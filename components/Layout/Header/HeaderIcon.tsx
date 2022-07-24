@@ -8,15 +8,15 @@ import { AiOutlineDown } from 'react-icons/ai'
 import { Settings, Logout } from 'tabler-icons-react'
 
 type Props = {
-  state: Partial<{
+  state: {
     userIcon: string
     userName: string
     error: string
     opened: boolean
-  }>
+  }
   dispatch: Dispatch<
     {
-      type: 'error' | 'opened' | 'icon' | 'display' | 'name'
+      type: 'error' | 'opened' | 'icon' | 'name' | 'display'
     } & Partial<{
       userIcon: string
       userName: string

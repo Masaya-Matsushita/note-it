@@ -22,67 +22,92 @@ type Props = {
 export const InputForm: FC<Props> = ({ router, uid }) => {
   const { state, dispatch } = useBookFormState()
 
+  // badgeとbookを保存する
+  const setBadgeAndBook = async (badgeArr: string[]) => {
+    await setDoc(doc(db, 'users', uid, 'badges', badgeArr[0]), {
+      badge: badgeArr[1],
+    })
+    await addDoc(collection(db, 'users', uid, 'badges', badgeArr[0], 'books'), {
+      title: state.title,
+      overview: state.overview,
+    })
+  }
+
   // badge,bookをデータベースに登録/更新
   const handleSubmit = async () => {
-    if (state.title && state.badge) {
-      if (
-        state.title.length < 2 ||
-        50 < state.title.length ||
-        200 < Number(state.overview?.length)
-      ) {
-        // フォームのバリデーションエラー
-        dispatch({ type: 'error' })
-      } else {
-        const badgeArray = state.badge.split(',')
-        if (state.initBadge) {
-          // 更新する場合
-          const bookId = String(router.query.id)
-          if (state.initBadge === state.badge) {
-            // badgeの値は更新されない場合
-            await updateDoc(
-              doc(db, 'users', uid, 'badges', badgeArray[0], 'books', bookId),
-              {
-                title: state.title,
-                overview: state.overview,
-              }
-            )
-          } else {
-            // badgeの値も更新される場合
-            const initBadgeId = state.initBadge.split(',')[0]
-            await deleteDoc(
-              doc(db, 'users', uid, 'badges', initBadgeId, 'books', bookId)
-            )
-            await setDoc(doc(db, 'users', uid, 'badges', badgeArray[0]), {
-              badge: badgeArray[1],
-            })
-            await addDoc(
-              collection(db, 'users', uid, 'badges', badgeArray[0], 'books'),
-              {
-                title: state.title,
-                overview: state.overview,
-              }
-            )
+    const title = state.title
+    const badge = state.badge
+    const initBadge = state.initBadge
+    const overview = state.overview
+    // フォームのバリデーション
+    if (
+      title.length < 2 ||
+      50 < title.length ||
+      200 < Number(overview.length)
+    ) {
+      dispatch({ type: 'error' })
+      return
+    }
+    const badgeArr = badge.split(',')
+    if (initBadge) {
+      // 更新する場合
+      const bookId = String(router.query.id)
+      if (initBadge === badge) {
+        // badgeの値は更新されない場合
+        await updateDoc(
+          doc(db, 'users', uid, 'badges', badgeArr[0], 'books', bookId),
+          {
+            title: title,
+            overview: overview,
           }
-        } else {
-          // 登録する場合
-          await setDoc(doc(db, 'users', uid, 'badges', badgeArray[0]), {
-            badge: badgeArray[1],
-          })
-          await addDoc(
-            collection(db, 'users', uid, 'badges', badgeArray[0], 'books'),
-            {
-              title: state.title,
-              overview: state.overview,
-            }
-          )
-        }
-        // ページ遷移（共通)
-        showNotification({
-          message: `${state.initBadge ? '更新' : '登録'}しました`,
-          autoClose: 3000,
-          icon: <Check size={20} />,
-        })
-        router.push(`/my-page/${uid}`)
+        )
+      } else {
+        // badgeの値も更新される場合
+        const initBadgeId = initBadge.split(',')[0]
+        await deleteDoc(
+          doc(db, 'users', uid, 'badges', initBadgeId, 'books', bookId)
+        )
+        setBadgeAndBook(badgeArr)
+      }
+    } else {
+      // 登録する場合
+      setBadgeAndBook(badgeArr)
+    }
+    // ページ遷移
+    showNotification({
+      message: `${initBadge ? '更新' : '登録'}しました`,
+      autoClose: 3000,
+      icon: <Check size={20} />,
+    })
+    router.push(`/my-page/${uid}`)
+  }
+
+  // badgeの値を整形
+  const exchangeBadgeValue = (badge: string) => {
+    switch (badge) {
+      case '学校': {
+        return '1,学校'
+      }
+      case '試験': {
+        return '2,試験'
+      }
+      case '研究': {
+        return '3,研究'
+      }
+      case '資格': {
+        return '4,資格'
+      }
+      case '研鑽': {
+        return '5,研鑽'
+      }
+      case '教養': {
+        return '6,教養'
+      }
+      case '趣味': {
+        return '7,趣味'
+      }
+      case 'その他': {
+        return '8,その他'
       }
     }
   }
@@ -90,54 +115,20 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
   useEffect(() => {
     // WebストレージからtargetBookを取得
     const jsonTargetBook = sessionStorage.getItem('targetBook')
-    if (jsonTargetBook) {
-      const targetBook = JSON.parse(jsonTargetBook)
-      if (targetBook.title !== '') {
-        // 更新の場合
-        // badgeの値を整形
-        let badgeValue = ''
-        switch (targetBook.badge) {
-          case '学校': {
-            badgeValue = '1,学校'
-            break
-          }
-          case '試験': {
-            badgeValue = '2,試験'
-            break
-          }
-          case '研究': {
-            badgeValue = '3,研究'
-            break
-          }
-          case '資格': {
-            badgeValue = '4,資格'
-            break
-          }
-          case '研鑽': {
-            badgeValue = '5,研鑽'
-            break
-          }
-          case '教養': {
-            badgeValue = '6,教養'
-            break
-          }
-          case '趣味': {
-            badgeValue = '7,趣味'
-            break
-          }
-          case 'その他': {
-            badgeValue = '8,その他'
-            break
-          }
-        }
-        // 値をフォームに代入
-        dispatch({
-          type: 'set',
-          title: targetBook.title,
-          badge: badgeValue,
-          overview: targetBook.overview,
-        })
-      }
+    if (!jsonTargetBook) {
+      return
+    }
+    const targetBook = JSON.parse(jsonTargetBook)
+    if (targetBook.title !== '') {
+      // 更新の場合
+      const badgeValue = exchangeBadgeValue(targetBook.badge)
+      // 値をフォームに代入
+      dispatch({
+        type: 'set',
+        title: targetBook.title,
+        badge: badgeValue,
+        overview: targetBook.overview,
+      })
     }
   }, [])
 
@@ -154,11 +145,10 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
           size='md'
           error={
             state.error
-              ? Number(state.title?.length) < 2 ||
-                50 < Number(state.title?.length)
+              ? state.title.length < 2 || 50 < state.title.length
                 ? '2~50文字で入力してください。'
-                : false
-              : false
+                : null
+              : null
           }
           value={state.title}
           onChange={(e) =>
@@ -184,7 +174,7 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
           placeholder='概要、メモなど'
           size='md'
           error={
-            state.error && 200 < Number(state.overview?.length)
+            state.error && 200 < state.overview.length
               ? '200文字以内で入力してください。'
               : false
           }

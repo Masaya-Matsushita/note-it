@@ -5,7 +5,7 @@ import { FcHighPriority } from 'react-icons/fc'
 
 type Props = {
   router?: NextRouter
-  error?: string
+  error: string
   method?: string
   dispatch: Dispatch<any>
 }

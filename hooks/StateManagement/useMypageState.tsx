@@ -8,21 +8,21 @@ const initialState = {
 }
 
 type State = {
-  pageLoading?: boolean | undefined
-  opened?: boolean | undefined
+  pageLoading: boolean
+  opened: boolean
   badgeAndBooksList?: BadgeAndBooksList | undefined
 }
 
 type Action = {
   type: 'opened' | 'pageLoading' | 'setList'
-} & State
+} & Partial<State>
 
 const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case 'opened': {
       return {
         ...state,
-        opened: action.opened,
+        opened: action.opened ? action.opened : false,
       }
     }
     case 'pageLoading': {

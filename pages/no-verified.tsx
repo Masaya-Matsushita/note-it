@@ -42,7 +42,7 @@ const NoVerified: NextPage = () => {
         <div>
           <div className='mx-auto max-w-[620px]'>
             <Stepper
-              active={state.active ? state.active : 0}
+              active={state.active}
               onStepClick={(e) => dispatch({ type: 'active', active: e })}
               orientation='vertical'
               iconSize={48}

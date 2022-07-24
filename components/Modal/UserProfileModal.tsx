@@ -9,13 +9,13 @@ import { useRouter } from 'next/router'
 import { useUserProfileModalState } from 'hooks/StateManagement/useUserProfileModalState'
 
 type Props = {
-  opened?: boolean
+  opened: boolean
   propsDispatch: Dispatch<any>
 }
 
 export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
   const router = useRouter()
-  const uid = router.query.uid
+  const uid = String(router.query.uid)
   const { state, dispatch } = useUserProfileModalState()
 
   // アイコンをアップロード＆URLを取得して表示
@@ -37,7 +37,7 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
 
   // userのドキュメントを作成/更新、リロード
   const setUserProfile = async () => {
-    if (typeof uid === 'string' && state.userName) {
+    if (state.userName) {
       await setDoc(doc(db, 'users', uid), {
         userName: state.userName,
         iconURL: state.userIcon,
@@ -73,7 +73,7 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
 
   return (
     <Modal
-      opened={opened ? opened : false}
+      opened={opened}
       onClose={() => propsDispatch({ type: 'opened', opened: false })}
       closeOnClickOutside={false}
       closeOnEscape={false}

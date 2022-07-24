@@ -7,7 +7,7 @@ import { Book } from 'types'
 type Props = {
   label: string
   targetBook: Book
-  uid: string | string[] | undefined
+  uid: string
   bookId: string
 }
 
@@ -16,13 +16,11 @@ export const ItemMenu: FC<Props> = ({ label, targetBook, uid, bookId }) => {
 
   // ブラウザにtargetBookを保存し、book-formページへ
   const toEditPage = () => {
-    if (typeof uid === 'string') {
-      sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
-      router.push({
-        pathname: `/my-page/${uid}/book-form`,
-        query: { id: bookId },
-      })
-    }
+    sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
+    router.push({
+      pathname: `/my-page/${uid}/book-form`,
+      query: { id: bookId },
+    })
   }
 
   return (

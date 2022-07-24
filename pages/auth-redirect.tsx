@@ -56,7 +56,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
         dispatch={dispatch}
       />
       <LoadingOverlay
-        visible={state.pageLoading ? state.pageLoading : true}
+        visible={state.pageLoading}
         loaderProps={{ size: 'xl' }}
       />
     </>

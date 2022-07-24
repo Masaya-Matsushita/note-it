@@ -9,7 +9,7 @@ const initialState = {
   emailValue: '',
 }
 
-type State = Partial<typeof initialState>
+type State = typeof initialState
 
 type Action = {
   type:
@@ -20,7 +20,7 @@ type Action = {
     | 'error'
     | 'resetError'
     | 'checked'
-} & State
+} & Partial<State>
 
 // reducer関数
 const reducer: Reducer<State, Action> = (state, action) => {
@@ -28,14 +28,14 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'setEmail': {
       return {
         ...state,
-        emailValue: action.emailValue,
+        emailValue: action.emailValue ? action.emailValue : '',
         checked: true,
       }
     }
     case 'inputEmail': {
       return {
         ...state,
-        emailValue: action.emailValue,
+        emailValue: action.emailValue ? action.emailValue : '',
       }
     }
     case 'loading': {
@@ -53,22 +53,23 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'error': {
       return {
         ...state,
-        error: action.error,
-        method: action.method,
+        error: action.error ? action.error : '',
+        method: action.method ? action.method : '',
         loading: false,
       }
     }
     case 'resetError': {
       return {
         ...state,
-        error: '',
-        method: '',
+        error: action.error ? action.error : '',
+
+        method: action.method ? action.method : '',
       }
     }
     case 'checked': {
       return {
         ...state,
-        checked: action.checked,
+        checked: action.checked ? action.checked : false,
       }
     }
   }

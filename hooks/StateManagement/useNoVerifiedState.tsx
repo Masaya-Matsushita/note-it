@@ -6,25 +6,25 @@ const initialState = {
   active: 0,
 }
 
-type State = Partial<typeof initialState>
+type State =  typeof initialState
 
 type Action = {
   type: 'error' | 'active'
-} & State
+} & Partial<State>
 
 const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case 'error': {
       return {
         ...state,
-        error: action.error,
-        method: action.method,
+        error: action.error ? action.error : '',
+        method: action.method ? action.method : '',
       }
     }
     case 'active': {
       return {
         ...state,
-        active: action.active,
+        active: action.active ? action.active : 0,
       }
     }
   }

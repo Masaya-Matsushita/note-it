@@ -5,11 +5,11 @@ const initialState = {
   loading: false,
 }
 
-type State = Partial<typeof initialState>
+type State = typeof initialState
 
 type Action = {
   type: 'error' | 'loading' | 'end'
-} & State
+} & Partial<State>
 
 const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
@@ -28,7 +28,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'error': {
       return {
         ...state,
-        error: action.error,
+        error: action.error ? action.error : '',
         loading: false,
       }
     }
