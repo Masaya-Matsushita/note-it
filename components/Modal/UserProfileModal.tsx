@@ -64,7 +64,7 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
           // 新規作成の場合はデフォルトを表示
           dispatch({ type: 'icon', userIcon: '/UnknownIcon.png' })
           if (user.displayName) {
-            dispatch({ type: 'name', userIcon: user.displayName })
+            dispatch({ type: 'name', userName: user.displayName })
           }
         }
       }
@@ -110,7 +110,9 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
         <TextInput
           placeholder='User Name'
           value={state.userName}
-          onChange={(e) => dispatch({ type: 'name', userName: e.target.value })}
+          onChange={(e) =>
+            dispatch({ type: 'name', userName: e.currentTarget.value })
+          }
           className='mt-4'
         />
       </Card>

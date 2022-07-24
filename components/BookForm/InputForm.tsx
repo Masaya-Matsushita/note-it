@@ -1,66 +1,71 @@
 import { TextInput, Chips, Chip, Textarea, Button } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { setDoc, doc, addDoc, collection } from 'firebase/firestore'
-import db, { auth } from 'firebaseConfig/firebase'
+import db from 'firebaseConfig/firebase'
+import { useBookFormState } from 'hooks/StateManagement/useBookFormState'
 import { NextRouter } from 'next/router'
-import { Dispatch, FC } from 'react'
+import { FC, useEffect } from 'react'
 import { Book2, Check } from 'tabler-icons-react'
 
 type Props = {
   router: NextRouter
-  state: {
-    title?: string
-    badge?: string
-    overview?: string
-  }
-  dispatch: Dispatch<
-    {
-      type: 'set' | 'title' | 'badge' | 'overview'
-    } & {
-      title?: string
-      badge?: string
-      overview?: string
-    }
-  >
+  uid: string
 }
 
-type InputValues = {
-  title: string
-  chips: string
-  overview: string
-}
+export const InputForm: FC<Props> = ({ router, uid }) => {
+  const { state, dispatch } = useBookFormState()
 
-export const InputForm: FC<Props> = ({ router, state, dispatch }) => {
   // badge,bookをデータベースに登録
-  const addBook = async (values: InputValues) => {
-    const user = auth.currentUser
-    if (user) {
-      // badgeを登録
-      const chipsArray = values.chips.split(',')
-      await setDoc(doc(db, 'users', user.uid, 'badges', chipsArray[1]), {
-        priority: Number(chipsArray[0]),
-        badge: chipsArray[1],
-      })
-      // bookを登録
-      await addDoc(
-        collection(db, 'users', user.uid, 'badges', chipsArray[1], 'books'),
-        {
-          title: values.title,
-          overview: values.overview,
-        }
-      )
-      // 登録後、ページ遷移
-      showNotification({
-        message: '登録完了！',
-        autoClose: 3000,
-        icon: <Check size={20} />,
-      })
-      router.push(`/my-page/${user.uid}`)
+  const addBook = async () => {
+    if (state.title && state.badge) {
+      if (state.edit) {
+        console.log('hello')
+      } else {
+        // badgeを登録
+        const chipsArray = state.badge.split(',')
+        await setDoc(doc(db, 'users', uid, 'badges', chipsArray[1]), {
+          priority: Number(chipsArray[0]),
+          badge: chipsArray[1],
+        })
+        // bookを登録
+        await addDoc(
+          collection(db, 'users', uid, 'badges', chipsArray[1], 'books'),
+          {
+            title: state.title,
+            overview: state.overview,
+          }
+        )
+        // 登録後、ページ遷移
+        showNotification({
+          message: '登録完了！',
+          autoClose: 3000,
+          icon: <Check size={20} />,
+        })
+        router.push(`/my-page/${uid}`)
+      }
     }
   }
+
+  useEffect(() => {
+    const jsonTargetBook = sessionStorage.getItem('targetBook')
+    if (jsonTargetBook) {
+      const targetBook = JSON.parse(jsonTargetBook)
+      if (targetBook.title !== '') {
+        dispatch({
+          type: 'set',
+          title: targetBook.title,
+          badge: targetBook.badge,
+          overview: targetBook.overview,
+        })
+      }
+    }
+  }, [])
 
   return (
     <div>
+      <div className='ml-2 max-w-lg text-3xl'>
+        Book {state.edit ? '更新' : '登録'}
+      </div>
       <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-600 border-solid xs:px-6'>
         <TextInput
           required
@@ -101,9 +106,9 @@ export const InputForm: FC<Props> = ({ router, state, dispatch }) => {
         <Button
           className='w-full h-10 text-base xs:h-12 xs:text-lg'
           leftIcon={<Book2 size={18} />}
-          onClick={() => console.log('hello')}
+          onClick={() => addBook()}
         >
-          登録
+          {state.edit ? '更新' : '登録'}
         </Button>
       </div>
     </div>

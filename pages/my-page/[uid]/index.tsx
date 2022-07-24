@@ -29,44 +29,47 @@ const Mypage: NextPage = () => {
   const createBadgeAndBooksList = async (userId: string) => {
     // userのbadgesを取得
     const badgesSnap = await getDocs(collection(db, 'users', userId, 'badges'))
-    let badgeAndBooksArray: BadgeAndBooksList = []
-    // 各badgeのbooksを取得
-    badgesSnap.forEach(async (badge) => {
-      const booksSnap = await getDocs(
-        collection(db, 'users', userId, 'badges', badge.id, 'books')
-      )
-      // 取得したbooksを配列booksへ
-      let books: Books = []
-      booksSnap.forEach((book) => {
-        books = [
-          ...books,
+    if (badgesSnap.empty) {
+      dispatch({
+        type: 'setList',
+        badgeAndBooksList: [],
+      })
+    } else {
+      let badgeAndBooksArray: BadgeAndBooksList = []
+      // 各badgeのbooksを取得
+      badgesSnap.forEach(async (badge) => {
+        const booksSnap = await getDocs(
+          collection(db, 'users', userId, 'badges', badge.id, 'books')
+        )
+        // 取得したbooksを配列booksへ
+        let books: Books = []
+        booksSnap.forEach((book) => {
+          books = [
+            ...books,
+            {
+              id: book.id,
+              title: book.data().title,
+              overview: book.data().overview,
+            },
+          ]
+        })
+        // 取得したbadgesとbooksをまとめて配列へ
+        badgeAndBooksArray = [
+          ...badgeAndBooksArray,
           {
-            id: book.id,
-            title: book.data().title,
-            overview: book.data().overview,
+            priority: badge.data().priority,
+            badge: badge.data().badge,
+            books: books,
           },
         ]
-      })
-      // 取得したbadgesとbooksをまとめて配列へ
-      badgeAndBooksArray = [
-        ...badgeAndBooksArray,
-        {
-          priority: badge.data().priority,
-          badge: badge.data().badge,
-          books: books,
-        },
-      ]
-      // badgeのpriorityの値で並べ替え
-      badgeAndBooksArray.sort((a, b) => {
-        return a.priority - b.priority
-      })
-      // badgeAndBooksListへ追加
-      if (badgeAndBooksArray.length) {
+        // badgeのpriorityの値で並べ替え
+        badgeAndBooksArray.sort((a, b) => {
+          return a.priority - b.priority
+        })
+        // badgeAndBooksListへ追加
         dispatch({ type: 'setList', badgeAndBooksList: badgeAndBooksArray })
-      } else {
-        dispatch({ type: 'setList', badgeAndBooksList: [] })
-      }
-    })
+      })
+    }
   }
 
   useEffect(() => {
