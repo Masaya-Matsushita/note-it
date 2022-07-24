@@ -1,5 +1,5 @@
 import { UserProfileModal } from 'components/Modal/UserProfileModal'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -9,14 +9,11 @@ import { Loader } from '@mantine/core'
 import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
+import { useMypageState } from 'hooks/StateManagement/useMypageState'
 
 const Mypage: NextPage = () => {
   const router = useRouter()
-  const [pageLoading, setPageLoading] = useState(true)
-  const [opened, setOpened] = useState(false)
-  const [badgeAndBooksList, setBadgeAndBooksList] = useState<
-    BadgeAndBooksList | undefined
-  >()
+  const { state, dispatch } = useMypageState()
 
   // userのドキュメントが存在するか判断
   const checkUserExists = async (userId: string) => {
@@ -24,16 +21,14 @@ const Mypage: NextPage = () => {
     if (userSnap.exists()) {
       createBadgeAndBooksList(userId)
     } else {
-      setOpened(true)
+      dispatch({ type: 'opened', opened: true })
     }
   }
 
   // badgesとbooksを取得しbadgeAndBooksListへ追加
   const createBadgeAndBooksList = async (userId: string) => {
     // userのbadgesを取得
-    const badgesSnap = await getDocs(
-      collection(db, 'users', userId, 'badges')
-    )
+    const badgesSnap = await getDocs(collection(db, 'users', userId, 'badges'))
     let badgeAndBooksArray: BadgeAndBooksList = []
     // 各badgeのbooksを取得
     badgesSnap.forEach(async (badge) => {
@@ -67,9 +62,9 @@ const Mypage: NextPage = () => {
       })
       // badgeAndBooksListへ追加
       if (badgeAndBooksArray.length) {
-        setBadgeAndBooksList(badgeAndBooksArray)
+        dispatch({ type: 'setList', badgeAndBooksList: badgeAndBooksArray })
       } else {
-        setBadgeAndBooksList([])
+        dispatch({ type: 'setList', badgeAndBooksList: [] })
       }
     })
   }
@@ -85,7 +80,7 @@ const Mypage: NextPage = () => {
           router.push('/no-verified')
         } else {
           checkUserExists(user.uid)
-          setPageLoading(false)
+          dispatch({ type: 'pageLoading', pageLoading: false })
         }
       }
     })
@@ -93,13 +88,13 @@ const Mypage: NextPage = () => {
 
   return (
     <>
-      {/* ユーザーが未認証の時はLoaderのみ表示 */}
-      {pageLoading ? (
+      {/* ユーザーが未認証の時はLoaderを表示 */}
+      {state.pageLoading ? (
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <>
-          <UserProfileModal opened={opened} setOpened={setOpened} />
-          <BookList badgeAndBooksList={badgeAndBooksList} router={router} />
+          <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
+          <BookList badgeAndBooksList={state.badgeAndBooksList} />
           <ToCreateBookButton router={router} />
         </>
       )}

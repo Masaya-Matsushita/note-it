@@ -1,5 +1,4 @@
 import { Button } from '@mantine/core'
-import { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
 import { Plus } from 'tabler-icons-react'
@@ -9,10 +8,14 @@ type Props = {
 }
 
 export const ToCreateBookButton: FC<Props> = ({ router }) => {
+  const uid = router.query.uid
+
+  // ブラウザのtargetBookを空にしてbook-formページへ移動
   const toBookForm = () => {
-    const user = auth.currentUser
-    if (user) {
-      router.push(`/my-page/${user.uid}/book-form`)
+    if (typeof uid === 'string') {
+      const emptyTargetBook = { badge: '', title: '', overview: '' }
+      sessionStorage.setItem('targetBook', JSON.stringify(emptyTargetBook))
+      router.push(`/my-page/${uid}/book-form`)
     }
   }
 

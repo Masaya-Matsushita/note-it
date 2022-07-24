@@ -10,7 +10,6 @@ export type Badge =
 
 export type Book = {
   badge: Badge
-  bookId: string
   title: string
   overview: string
 }
