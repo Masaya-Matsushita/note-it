@@ -1,19 +1,27 @@
 import { TextInput, Chips, Chip, Textarea, Button } from '@mantine/core'
-import { UseFormReturnType } from '@mantine/form/lib/use-form'
 import { showNotification } from '@mantine/notifications'
 import { setDoc, doc, addDoc, collection } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
-import { FC } from 'react'
+import { Dispatch, FC } from 'react'
 import { Book2, Check } from 'tabler-icons-react'
 
 type Props = {
-  bookForm: UseFormReturnType<{
-    title: string
-    chips: string
-    overview: string
-  }>
   router: NextRouter
+  state: {
+    title?: string
+    badge?: string
+    overview?: string
+  }
+  dispatch: Dispatch<
+    {
+      type: 'set' | 'title' | 'badge' | 'overview'
+    } & {
+      title?: string
+      badge?: string
+      overview?: string
+    }
+  >
 }
 
 type InputValues = {
@@ -22,7 +30,7 @@ type InputValues = {
   overview: string
 }
 
-export const InputForm: FC<Props> = ({ bookForm, router }) => {
+export const InputForm: FC<Props> = ({ router, state, dispatch }) => {
   // badge,bookをデータベースに登録
   const addBook = async (values: InputValues) => {
     const user = auth.currentUser
@@ -52,17 +60,23 @@ export const InputForm: FC<Props> = ({ bookForm, router }) => {
   }
 
   return (
-    <form onSubmit={bookForm.onSubmit((values) => addBook(values))}>
+    <div>
       <div className='p-4 py-6 mt-3 mb-6 rounded-md border-dark-600 border-solid xs:px-6'>
         <TextInput
           required
           label='Title'
           placeholder='タイトル(必須)'
           size='md'
-          {...bookForm.getInputProps('title')}
+          value={state.title}
+          onChange={(e) =>
+            dispatch({ type: 'title', title: e.currentTarget.value })
+          }
         />
         <div className='mt-4 mb-2 font-medium'>Badge</div>
-        <Chips {...bookForm.getInputProps('chips')}>
+        <Chips
+          value={state.badge}
+          onChange={(e) => dispatch({ type: 'badge', badge: String(e) })}
+        >
           <Chip value='1,学校'>学校</Chip>
           <Chip value='2,試験'>試験</Chip>
           <Chip value='3,研究'>研究</Chip>
@@ -76,19 +90,22 @@ export const InputForm: FC<Props> = ({ bookForm, router }) => {
           label='Overview'
           placeholder='概要、メモなど'
           size='md'
-          {...bookForm.getInputProps('overview')}
+          value={state.overview}
+          onChange={(e) =>
+            dispatch({ type: 'overview', overview: e.currentTarget.value })
+          }
           className='mt-4 mb-1'
         />
       </div>
       <div className='mx-4'>
         <Button
-          type='submit'
           className='w-full h-10 text-base xs:h-12 xs:text-lg'
           leftIcon={<Book2 size={18} />}
+          onClick={() => console.log('hello')}
         >
           登録
         </Button>
       </div>
-    </form>
+    </div>
   )
 }

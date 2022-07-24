@@ -20,18 +20,18 @@ const signUpShema = z.object({
     }),
 })
 
-const bookSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(2, { message: '2~50文字で入力してください。' })
-    .max(50, { message: '2~50文字で入力してください。' }),
-  chips: z.string(),
-  overview: z
-    .string()
-    .trim()
-    .max(200, { message: '200文字以内で入力してください。' }),
-})
+// const bookSchema = z.object({
+//   title: z
+//     .string()
+//     .trim()
+//     .min(2, { message: '2~50文字で入力してください。' })
+//     .max(50, { message: '2~50文字で入力してください。' }),
+//   chips: z.string(),
+//   overview: z
+//     .string()
+//     .trim()
+//     .max(200, { message: '200文字以内で入力してください。' }),
+// })
 
 export const useFormInitialized = () => {
   // フォームの初期値、バリデーションを設定
@@ -54,14 +54,5 @@ export const useFormInitialized = () => {
     },
   })
 
-  const bookForm = useForm({
-    schema: zodResolver(bookSchema),
-    initialValues: {
-      title: '',
-      chips: '1,学校',
-      overview: '',
-    },
-  })
-
-  return { signUpForm, emailForm, bookForm }
+  return { signUpForm, emailForm }
 }

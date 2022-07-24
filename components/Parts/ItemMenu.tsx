@@ -1,12 +1,30 @@
 import { Menu } from '@mantine/core'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { Pencil, Trash } from 'tabler-icons-react'
+import { Book } from 'types'
 
 type Props = {
   label: string
+  targetBook: Book
+  uid: string | string[] | undefined
+  bookId: string
 }
 
-export const ItemMenu: FC<Props> = (props) => {
+export const ItemMenu: FC<Props> = ({ label, targetBook, uid, bookId }) => {
+  const router = useRouter()
+
+  // ブラウザにtargetBookを保存し、book-formページへ
+  const toEditPage = () => {
+    if (typeof uid === 'string') {
+      sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
+      router.push({
+        pathname: `/my-page/${uid}/book-form`,
+        query: { id: bookId },
+      })
+    }
+  }
+
   return (
     <Menu
       control={<div>...</div>}
@@ -15,8 +33,10 @@ export const ItemMenu: FC<Props> = (props) => {
         body: 'border-dark-500 border-solid',
       }}
     >
-      <Menu.Label>{props.label}</Menu.Label>
-      <Menu.Item icon={<Pencil size={14} />}>編集</Menu.Item>
+      <Menu.Label>{label}</Menu.Label>
+      <Menu.Item icon={<Pencil size={14} />} onClick={() => toEditPage()}>
+        編集
+      </Menu.Item>
       <Menu.Item color='red' icon={<Trash size={14} />}>
         削除
       </Menu.Item>

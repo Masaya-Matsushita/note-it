@@ -86,6 +86,13 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
                           ? book.title.slice(0, 20) + '...'
                           : book.title
                       }
+                      targetBook={{
+                        badge: badgeAndBooks.badge,
+                        title: book.title,
+                        overview: book.overview,
+                      }}
+                      uid={uid}
+                      bookId={book.id}
                     />
                   </div>
                 )
