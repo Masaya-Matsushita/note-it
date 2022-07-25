@@ -70,12 +70,12 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
         setBadgeAndBook(badgeArr)
       }
     } else {
-      // 登録する場合
+      // 作成する場合
       setBadgeAndBook(badgeArr)
     }
     // ページ遷移
     showNotification({
-      message: `${initBadge ? '更新' : '登録'}しました`,
+      message: `${initBadge ? '更新' : '作成'}しました`,
       autoClose: 3000,
       icon: <Check size={20} />,
     })

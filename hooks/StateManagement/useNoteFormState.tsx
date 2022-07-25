@@ -20,6 +20,7 @@ type Action = {
 } & Partial<State>
 
 const initialState = {
+  edit: false,
   opened: false,
   title: '',
   label: '',
@@ -100,6 +101,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'setBookAndNote':
       return {
         ...state,
+        edit: action.edit ? action.edit : false,
         title: action.title ? action.title : '',
         label: action.label ? action.label : '',
         page: action.page ? action.page : 0,

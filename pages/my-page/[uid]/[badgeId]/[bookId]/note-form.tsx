@@ -1,7 +1,7 @@
 import { Card } from '@mantine/core'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ErrorModal } from 'components/Modal/ErrorModal'
 import { LabelInput } from 'components/NoteForm/LabelInput'
 import { PageInput } from 'components/NoteForm/PageInput'
@@ -31,6 +31,7 @@ const NoteForm: NextPage = () => {
       if (targetNote.label !== '') {
         dispatch({
           type: 'setBookAndNote',
+          edit: true,
           title: targetBook.title,
           label: targetNote.label,
           page: Number(targetNote.page),
@@ -61,19 +62,14 @@ const NoteForm: NextPage = () => {
         dispatch={dispatch}
       />
       <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
-      <div className='mt-2 ml-4 text-lg text-dark-400'>
-        - {state.title}
-      </div>
+      <div className='mt-2 ml-4 text-lg text-dark-400'>- {state.title}</div>
       <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
         <div className='flex mr-4'>
           <LabelInput label={state.label} dispatch={dispatch} />
           <PageInput page={state.page} dispatch={dispatch} />
         </div>
         <NoteInput note={state.note} cloze={state.cloze} dispatch={dispatch} />
-        <ClozeSwitch
-          cloze={state.cloze}
-          dispatch={dispatch}
-        />
+        <ClozeSwitch cloze={state.cloze} dispatch={dispatch} />
         {state.showClozeNote ? (
           <div>
             <div className='mb-2 text-sm font-semibold'>括弧抜き</div>
@@ -86,6 +82,7 @@ const NoteForm: NextPage = () => {
         badgeId={badgeId}
         bookId={bookId}
         router={router}
+        edit={state.edit}
         label={state.label}
         page={state.page}
         note={state.note}
