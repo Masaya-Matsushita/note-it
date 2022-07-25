@@ -1,93 +1,156 @@
-import { Card } from '@mantine/core'
-import { auth } from 'firebaseConfig/firebase'
+import { ItemMenu } from 'components/Parts/ItemMenu'
+import { deleteDoc, doc } from 'firebase/firestore'
+import db from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
-import { Badge, BookAndNotes } from 'types'
+import { Note } from 'tabler-icons-react'
+import { Notes } from 'types'
 
 type Props = {
-  bookAndNotes: BookAndNotes
+  notes: Notes
   router: NextRouter
-}
-
-type TargetNote = {
-  badge: Badge
+  uid: string
+  badgeId: string
   bookId: string
-  title: string
-  noteId: string
 }
 
-export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
-  const toNotePage = (targetNote: TargetNote) => {
-    const user = auth.currentUser
-    if (user) {
-      sessionStorage.setItem('targetNote', JSON.stringify(targetNote))
-      router.push(
-        `/my-page/${user.uid}/${targetNote.bookId}/${targetNote.noteId}`
-      )
-    }
+export const NoteList: FC<Props> = ({
+  notes,
+  router,
+  uid,
+  badgeId,
+  bookId,
+}) => {
+  const toNotePage = (note: {
+    id: string
+    label: string
+    page: number
+    note: string
+    clozeNote: string
+  }) => {
+    sessionStorage.setItem('targetNote', JSON.stringify(note))
+    router.push(`/my-page/${uid}/${badgeId}/${bookId}/${note.id}`)
   }
 
-  const toNoteForm = () => {
-    const user = auth.currentUser
-    if (user) {
-      router.push(`/my-page/${user.uid}/${bookAndNotes.book.bookId}/note-form`)
-    }
+  const toNoteForm = (target: any) => {
+    sessionStorage.setItem('targetNote', JSON.stringify(target))
+    router.push(`/my-page/${uid}/${badgeId}/${bookId}/note-form`)
+  }
+
+  // ブラウザにtargetNoteを保存し、note-formページへ
+  const toEditPage = (target: any, targetId: string) => {
+    sessionStorage.setItem('targetNote', JSON.stringify(target))
+    router.push({
+      pathname: `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
+      query: { id: targetId },
+    })
+  }
+
+  // noteを削除
+  const handleDelete = async (noteId: string) => {
+    await deleteDoc(
+      doc(db, 'users', uid, 'badges', badgeId, 'books', bookId, 'notes', noteId)
+    )
+    location.reload()
   }
 
   return (
     <div>
-      <div className='mb-1 ml-4 text-2xl font-semibold'>Notes</div>
-      <div className='grow mx-2 border border-dark-400 border-solid'></div>
-      {bookAndNotes.notes.length ? (
-        <div>
-          <div className='flex justify-between mt-4 mb-1'>
-            <div className='ml-8 text-sm text-dark-300 xs:ml-16 xs:text-base'>
-              Label
-            </div>
-            <div className='mr-12 text-sm text-dark-300 xs:mr-[72px] xs:text-base'>
-              Page
-            </div>
+      <div className='mb-1 ml-2 text-2xl font-semibold'>Notes</div>
+      <div className='grow border border-dark-400 border-solid'></div>
+      {notes.length ? (
+        <div className='mx-2'>
+          <div className='flex mt-4 mb-1 text-sm text-dark-300 xs:text-base'>
+            <div className='ml-2 w-[72px]'>Page</div>
+            <div>Label</div>
           </div>
-          {bookAndNotes.notes.map((note) => {
+          {notes.map((note) => {
             return (
-              <Card
-                className='group p-2 mx-4 mb-4 hover:bg-dark-600 hover:cursor-pointer xs:p-4 xs:mx-8'
-                key={note.id}
-                onClick={() => {
-                  const targetNote = {
-                    badge: bookAndNotes.book.badge,
-                    bookId: bookAndNotes.book.bookId,
-                    title: bookAndNotes.book.title,
-                    noteId: note.id,
-                  }
-                  toNotePage(targetNote)
-                }}
-              >
-                <div className='flex justify-between xs:text-lg md:ml-2'>
-                  <div className='ml-4'>{note.label}</div>
-                  <div className='py-1 px-2 mr-4 text-dark-200 bg-dark-800 group-hover:bg-dark-700 rounded-md'>
+              <div key={note.id}>
+                <div className='flex justify-between items-center mb-2 text-dark-100 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer sm:text-xl'>
+                  <div
+                    onClick={() => {
+                      toNotePage(note)
+                    }}
+                    className='py-2 pl-4 w-20'
+                  >
                     {note.page}
                   </div>
+                  <div
+                    onClick={() => {
+                      toNotePage(note)
+                    }}
+                    className='flex-1 py-2'
+                  >
+                    {innerWidth < 300 && note.label.length > 8
+                      ? note.label.slice(0, 8) + '...'
+                      : innerWidth < 320 && note.label.length > 11
+                      ? note.label.slice(0, 11) + '...'
+                      : innerWidth < 370 && note.label.length > 15
+                      ? note.label.slice(0, 15) + '...'
+                      : innerWidth < 460 && note.label.length > 20
+                      ? note.label.slice(0, 20) + '...'
+                      : innerWidth < 550 && note.label.length > 30
+                      ? note.label.slice(0, 30) + '...'
+                      : innerWidth < 680 && note.label.length > 40
+                      ? note.label.slice(0, 40) + '...'
+                      : note.label}
+                  </div>
+                  <ItemMenu
+                    label={
+                      note.label.length > 20
+                        ? note.label.slice(0, 20) + '...'
+                        : note.label
+                    }
+                    toEditPage={() => toEditPage(note, note.id)}
+                    handleDelete={() => handleDelete(note.id)}
+                  />
                 </div>
-              </Card>
+              </div>
             )
           })}
-          <Card
-            className='py-1 mx-4 text-sm font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'
-            onClick={() => toNoteForm()}
+          <div
+            className='py-1 mx-4 mt-4 text-sm text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'
+            onClick={() =>
+              toNoteForm({
+                id: '',
+                label: '',
+                page: '0',
+                note: '',
+                clozeNote: '',
+              })
+            }
           >
             + 追加
-          </Card>
+          </div>
         </div>
       ) : (
         <div>
-          <div className='mt-8 mb-4 text-center'>Noteがありません。</div>
-          <Card
-            className='block py-2 mx-auto w-52 font-semibold text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer'
-            onClick={() => toNoteForm()}
+          <div className='mt-8 xs:mt-16'>
+            <Note
+              size={'160px'}
+              strokeWidth={1.5}
+              color={'#2b2c31'}
+              className='block mx-auto'
+            />
+            <div className='text-lg text-center text-dark-400 xs:text-xl'>
+              <div>Noteがありません。</div>
+            </div>
+          </div>
+          <div
+            className='py-2 mx-auto mt-8 w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:mt-12'
+            onClick={() =>
+              toNoteForm({
+                id: '',
+                label: '',
+                page: 0,
+                note: '',
+                clozeNote: '',
+              })
+            }
           >
             + 作成
-          </Card>
+          </div>
         </div>
       )}
     </div>

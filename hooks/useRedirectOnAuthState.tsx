@@ -11,8 +11,7 @@ export const useRedirectOnAuthState = (router: NextRouter) => {
           case '/login':
           case '/forgot-password':
           case '/auth-redirect': {
-            const uid = user.uid
-            router.push(`/my-page/${uid}`)
+            router.push(`/my-page/${user.uid}`)
             break
           }
           default: {
@@ -22,7 +21,11 @@ export const useRedirectOnAuthState = (router: NextRouter) => {
       } else {
         switch (router.pathname) {
           case '/no-verified':
-          case '/my-page/[uid]': {
+          case '/my-page/[uid]':
+          case '/my-page/[uid]/book-form':
+          case '/my-page/[uid]/[bookId]':
+          case '/my-page/[uid]/[bookId]/note-form':
+          case '/my-page/[uid]/[bookId]/[noteId]': {
             router.push('/login')
             break
           }

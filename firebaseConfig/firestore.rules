@@ -1,13 +1,6 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 必須フィールドと任意フィールドを定義する関数
-    function verifyFields(required, optional) {
-      let allAllowedFields = required.concat(optional);
-      return request.resource.data.keys().hasAll(required) &&
-        request.resource.data.keys().hasOnly(allAllowedFields);
-    }
-
     match /users/{userId}{
       // ユーザーは自分のuserId以降の階層のデータのみ参照
       match /{document=**} {
@@ -15,13 +8,13 @@ service cloud.firestore {
       }
       // badgesへの書き込み
       match /badges/{badgeId} {
-        allow write: if verifyFields(['badge']);
+        allow write: if request.resource.data.keys().hasAll(['badge']);
         // booksへの書き込み
         match /books/{bookId} {
-          allow write: if verifyFields(['title', 'overview']);
+          allow write: if request.resource.data.keys().hasAll(['title', 'overview']);
           // notesへの書き込み
           match /notes/{noteId} {
-            allow write: if verifyFields(['page', 'label', 'note'], ['cloze_1', 'cloze_2', 'cloze_3']);
+            allow write: if request.resource.data.keys().hasAll(['page', 'label', 'note', 'clozeNote']);
           }
         }
       }

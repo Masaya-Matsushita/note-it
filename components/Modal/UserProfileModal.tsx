@@ -1,61 +1,52 @@
-import {
-  ComponentProps,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react'
+import { ComponentProps, Dispatch, FC, useEffect } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import db, { auth, storage } from 'firebaseConfig/firebase'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Button, Card, Modal, Skeleton, TextInput } from '@mantine/core'
 import { Plus } from 'tabler-icons-react'
+import { useRouter } from 'next/router'
+import { useUserProfileModalState } from 'hooks/StateManagement/useUserProfileModalState'
 
 type Props = {
   opened: boolean
-  setOpened: Dispatch<SetStateAction<boolean>>
+  propsDispatch: Dispatch<any>
 }
 
-export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
-  const [error, setError] = useState('')
-  const [userIcon, setUserIcon] = useState('')
-  const [userName, setUserName] = useState('')
-
-  // ユーザーネームを入力
-  const changeUserName: ComponentProps<'input'>['onChange'] = (e) => {
-    setUserName(e.target.value)
-  }
+export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
+  const router = useRouter()
+  const uid = String(router.query.uid)
+  const { state, dispatch } = useUserProfileModalState()
 
   // アイコンをアップロード＆URLを取得して表示
   const changeUserImage: ComponentProps<'input'>['onChange'] = async (e) => {
+    // fileが選択されてない場合
     if (!e.target.files) {
       return
     }
     const file = e.target.files[0]
-    const user = auth.currentUser
-    const iconUsersRef = ref(storage, `users/${user?.uid}/icon`)
+    const iconUsersRef = ref(storage, `users/${uid}/icon`)
     try {
       await uploadBytes(iconUsersRef, file)
       const iconUrl = await getDownloadURL(iconUsersRef)
-      setUserIcon(iconUrl)
+      dispatch({ type: 'icon', userIcon: iconUrl })
     } catch (error: any) {
-      setError(error.message)
+      dispatch({ type: 'error', error: error.message })
     }
   }
 
   // userのドキュメントを作成/更新、リロード
   const setUserProfile = async () => {
-    const user = auth.currentUser
-    if (user) {
-      await setDoc(doc(db, 'users', user.uid), {
-        userName: userName,
-        iconURL: userIcon,
+    if (state.userName) {
+      await setDoc(doc(db, 'users', uid), {
+        userName: state.userName,
+        iconURL: state.userIcon,
       })
+      propsDispatch({ type: 'opened', opened: false })
+      location.reload()
+    } else {
+      dispatch({ type: 'error', error: 'username not entered' })
     }
-    setOpened(false)
-    location.reload()
   }
 
   useEffect(() => {
@@ -64,13 +55,16 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
         const docSnap = await getDoc(doc(db, 'users', user.uid))
         if (docSnap.exists()) {
           // 更新の場合は現在のプロフィールを表示
-          setUserIcon(docSnap.data().iconURL)
-          setUserName(docSnap.data().userName)
+          dispatch({
+            type: 'display',
+            userIcon: docSnap.data().iconURL,
+            userName: docSnap.data().userName,
+          })
         } else {
           // 新規作成の場合はデフォルトを表示
-          setUserIcon('/UnknownIcon.png')
+          dispatch({ type: 'icon', userIcon: '/UnknownIcon.png' })
           if (user.displayName) {
-            setUserName(user.displayName)
+            dispatch({ type: 'name', userName: user.displayName })
           }
         }
       }
@@ -80,21 +74,21 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
   return (
     <Modal
       opened={opened}
-      onClose={() => setOpened(false)}
+      onClose={() => propsDispatch({ type: 'opened', opened: false })}
       closeOnClickOutside={false}
       closeOnEscape={false}
       withCloseButton={false}
-      className='mt-16'
+      className='mx-2 mt-16'
     >
-      <div className='text-lg text-center'>
+      <div className='mt-4 mb-6 text-xl text-center'>
         アイコンと名前を設定してください。
       </div>
-      <Card className='flex flex-col items-center mx-16 mt-4'>
-        {userIcon ? (
+      <Card className='flex flex-col items-center mx-16'>
+        {state.userIcon ? (
           <div className='relative'>
             <img
-              src={userIcon}
-              alt='icon'
+              src={state.userIcon}
+              alt='アイコンの描画に失敗しました。'
               className='w-20 h-20 rounded-full sm:w-24 sm:h-24'
             />
             <label htmlFor='userIcon' className='absolute left-14 sm:left-16'>
@@ -115,15 +109,18 @@ export const UserProfileModal: FC<Props> = ({ opened, setOpened }) => {
         )}
         <TextInput
           placeholder='User Name'
-          required
-          value={userName}
-          onChange={(e) => changeUserName(e)}
+          value={state.userName}
+          onChange={(e) =>
+            dispatch({ type: 'name', userName: e.currentTarget.value })
+          }
           className='mt-4'
         />
       </Card>
-      {error !== '' ? (
-        <div className='mt-2 text-sm font-bold text-red-500'>
-          エラーが発生しました。入力内容をご確認ください。(画像サイズは最大5MBです)
+      {state.error ? (
+        <div className='mt-2 text-sm font-bold text-center text-red-500'>
+          {state.error === 'username not entered'
+            ? 'ユーザーネームが未入力です。'
+            : 'エラーが発生しました。入力内容をご確認ください。(画像サイズは最大5MBです'}
         </div>
       ) : null}
       <Button onClick={setUserProfile} className='block mx-auto mt-8 w-48'>
