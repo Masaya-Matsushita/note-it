@@ -19,6 +19,15 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
     router.push(`/my-page/${uid}/${bookId}`)
   }
 
+  // ブラウザにtargetBookを保存し、book-formページへ
+  const toEditPage = (target: Book, targetId: string) => {
+    sessionStorage.setItem('targetBook', JSON.stringify(target))
+    router.push({
+      pathname: `/my-page/${uid}/book-form`,
+      query: { id: targetId },
+    })
+  }
+
   // ローディング中
   if (!badgeAndBooksList) {
     return <Loader size='xl' className='fixed inset-0 m-auto' />
@@ -84,13 +93,16 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
                           ? book.title.slice(0, 20) + '...'
                           : book.title
                       }
-                      targetBook={{
-                        badge: badgeAndBooks.badge,
-                        title: book.title,
-                        overview: book.overview,
-                      }}
-                      uid={uid}
-                      bookId={book.id}
+                      toEditPage={() =>
+                        toEditPage(
+                          {
+                            badge: badgeAndBooks.badge,
+                            title: book.title,
+                            overview: book.overview,
+                          },
+                          book.id
+                        )
+                      }
                     />
                   </div>
                 )

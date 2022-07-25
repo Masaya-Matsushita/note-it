@@ -1,62 +1,75 @@
 import { ItemMenu } from 'components/Parts/ItemMenu'
-import { auth } from 'firebaseConfig/firebase'
-import Link from 'next/link'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
 import { Note } from 'tabler-icons-react'
-import { Badge, BookAndNotes } from 'types'
+import { Book, Notes } from 'types'
 
 type Props = {
-  bookAndNotes: BookAndNotes
+  book: Book
+  notes: Notes
   router: NextRouter
+  uid: string
+  badgeId: string
+  bookId: string
 }
 
 type TargetNote = {
-  badge: Badge
-  bookId: string
   title: string
-  noteId: string
+  note: {
+    id: string
+    label: string
+    page: number
+    note: string
+    clozeNote: string
+  }
 }
 
-export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
+export const NoteList: FC<Props> = ({
+  book,
+  notes,
+  router,
+  uid,
+  badgeId,
+  bookId,
+}) => {
   const toNotePage = (targetNote: TargetNote) => {
-    const user = auth.currentUser
-    if (user) {
-      sessionStorage.setItem('targetNote', JSON.stringify(targetNote))
-      router.push(
-        `/my-page/${user.uid}/${targetNote.bookId}/${targetNote.noteId}`
-      )
-    }
+    sessionStorage.setItem('targetNote', JSON.stringify(targetNote))
+    router.push(`/my-page/${uid}/${badgeId}/${bookId}/${targetNote.note.id}`)
   }
 
-  const toNoteForm = () => {
-    const user = auth.currentUser
-    if (user) {
-      router.push(`/my-page/${user.uid}/${bookAndNotes.book.bookId}/note-form`)
-    }
+  const toNoteForm = (target: any) => {
+    sessionStorage.setItem('targetNote', target)
+    router.push(`/my-page/${uid}/${badgeId}/${bookId}/note-form`)
+  }
+
+  // ブラウザにtargetNoteを保存し、note-formページへ
+  const toEditPage = (target: any, targetId: string) => {
+    sessionStorage.setItem('targetNote', JSON.stringify(target))
+    router.push({
+      pathname: `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
+      query: { id: targetId },
+    })
   }
 
   return (
     <div>
       <div className='mb-1 ml-2 text-2xl font-semibold'>Notes</div>
       <div className='grow border border-dark-400 border-solid'></div>
-      {bookAndNotes.notes.length ? (
+      {notes.length ? (
         <div className='mx-2'>
           <div className='flex mt-4 mb-1 text-sm text-dark-300 xs:text-base'>
             <div className='ml-2 w-[72px]'>Page</div>
             <div>Label</div>
           </div>
-          {bookAndNotes.notes.map((note) => {
+          {notes.map((note) => {
             return (
               <div key={note.id}>
                 <div className='flex justify-between items-center mb-2 text-dark-100 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer sm:text-xl'>
                   <div
                     onClick={() => {
                       const targetNote = {
-                        badge: bookAndNotes.book.badge,
-                        bookId: bookAndNotes.book.bookId,
-                        title: bookAndNotes.book.title,
-                        noteId: note.id,
+                        title: book.title,
+                        note: note,
                       }
                       toNotePage(targetNote)
                     }}
@@ -67,10 +80,14 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
                   <div
                     onClick={() => {
                       const targetNote = {
-                        badge: bookAndNotes.book.badge,
-                        bookId: bookAndNotes.book.bookId,
-                        title: bookAndNotes.book.title,
-                        noteId: note.id,
+                        title: book.title,
+                        note: {
+                          id: '',
+                          label: '',
+                          page: 0,
+                          note: '',
+                          clozeNote: '',
+                        },
                       }
                       toNotePage(targetNote)
                     }}
@@ -96,6 +113,7 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
                         ? note.label.slice(0, 20) + '...'
                         : note.label
                     }
+                    toEditPage={() => toEditPage(note, note.id)}
                   />
                 </div>
               </div>
@@ -103,7 +121,15 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
           })}
           <div
             className='py-1 mx-4 mt-4 text-sm text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'
-            onClick={() => toNoteForm()}
+            onClick={() =>
+              toNoteForm({
+                id: '',
+                label: '',
+                page: 0,
+                note: '',
+                clozeNote: '',
+              })
+            }
           >
             + 追加
           </div>
@@ -123,7 +149,15 @@ export const NoteList: FC<Props> = ({ bookAndNotes, router }) => {
           </div>
           <div
             className='py-2 mx-auto mt-8 w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:mt-12'
-            onClick={() => toNoteForm()}
+            onClick={() =>
+              toNoteForm({
+                id: '',
+                label: '',
+                page: 0,
+                note: '',
+                clozeNote: '',
+              })
+            }
           >
             + 作成
           </div>
