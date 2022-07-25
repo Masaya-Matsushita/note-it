@@ -1,4 +1,6 @@
 import { ItemMenu } from 'components/Parts/ItemMenu'
+import { deleteDoc, doc } from 'firebase/firestore'
+import db from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
 import { Note } from 'tabler-icons-react'
@@ -49,6 +51,14 @@ export const NoteList: FC<Props> = ({
       pathname: `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
       query: { id: targetId },
     })
+  }
+
+  // noteを削除
+  const handleDelete = async (noteId: string) => {
+    await deleteDoc(
+      doc(db, 'users', uid, 'badges', badgeId, 'books', bookId, 'notes', noteId)
+    )
+    location.reload()
   }
 
   return (
@@ -114,6 +124,7 @@ export const NoteList: FC<Props> = ({
                         : note.label
                     }
                     toEditPage={() => toEditPage(note, note.id)}
+                    handleDelete={() => handleDelete(note.id)}
                   />
                 </div>
               </div>

@@ -14,10 +14,9 @@ const Book: NextPage = () => {
   const uid = String(router.query.uid)
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
-  // const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes>()
+  const [loading, setLoading] = useState(true)
   let book: Book = { title: '', badge: '', overview: '' }
   let notes: Notes = []
-  const [loading, setLoading] = useState(true)
 
   // bookに値を代入
   const setBook = () => {

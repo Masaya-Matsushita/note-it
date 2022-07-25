@@ -41,33 +41,36 @@ const Mypage: NextPage = () => {
         const booksSnap = await getDocs(
           collection(db, 'users', userId, 'badges', badge.id, 'books')
         )
-        // 取得したbooksを配列booksへ
-        let books: Books = []
-        booksSnap.forEach((book) => {
-          books = [
-            ...books,
+        // booksが空のbadgeは含めない
+        if (!booksSnap.empty) {
+          // 取得したbooksを配列booksへ
+          let books: Books = []
+          booksSnap.forEach((book) => {
+            books = [
+              ...books,
+              {
+                id: book.id,
+                title: book.data().title,
+                overview: book.data().overview,
+              },
+            ]
+          })
+          // 取得したbadgesとbooksをまとめて配列へ
+          badgeAndBooksArray = [
+            ...badgeAndBooksArray,
             {
-              id: book.id,
-              title: book.data().title,
-              overview: book.data().overview,
+              priority: Number(badge.id),
+              badge: badge.data().badge,
+              books: books,
             },
           ]
-        })
-        // 取得したbadgesとbooksをまとめて配列へ
-        badgeAndBooksArray = [
-          ...badgeAndBooksArray,
-          {
-            priority: Number(badge.id),
-            badge: badge.data().badge,
-            books: books,
-          },
-        ]
-        // badgeのpriorityの値で並べ替え
-        badgeAndBooksArray.sort((a, b) => {
-          return a.priority - b.priority
-        })
-        // badgeAndBooksListへ追加
-        dispatch({ type: 'setList', badgeAndBooksList: badgeAndBooksArray })
+          // badgeのpriorityの値で並べ替え
+          badgeAndBooksArray.sort((a, b) => {
+            return a.priority - b.priority
+          })
+          // badgeAndBooksListへ追加
+          dispatch({ type: 'setList', badgeAndBooksList: badgeAndBooksArray })
+        }
       })
     }
   }

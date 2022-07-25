@@ -1,5 +1,7 @@
 import { Accordion, Loader } from '@mantine/core'
 import { ItemMenu } from 'components/Parts/ItemMenu'
+import { deleteDoc, doc } from 'firebase/firestore'
+import db from 'firebaseConfig/firebase'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { Book2 } from 'tabler-icons-react'
@@ -14,9 +16,9 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
   const uid = String(router.query.uid)
 
   // targetBookをブラウザに保存し、bookページへ
-  const toBookPage = (targetBook: Book, bookId: string) => {
+  const toBookPage = (targetBook: Book, badgeId: string, bookId: string) => {
     sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
-    router.push(`/my-page/${uid}/${bookId}`)
+    router.push(`/my-page/${uid}/${badgeId}/${bookId}`)
   }
 
   // ブラウザにtargetBookを保存し、book-formページへ
@@ -26,6 +28,12 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
       pathname: `/my-page/${uid}/book-form`,
       query: { id: targetId },
     })
+  }
+
+  // bookを削除
+  const handleDelete = async (badgeId: string, bookId: string) => {
+    await deleteDoc(doc(db, 'users', uid, 'badges', badgeId, 'books', bookId))
+    location.reload()
   }
 
   // ローディング中
@@ -82,7 +90,11 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
                           title: book.title,
                           overview: book.overview,
                         }
-                        toBookPage(targetBook, book.id)
+                        toBookPage(
+                          targetBook,
+                          String(badgeAndBooks.priority),
+                          book.id
+                        )
                       }}
                     >
                       {book.title}
@@ -102,6 +114,9 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
                           },
                           book.id
                         )
+                      }
+                      handleDelete={() =>
+                        handleDelete(String(badgeAndBooks.priority), book.id)
                       }
                     />
                   </div>
