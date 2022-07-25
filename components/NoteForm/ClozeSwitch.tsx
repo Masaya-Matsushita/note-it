@@ -14,9 +14,6 @@ export const ClozeSwitch: FC<Props> = ({ cloze, dispatch }) => {
         size='md'
         checked={cloze}
         onChange={(e) => {
-          // dispatch({ type: 'cloze', cloze: e.target.checked })
-          // dispatch({ type: 'opened', opened: e.target.checked })
-          // dispatch({ type: 'setShowClozeNote', setShowClozeNote: false })
           dispatch({
             type: 'toggleClozeSwitch',
             cloze: e.target.checked,

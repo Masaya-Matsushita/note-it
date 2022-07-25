@@ -2,7 +2,6 @@ import { Card } from '@mantine/core'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Book } from 'types'
 import { ErrorModal } from 'components/Modal/ErrorModal'
 import { LabelInput } from 'components/NoteForm/LabelInput'
 import { PageInput } from 'components/NoteForm/PageInput'
@@ -11,33 +10,35 @@ import { ClozeSwitch } from 'components/NoteForm/ClozeSwitch'
 import { ClozeModal } from 'components/NoteForm/ClozeModal'
 import { AddNoteButton } from 'components/NoteForm/AddNoteButton'
 import { ToBackLink } from 'components/Parts/ToBackLink'
-import { auth } from 'firebaseConfig/firebase'
-import { onAuthStateChanged } from 'firebase/auth'
 import { useNoteFormState } from 'hooks/StateManagement/useNoteFormState'
 
 const NoteForm: NextPage = () => {
   const router = useRouter()
-  // const [targetBook, setTargetBook] = useState<Book | undefined>()
-  // const [uid, setUid] = useState('')
-  // const [opened, setOpened] = useState(false)
-  // const [label, setLabel] = useState('')
-  // const [page, setPage] = useState(0)
-  // const [note, setNote] = useState('')
-  // const [error, setError] = useState('')
-  // const [cloze, setCloze] = useState(false)
-  // const [showClozeNote, setShowClozeNote] = useState(false)
-  // const [clozeNote, setClozeNote] = useState('')
+
   const { state, dispatch } = useNoteFormState()
   const uid = String(router.query.uid)
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
-  let targetBook: Book = { title: '', badge: '', overview: '' }
 
   //マウント時にsessionStorageからデータを取得
   useEffect(() => {
     const jsonTargetBook = sessionStorage.getItem('targetBook')
-    if (jsonTargetBook) {
-      targetBook = JSON.parse(jsonTargetBook)
+    const jsonTargetNote = sessionStorage.getItem('targetNote')
+    if (jsonTargetBook && jsonTargetNote) {
+      const targetBook = JSON.parse(jsonTargetBook)
+      const targetNote = JSON.parse(jsonTargetNote)
+      // 編集の場合、フォームに値を代入
+      if (targetNote.label !== '') {
+        dispatch({
+          type: 'setBookAndNote',
+          title: targetBook.title,
+          label: targetNote.label,
+          page: Number(targetNote.page),
+          note: targetNote.note,
+        })
+      } else {
+        dispatch({ type: 'setBook', title: targetBook.title })
+      }
     }
   }, [])
 
@@ -55,17 +56,13 @@ const NoteForm: NextPage = () => {
       <ErrorModal error={state.error} dispatch={dispatch} />
       <ClozeModal
         clozeNote={state.clozeNote}
-        // setClozeNote={setClozeNote}
         opened={state.opened}
-        // setOpened={setOpened}
         note={state.note}
-        // setCloze={setCloze}
-        // setShowClozeNote={setShowClozeNote}
         dispatch={dispatch}
       />
       <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
       <div className='mt-2 ml-4 text-lg text-dark-400'>
-        - {targetBook.title}
+        - {state.title}
       </div>
       <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
         <div className='flex mr-4'>
@@ -75,9 +72,6 @@ const NoteForm: NextPage = () => {
         <NoteInput note={state.note} cloze={state.cloze} dispatch={dispatch} />
         <ClozeSwitch
           cloze={state.cloze}
-          // setCloze={setCloze}
-          // setOpened={setOpened}
-          // setShowClozeNote={setShowClozeNote}
           dispatch={dispatch}
         />
         {state.showClozeNote ? (
@@ -100,9 +94,9 @@ const NoteForm: NextPage = () => {
       />
       <ToBackLink
         text={
-          targetBook.title.length > 10
-            ? `「${targetBook.title.slice(0, 10)}...」`
-            : `「${targetBook.title}」`
+          state.title.length > 10
+            ? `「${state.title.slice(0, 10)}...」`
+            : `「${state.title}」`
         }
         href={`/my-page/${uid}/${badgeId}/${bookId}`}
       />

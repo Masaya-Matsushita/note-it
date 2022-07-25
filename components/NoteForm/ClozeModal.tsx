@@ -5,11 +5,8 @@ import { Ballpen } from 'tabler-icons-react'
 
 type Props = {
   clozeNote: string
-  // setClozeNote: Dispatch<SetStateAction<string>>
   opened: boolean
   note: string
-  // setCloze: Dispatch<SetStateAction<boolean>>
-  // setShowClozeNote: Dispatch<SetStateAction<boolean>>
   dispatch: Dispatch<any>
 }
 
@@ -119,8 +116,6 @@ export const ClozeModal: FC<Props> = ({
           <Button
             color='red'
             onClick={() => {
-              // dispatch({ type: 'cloze', cloze: false })
-              // dispatch({ type: 'opened', opened: false })
               dispatch({
                 type: 'cancelClozeModal',
                 cloze: false,
@@ -134,8 +129,6 @@ export const ClozeModal: FC<Props> = ({
           <Button
             leftIcon={<Ballpen size={18} />}
             onClick={() => {
-              //   dispatch({ type: 'showClozeNote', showClozeNote: true })
-              //   dispatch({ type: 'opened', opened: false })
               dispatch({
                 type: 'okClozeModal',
                 showClozeNote: true,

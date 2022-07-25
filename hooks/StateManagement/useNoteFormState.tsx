@@ -15,10 +15,13 @@ type Action = {
     | 'cancelClozeModal'
     | 'okClozeModal'
     | 'toggleClozeSwitch'
+    | 'setBookAndNote'
+    | 'setBook'
 } & Partial<State>
 
 const initialState = {
   opened: false,
+  title: '',
   label: '',
   page: 0,
   note: '',
@@ -88,6 +91,19 @@ const reducer: Reducer<State, Action> = (state, action) => {
         cloze: action.cloze ? action.cloze : false,
         opened: action.opened ? action.opened : false,
         showClozeNote: action.showClozeNote ? action.showClozeNote : false,
+      }
+    case 'setBook':
+      return {
+        ...state,
+        title: action.title ? action.title : '',
+      }
+    case 'setBookAndNote':
+      return {
+        ...state,
+        title: action.title ? action.title : '',
+        label: action.label ? action.label : '',
+        page: action.page ? action.page : 0,
+        note: action.note ? action.note : '',
       }
   }
 }

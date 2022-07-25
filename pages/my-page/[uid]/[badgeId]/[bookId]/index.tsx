@@ -7,31 +7,22 @@ import db from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Book, Notes } from 'types'
+import { Book, BookAndNotes, Notes } from 'types'
 
 const Book: NextPage = () => {
   const router = useRouter()
   const uid = String(router.query.uid)
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
-  const [loading, setLoading] = useState(true)
-  let book: Book = { title: '', badge: '', overview: '' }
-  let notes: Notes = []
-
-  // bookに値を代入
-  const setBook = () => {
-    const jsonTargetBook = sessionStorage.getItem('targetBook')
-    if (jsonTargetBook) {
-      book = JSON.parse(jsonTargetBook)
-    }
-  }
+  const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes | undefined>()
 
   // notesに値を代入
-  const setNotes = async () => {
+  const createBookAndNotes = async (targetBook: Book) => {
     // notesを取得
     const noteSnap = await getDocs(
       collection(db, 'users', uid, 'badges', badgeId, 'books', bookId, 'notes')
     )
+    let notes: Notes = []
     // notesへ追加
     noteSnap.forEach((note) => {
       notes = [
@@ -49,24 +40,35 @@ const Book: NextPage = () => {
     notes.sort((a, b) => {
       return a.page - b.page
     })
-    setLoading(false)
+    setBookAndNotes({
+      book: {
+        title: targetBook.title,
+        badge: targetBook.badge,
+        overview: targetBook.overview,
+      },
+      notes: notes,
+    })
   }
 
   useEffect(() => {
-    setBook()
-    setNotes()
+    // bookに値を代入
+    const jsonTargetBook = sessionStorage.getItem('targetBook')
+    if (jsonTargetBook) {
+      const targetBook = JSON.parse(jsonTargetBook)
+      createBookAndNotes(targetBook)
+    }
   }, [router])
 
   return (
     <>
-      {loading ? (
+      {!bookAndNotes ? (
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <div className='mx-auto max-w-3xl'>
-          <BookDetail book={book} />
+          <BookDetail book={bookAndNotes.book} />
           <NoteList
-            book={book}
-            notes={notes}
+            book={bookAndNotes.book}
+            notes={bookAndNotes.notes}
             router={router}
             uid={uid}
             badgeId={badgeId}

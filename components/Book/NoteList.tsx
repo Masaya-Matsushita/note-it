@@ -40,7 +40,7 @@ export const NoteList: FC<Props> = ({
   }
 
   const toNoteForm = (target: any) => {
-    sessionStorage.setItem('targetNote', target)
+    sessionStorage.setItem('targetNote', JSON.stringify(target))
     router.push(`/my-page/${uid}/${badgeId}/${bookId}/note-form`)
   }
 
@@ -136,7 +136,7 @@ export const NoteList: FC<Props> = ({
               toNoteForm({
                 id: '',
                 label: '',
-                page: 0,
+                page: '0',
                 note: '',
                 clozeNote: '',
               })
