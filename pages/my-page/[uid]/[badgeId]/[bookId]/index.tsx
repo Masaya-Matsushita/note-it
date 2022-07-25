@@ -67,7 +67,6 @@ const Book: NextPage = () => {
         <div className='mx-auto max-w-3xl'>
           <BookDetail book={bookAndNotes.book} />
           <NoteList
-            book={bookAndNotes.book}
             notes={bookAndNotes.notes}
             router={router}
             uid={uid}

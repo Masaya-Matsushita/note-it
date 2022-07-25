@@ -4,10 +4,9 @@ import db from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC } from 'react'
 import { Note } from 'tabler-icons-react'
-import { Book, Notes } from 'types'
+import { Notes } from 'types'
 
 type Props = {
-  book: Book
   notes: Notes
   router: NextRouter
   uid: string
@@ -15,28 +14,22 @@ type Props = {
   bookId: string
 }
 
-type TargetNote = {
-  title: string
-  note: {
-    id: string
-    label: string
-    page: number
-    note: string
-    clozeNote: string
-  }
-}
-
 export const NoteList: FC<Props> = ({
-  book,
   notes,
   router,
   uid,
   badgeId,
   bookId,
 }) => {
-  const toNotePage = (targetNote: TargetNote) => {
-    sessionStorage.setItem('targetNote', JSON.stringify(targetNote))
-    router.push(`/my-page/${uid}/${badgeId}/${bookId}/${targetNote.note.id}`)
+  const toNotePage = (note: {
+    id: string
+    label: string
+    page: number
+    note: string
+    clozeNote: string
+  }) => {
+    sessionStorage.setItem('targetNote', JSON.stringify(note))
+    router.push(`/my-page/${uid}/${badgeId}/${bookId}/${note.id}`)
   }
 
   const toNoteForm = (target: any) => {
@@ -77,11 +70,7 @@ export const NoteList: FC<Props> = ({
                 <div className='flex justify-between items-center mb-2 text-dark-100 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer sm:text-xl'>
                   <div
                     onClick={() => {
-                      const targetNote = {
-                        title: book.title,
-                        note: note,
-                      }
-                      toNotePage(targetNote)
+                      toNotePage(note)
                     }}
                     className='py-2 pl-4 w-20'
                   >
@@ -89,17 +78,7 @@ export const NoteList: FC<Props> = ({
                   </div>
                   <div
                     onClick={() => {
-                      const targetNote = {
-                        title: book.title,
-                        note: {
-                          id: '',
-                          label: '',
-                          page: 0,
-                          note: '',
-                          clozeNote: '',
-                        },
-                      }
-                      toNotePage(targetNote)
+                      toNotePage(note)
                     }}
                     className='flex-1 py-2'
                   >
