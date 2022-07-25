@@ -106,6 +106,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
         label: action.label ? action.label : '',
         page: action.page ? action.page : 0,
         note: action.note ? action.note : '',
+        cloze: action.cloze ? action.cloze : false,
+        showClozeNote: action.showClozeNote ? action.showClozeNote : false,
       }
   }
 }

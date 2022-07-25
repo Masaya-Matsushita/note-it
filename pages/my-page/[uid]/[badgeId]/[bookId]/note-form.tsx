@@ -36,6 +36,8 @@ const NoteForm: NextPage = () => {
           label: targetNote.label,
           page: Number(targetNote.page),
           note: targetNote.note,
+          cloze: true,
+          showClozeNote: true,
         })
       } else {
         dispatch({ type: 'setBook', title: targetBook.title })
