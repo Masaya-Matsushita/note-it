@@ -5,22 +5,19 @@ import { Ballpen } from 'tabler-icons-react'
 
 type Props = {
   clozeNote: string
-  setClozeNote: Dispatch<SetStateAction<string>>
+  // setClozeNote: Dispatch<SetStateAction<string>>
   opened: boolean
-  setOpened: Dispatch<SetStateAction<boolean>>
   note: string
-  setCloze: Dispatch<SetStateAction<boolean>>
-  setShowClozeNote: Dispatch<SetStateAction<boolean>>
+  // setCloze: Dispatch<SetStateAction<boolean>>
+  // setShowClozeNote: Dispatch<SetStateAction<boolean>>
+  dispatch: Dispatch<any>
 }
 
 export const ClozeModal: FC<Props> = ({
   clozeNote,
-  setClozeNote,
   opened,
-  setOpened,
   note,
-  setCloze,
-  setShowClozeNote,
+  dispatch,
 }) => {
   const [popover, setPopover] = useState(false)
 
@@ -48,7 +45,7 @@ export const ClozeModal: FC<Props> = ({
           ')',
           ' '
         )
-        setClozeNote(clozeNoteArr.join(''))
+        dispatch({ type: 'clozeNote', clozeNote: clozeNoteArr.join('') })
       }
     } catch (error) {
       // 範囲選択されていないとき
@@ -59,7 +56,7 @@ export const ClozeModal: FC<Props> = ({
   return (
     <Modal
       opened={opened}
-      onClose={() => setOpened(false)}
+      onClose={() => dispatch({ type: 'opened', opened: false })}
       closeOnClickOutside={false}
       closeOnEscape={false}
       withCloseButton={false}
@@ -91,7 +88,7 @@ export const ClozeModal: FC<Props> = ({
           classNames={{
             popover: 'border-dark-500 border-solid',
             target: 'w-24 ml-auto',
-            body: 'p-0'
+            body: 'p-0',
           }}
           withArrow
         >
@@ -106,7 +103,7 @@ export const ClozeModal: FC<Props> = ({
         <div className='flex items-center mb-12'>
           <Button
             leftIcon={<BsArrowCounterclockwise />}
-            onClick={() => setClozeNote(note)}
+            onClick={() => dispatch({ type: 'clozeNote', clozeNote: note })}
             className='flex-1 mx-2 text-dark-100 bg-dark-500 hover:bg-dark-600'
           >
             リセット
@@ -122,8 +119,13 @@ export const ClozeModal: FC<Props> = ({
           <Button
             color='red'
             onClick={() => {
-              setCloze(false)
-              setOpened(false)
+              // dispatch({ type: 'cloze', cloze: false })
+              // dispatch({ type: 'opened', opened: false })
+              dispatch({
+                type: 'cancelClozeModal',
+                cloze: false,
+                opened: false,
+              })
             }}
             className='flex-1 mr-2'
           >
@@ -132,8 +134,13 @@ export const ClozeModal: FC<Props> = ({
           <Button
             leftIcon={<Ballpen size={18} />}
             onClick={() => {
-              setShowClozeNote(true)
-              setOpened(false)
+              //   dispatch({ type: 'showClozeNote', showClozeNote: true })
+              //   dispatch({ type: 'opened', opened: false })
+              dispatch({
+                type: 'okClozeModal',
+                showClozeNote: true,
+                opened: false,
+              })
             }}
             className='flex-1 mr-2'
           >

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { doc, getDoc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
 import { useHeaderState } from 'hooks/StateManagement/useHeaderState'
-import { HeaderLogo } from './HeaderLogo'
 import { HeaderIcon } from './HeaderIcon'
 
 export const Header = () => {
@@ -36,7 +35,9 @@ export const Header = () => {
     <div>
       <ErrorModal error={state.error} dispatch={dispatch} />
       <div className='flex justify-between items-center mb-4 h-20 bg-dark-700 sm:h-24'>
-        <HeaderLogo uid={uid} />
+        <div className='ml-6 text-2xl text-dark-100 no-underline hover:cursor-pointer sm:ml-12 sm:text-3xl'>
+          Note It
+        </div>
         <HeaderIcon state={state} dispatch={dispatch} />
       </div>
     </div>

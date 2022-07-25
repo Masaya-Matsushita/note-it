@@ -1,37 +1,38 @@
 import { Button } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { addDoc, collection } from 'firebase/firestore'
-import db, { auth } from 'firebaseConfig/firebase'
+import db from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC } from 'react'
 import { Check, Note } from 'tabler-icons-react'
-import { Book } from 'types'
 
 type Props = {
-  targetBook: Book | undefined
   uid: string
+  badgeId: string
+  bookId: string
   router: NextRouter
   label: string
   page: number
   note: string
   clozeNote: string
-  setError: Dispatch<SetStateAction<string>>
+  dispatch: Dispatch<any>
 }
 
 export const AddNoteButton: FC<Props> = ({
-  targetBook,
   uid,
+  badgeId,
+  bookId,
   router,
   label,
   page,
   note,
   clozeNote,
-  setError,
+  dispatch,
 }) => {
   // noteをデータベースに登録
   const addNote = async () => {
     // フォームのバリデーション
-    if (targetBook && label.length <= 50 && note.length <= 500) {
+    if (label.length <= 50 && note.length <= 500) {
       if (label.length > 0 && note.length > 0 && page !== null) {
         // データベースに登録
         await addDoc(
@@ -40,16 +41,16 @@ export const AddNoteButton: FC<Props> = ({
             'users',
             uid,
             'badges',
-            targetBook.badge,
+            badgeId,
             'books',
-            targetBook.bookId,
+            bookId,
             'notes'
           ),
           {
-            label: String(label),
-            page: Number(page),
-            note: String(note),
-            clozeNote: String(clozeNote),
+            label: label,
+            page: page,
+            note: note,
+            clozeNote: clozeNote,
           }
         )
         // 登録後、ページ遷移
@@ -58,9 +59,9 @@ export const AddNoteButton: FC<Props> = ({
           autoClose: 3000,
           icon: <Check size={20} />,
         })
-        router.push(`/my-page/${uid}/${targetBook.bookId}`)
+        router.push(`/my-page/${uid}/${badgeId}/${bookId}`)
       } else {
-        setError('note/required-form')
+        dispatch({ type: 'error', error: 'note/required-form' })
       }
     }
   }

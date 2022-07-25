@@ -1,11 +1,11 @@
-import { NumberInput } from "@mantine/core"
+import { NumberInput } from '@mantine/core'
 import { Dispatch, FC, SetStateAction } from 'react'
 
 type Props = {
   page: number
-  setPage: Dispatch<SetStateAction<number>>
+  dispatch: Dispatch<any>
 }
-export const PageInput:FC<Props> = ({page, setPage}) => {
+export const PageInput: FC<Props> = ({ page, dispatch }) => {
   return (
     <NumberInput
       min={0}
@@ -14,7 +14,7 @@ export const PageInput:FC<Props> = ({page, setPage}) => {
       placeholder='26'
       size='md'
       value={page}
-      onChange={(num) => (num ? setPage(num) : null)}
+      onChange={(val) => dispatch({ type: 'page', page: val })}
       className='w-20'
     />
   )

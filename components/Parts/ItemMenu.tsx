@@ -17,7 +17,7 @@ export const ItemMenu: FC<Props> = ({ label, toEditPage }) => {
       }}
     >
       <Menu.Label>{label}</Menu.Label>
-      <Menu.Item icon={<Pencil size={14} />} onClick={() => toEditPage}>
+      <Menu.Item icon={<Pencil size={14} />} onClick={() => toEditPage()}>
         編集
       </Menu.Item>
       <Menu.Item color='red' icon={<Trash size={14} />}>

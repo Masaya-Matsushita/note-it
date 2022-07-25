@@ -3,17 +3,10 @@ import { Dispatch, FC, SetStateAction } from 'react'
 
 type Props = {
   cloze: boolean
-  setCloze: Dispatch<SetStateAction<boolean>>
-  setOpened: Dispatch<SetStateAction<boolean>>
-  setShowClozeNote: Dispatch<SetStateAction<boolean>>
+  dispatch: Dispatch<any>
 }
 
-export const ClozeSwitch: FC<Props> = ({
-  cloze,
-  setCloze,
-  setOpened,
-  setShowClozeNote,
-}) => {
+export const ClozeSwitch: FC<Props> = ({ cloze, dispatch }) => {
   return (
     <div className='flex justify-end'>
       <Switch
@@ -21,9 +14,15 @@ export const ClozeSwitch: FC<Props> = ({
         size='md'
         checked={cloze}
         onChange={(e) => {
-          setCloze(e.target.checked)
-          setOpened(e.target.checked)
-          setShowClozeNote(false)
+          // dispatch({ type: 'cloze', cloze: e.target.checked })
+          // dispatch({ type: 'opened', opened: e.target.checked })
+          // dispatch({ type: 'setShowClozeNote', setShowClozeNote: false })
+          dispatch({
+            type: 'toggleClozeSwitch',
+            cloze: e.target.checked,
+            opened: e.target.checked,
+            setShowClozeNote: false,
+          })
         }}
         className='mt-4 mr-4 hover:cursor-pointer'
       />

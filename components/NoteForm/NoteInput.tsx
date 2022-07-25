@@ -3,11 +3,11 @@ import { Dispatch, FC, SetStateAction } from 'react'
 
 type Props = {
   note: string
-  setNote: Dispatch<SetStateAction<string>>
   cloze: boolean
+  dispatch: Dispatch<any>
 }
 
-export const NoteInput: FC<Props> = ({ note, setNote, cloze }) => {
+export const NoteInput: FC<Props> = ({ note, cloze, dispatch }) => {
   return (
     <Textarea
       required
@@ -15,7 +15,7 @@ export const NoteInput: FC<Props> = ({ note, setNote, cloze }) => {
       placeholder='炭酸水素ナトリウムを試験管に入れ、ガスバーナーで加熱すると、水と二酸化炭素が発生し、炭酸ナトリウムが残る。'
       size='md'
       value={note}
-      onChange={(e) => setNote(e.target.value)}
+      onChange={(e) => dispatch({ type: 'note', note: e.target.value })}
       error={note.length > 500 ? '500文字以内で入力してください。' : null}
       disabled={cloze}
       description={
