@@ -3,20 +3,85 @@ import { ErrorModal } from 'components/Modal/ErrorModal'
 import { LoginButton } from 'components/Parts/LoginButton'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
-import { useSignInState } from 'hooks/StateManagement/Login/useSignInState'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ComponentProps, FC, useEffect } from 'react'
+import { FC, FormEvent, useCallback, useEffect } from 'react'
 import { AiOutlineMail, AiOutlineKey } from 'react-icons/ai'
+import { Reducer, useReducer } from 'react'
 
 type Props = { label: 'ログイン' }
 
+type State = typeof initialState
+
+type Action = {
+  type:
+    | 'setEmail'
+    | 'inputEmail'
+    | 'loading'
+    | 'error'
+    | 'resetError'
+    | 'checked'
+} & Partial<State>
+
+const initialState = {
+  loading: false,
+  error: '',
+  method: '',
+  checked: false,
+  emailValue: '',
+}
+
+const reducer: Reducer<State, Action> = (state, action) => {
+  switch (action.type) {
+    case 'setEmail': {
+      return {
+        ...state,
+        emailValue: action.emailValue ? action.emailValue : '',
+        checked: true,
+      }
+    }
+    case 'inputEmail': {
+      return {
+        ...state,
+        emailValue: action.emailValue ? action.emailValue : '',
+      }
+    }
+    case 'loading': {
+      return {
+        ...state,
+        loading: action.loading ? action.loading : false,
+      }
+    }
+    case 'error': {
+      return {
+        ...state,
+        error: action.error ? action.error : '',
+        method: action.method ? action.method : '',
+        loading: false,
+      }
+    }
+    case 'resetError': {
+      return {
+        ...state,
+        error: action.error ? action.error : '',
+        method: action.method ? action.method : '',
+      }
+    }
+    case 'checked': {
+      return {
+        ...state,
+        checked: action.checked ? action.checked : false,
+      }
+    }
+  }
+}
+
 export const SignInForm: FC<Props> = ({ label }) => {
   const router = useRouter()
-  const { state, dispatch } = useSignInState()
+  const [state, dispatch] = useReducer(reducer, initialState)
 
-  // localStorageにemailが保存されていた場合
   useEffect(() => {
+    // localStorageにemailがある場合、値をセット
     if (localStorage.hasOwnProperty('email')) {
       dispatch({
         type: 'setEmail',
@@ -26,27 +91,30 @@ export const SignInForm: FC<Props> = ({ label }) => {
   }, [])
 
   // email & passwordでログイン
-  const emailSignIn: ComponentProps<'form'>['onSubmit'] = async (e) => {
-    try {
-      e.preventDefault()
-      dispatch({ type: 'loading', loading: true })
-      const email = String(e.currentTarget.email.value)
-      const password = String(e.currentTarget.password.value)
-      await signInWithEmailAndPassword(auth, email, password)
-      // localStorageにemailを保存or削除
-      if (state.checked) {
-        localStorage.setItem('email', email)
-      } else {
-        localStorage.removeItem('email')
+  const emailSignIn = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      try {
+        e.preventDefault()
+        dispatch({ type: 'loading', loading: true })
+        const email = String(e.currentTarget.email.value.trim())
+        const password = String(e.currentTarget.password.value.trim())
+        await signInWithEmailAndPassword(auth, email, password)
+        // localStorageにemailを保存or削除
+        if (state.checked) {
+          localStorage.setItem('email', email)
+        } else {
+          localStorage.removeItem('email')
+        }
+        // my-pageへ遷移
+        const user = auth.currentUser
+        router.push(`/my-page/${user?.uid}`)
+        dispatch({ type: 'loading', loading: false })
+      } catch (error: any) {
+        dispatch({ type: 'error', error: error.code, method: 'signin' })
       }
-      // my-pageへ遷移
-      const user = auth.currentUser
-      router.push(`/my-page/${user?.uid}`)
-      dispatch({ type: 'loading', loading: false })
-    } catch (error: any) {
-      dispatch({ type: 'error', error: error.code, method: 'signin' })
-    }
-  }
+    },
+    [router, state.checked]
+  )
 
   return (
     <div>
@@ -83,7 +151,10 @@ export const SignInForm: FC<Props> = ({ label }) => {
           icon={<AiOutlineKey />}
         />
         <div className='flex flex-col items-end mt-6 text-dark-200 xs:flex-row xs:justify-between xs:items-center'>
-          <label htmlFor='checkbox' className='flex items-center'>
+          <label
+            htmlFor='checkbox'
+            className='flex items-center hover:cursor-pointer'
+          >
             <Checkbox
               id='checkbox'
               checked={state.checked}
@@ -98,7 +169,9 @@ export const SignInForm: FC<Props> = ({ label }) => {
             メールアドレスを記憶する
           </label>
           <Link href={'/forgot-password'} passHref>
-            <a className='text-dark-200'>パスワードをお忘れですか？</a>
+            <a className='mt-3 text-dark-200 xs:mt-0'>
+              パスワードをお忘れですか？
+            </a>
           </Link>
         </div>
         <LoginButton label={label} loading={state.loading} />

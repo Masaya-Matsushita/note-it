@@ -1,5 +1,5 @@
 import { Button } from '@mantine/core'
-import { FC } from 'react'
+import { FC, memo } from 'react'
 import { AiOutlineDatabase } from 'react-icons/ai'
 
 type Props = {
@@ -7,7 +7,8 @@ type Props = {
   loading: boolean
 }
 
-export const LoginButton: FC<Props> = ({ label, loading }) => {
+// eslint-disable-next-line react/display-name
+export const LoginButton: FC<Props> = memo(({ label, loading }) => {
   return (
     <Button
       type='submit'
@@ -19,4 +20,4 @@ export const LoginButton: FC<Props> = ({ label, loading }) => {
       {label}
     </Button>
   )
-}
+})

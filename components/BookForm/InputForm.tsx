@@ -23,11 +23,11 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
   const { state, dispatch } = useBookFormState()
 
   // badgeとbookを保存する
-  const setBadgeAndBook = async (badgeArr: string[]) => {
-    await setDoc(doc(db, 'users', uid, 'badges', badgeArr[0]), {
-      badge: badgeArr[1],
+  const setBadgeAndBook = async (badgeId: string, badgeLabel: string) => {
+    await setDoc(doc(db, 'users', uid, 'badges', badgeId), {
+      badge: badgeLabel,
     })
-    await addDoc(collection(db, 'users', uid, 'badges', badgeArr[0], 'books'), {
+    await addDoc(collection(db, 'users', uid, 'badges', badgeId, 'books'), {
       title: state.title,
       overview: state.overview,
     })
@@ -48,14 +48,14 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
       dispatch({ type: 'error' })
       return
     }
-    const badgeArr = badge.split(',')
+    const [badgeId, badgeLabel] = badge.split(',')
     if (initBadge) {
       // 更新する場合
       const bookId = String(router.query.id)
       if (initBadge === badge) {
         // badgeの値は更新されない場合
         await updateDoc(
-          doc(db, 'users', uid, 'badges', badgeArr[0], 'books', bookId),
+          doc(db, 'users', uid, 'badges', badgeId, 'books', bookId),
           {
             title: title,
             overview: overview,
@@ -67,11 +67,11 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
         await deleteDoc(
           doc(db, 'users', uid, 'badges', initBadgeId, 'books', bookId)
         )
-        setBadgeAndBook(badgeArr)
+        setBadgeAndBook(badgeId, badgeLabel)
       }
     } else {
       // 作成する場合
-      setBadgeAndBook(badgeArr)
+      setBadgeAndBook(badgeId, badgeLabel)
     }
     // ページ遷移
     showNotification({
