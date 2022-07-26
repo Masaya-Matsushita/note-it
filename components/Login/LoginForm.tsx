@@ -15,6 +15,7 @@ import {
   updateProfile,
 } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
+import { LoginAction, LoginState } from 'hooks/StateManagement/useLoginState'
 import { useFormInitialized } from 'hooks/useFormInitialized'
 import Link from 'next/link'
 import { NextRouter } from 'next/router'
@@ -24,31 +25,8 @@ import { RiBallPenLine } from 'react-icons/ri'
 import { AuthDivider } from './AuthDivider'
 
 type Props = {
-  state: {
-    loading: boolean
-    error: string
-    method: string
-    checked: boolean
-    emailValue: string
-  }
-  dispatch: Dispatch<
-    {
-      type:
-        | 'loading'
-        | 'end'
-        | 'error'
-        | 'checked'
-        | 'inputEmail'
-        | 'setEmail'
-        | 'resetError'
-    } & Partial<{
-      loading: boolean
-      error: string
-      method: string
-      checked: boolean
-      emailValue: string
-    }>
-  >
+  state: LoginState
+  dispatch: Dispatch<LoginAction>
   router: NextRouter
 }
 
@@ -65,9 +43,9 @@ export const LoginForm: FC<Props> = ({ state, dispatch, router }) => {
   const emailSignIn: ComponentProps<'form'>['onSubmit'] = async (e) => {
     try {
       e.preventDefault()
-      dispatch({ type: 'loading' })
-      const email = e.currentTarget.email.value
-      const password = e.currentTarget.password.value
+      dispatch({ type: 'loading', loading: true })
+      const email = String(e.currentTarget.email.value)
+      const password = String(e.currentTarget.password.value)
       await signInWithEmailAndPassword(auth, email, password)
       // localStorageにemailを保存or削除
       if (state.checked) {
@@ -78,7 +56,7 @@ export const LoginForm: FC<Props> = ({ state, dispatch, router }) => {
       // my-pageへ遷移
       const user = auth.currentUser
       router.push(`/my-page/${user?.uid}`)
-      dispatch({ type: 'end' })
+      dispatch({ type: 'loading', loading: false })
     } catch (error: any) {
       dispatch({ type: 'error', error: error.code, method: 'signin' })
     }
@@ -87,7 +65,7 @@ export const LoginForm: FC<Props> = ({ state, dispatch, router }) => {
   // email & passwordで新規登録
   const emailSignUp = async (values: SignUpValues) => {
     try {
-      dispatch({ type: 'loading' })
+      dispatch({ type: 'loading', loading: true })
       await createUserWithEmailAndPassword(auth, values.email, values.password)
       const user = auth.currentUser
       if (user) {
@@ -106,7 +84,7 @@ export const LoginForm: FC<Props> = ({ state, dispatch, router }) => {
         // my-pageへ遷移
         router.push(`/my-page/${user.uid}`)
       }
-      dispatch({ type: 'end' })
+      dispatch({ type: 'loading', loading: false })
     } catch (error: any) {
       dispatch({ type: 'error', error: error.code, method: 'signup' })
     }

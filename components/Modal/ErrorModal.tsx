@@ -1,7 +1,7 @@
 import { Dispatch, FC, useEffect, useState } from 'react'
 import { NextRouter } from 'next/router'
 import { Button, Modal } from '@mantine/core'
-import { FcHighPriority } from 'react-icons/fc'
+import { MdErrorOutline } from 'react-icons/md'
 
 type Props = {
   router?: NextRouter
@@ -14,12 +14,15 @@ export const ErrorModal: FC<Props> = ({ router, error, method, dispatch }) => {
   const [opened, setOpened] = useState(false)
   const [errorCodeJa, setErrorCodeJa] = useState('')
 
-  // errorを日本語に翻訳してモーダルで表示
-  const translateToJa = (): void => {
-    // 初期値では何もしない
-    if (error === '') {
-      return
+  // errorに値が入ると実行
+  useEffect(() => {
+    if (error) {
+      translateToJa()
     }
+  }, [error])
+
+  // errorを日本語に翻訳してモーダルで表示
+  const translateToJa = () => {
     // モーダルを表示
     setOpened(true)
     // errorを日本語に翻訳
@@ -105,26 +108,18 @@ export const ErrorModal: FC<Props> = ({ router, error, method, dispatch }) => {
             'エラーが発生しました。しばらく時間をおいてお試しください。'
           )
         }
-        return
     }
   }
 
-  // error,methodを初期値に戻す＆モーダルを閉じる
-  // no-verifiedページの場合、ページリロード処理
   const handleClose = () => {
-    if (dispatch) {
-      dispatch({ type: 'resetError' })
-    }
+    // error,methodを初期値に戻す＆モーダルを閉じる
+    dispatch({ type: 'resetError' })
     setOpened(false)
+    // no-verifiedページの場合、ページリロード処理
     if (method === 'updateUser') {
       location.reload()
     }
   }
-
-  // errorに値が入ると実行
-  useEffect(() => {
-    translateToJa()
-  }, [error])
 
   return (
     <Modal
@@ -134,8 +129,8 @@ export const ErrorModal: FC<Props> = ({ router, error, method, dispatch }) => {
       className='mt-16'
     >
       <div className='flex'>
-        <FcHighPriority size={24} />
-        <div className='ml-2 sm:text-lg'>{errorCodeJa}</div>
+        <MdErrorOutline color={'#a23535'} size={28} />
+        <div className='ml-1 sm:text-lg'>{errorCodeJa}</div>
       </div>
       {/* auth-redirectページの場合、ログイン画面へボタンを表示 */}
       {method === 'redirect' ? (

@@ -17,7 +17,6 @@ export const AuthProvider: FC<Props> = ({ router }) => {
             className='flex flex-col items-center px-4 xs:px-7 md:px-8 lg:px-10'
           >
             {/* GitHubの場合、ボタンの縁にborderをつける */}
-
             <div
               className='relative w-16 h-16 hover:cursor-pointer xs:w-20 xs:h-20'
               style={
