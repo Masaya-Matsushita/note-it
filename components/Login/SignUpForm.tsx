@@ -8,12 +8,13 @@ import {
   updateProfile,
 } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
-import { useFormInitialized } from 'hooks/useFormInitialized'
 import { useRouter } from 'next/router'
 import { FC, useCallback } from 'react'
 import { AiOutlineMail, AiOutlineKey } from 'react-icons/ai'
 import { RiBallPenLine } from 'react-icons/ri'
 import { Reducer, useReducer } from 'react'
+import { z } from 'zod'
+import { useForm, zodResolver } from '@mantine/form'
 
 type Props = { label: '新規登録' }
 
@@ -61,10 +62,37 @@ const reducer: Reducer<State, Action> = (state, action) => {
   }
 }
 
+// フォームのバリデーション
+const signUpShema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, { message: '2~10文字で入力してください。' })
+    .max(10, { message: '2~10文字で入力してください。' }),
+  email: z
+    .string()
+    .trim()
+    .email({ message: 'メールアドレスが正しくありません。' }),
+  password: z
+    .string()
+    .trim()
+    .regex(/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,100}$/i, {
+      message: '「半角英数をそれぞれ含む6文字以上」で入力してください。',
+    }),
+})
+
 export const SignUpForm: FC<Props> = ({ label }) => {
   const router = useRouter()
-  const { signUpForm } = useFormInitialized()
   const [state, dispatch] = useReducer(reducer, initialState)
+  // フォームの初期値
+  const signUpForm = useForm({
+    schema: zodResolver(signUpShema),
+    initialValues: {
+      name: '',
+      email: '',
+      password: '',
+    },
+  })
 
   // email & passwordで新規登録
   const emailSignUp = useCallback(

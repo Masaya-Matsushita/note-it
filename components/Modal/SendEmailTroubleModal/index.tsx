@@ -1,19 +1,28 @@
-import { FC, useState } from 'react'
+import { FC, memo, useCallback, useState } from 'react'
 import { sendEmailVerification } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
-import { Button, Modal } from '@mantine/core'
+import { Modal } from '@mantine/core'
+import { BiHelpCircle } from 'react-icons/bi'
 import { showNotification } from '@mantine/notifications'
 import { AiOutlineMail } from 'react-icons/ai'
-import { BiHelpCircle } from 'react-icons/bi'
+import { ResendButton } from './ResendButton'
 
 type Props = { resendButton: boolean }
 
-export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
+const ITEMS = [
+  '迷惑メールフォルダに振り分けされてしまっている',
+  '入力したメールアドレスが間違っている',
+  '受信トレイの空き容量が不足している',
+  'インターネット接続が不安定である',
+]
+
+// eslint-disable-next-line react/display-name
+export const SendEmailTroubleModal: FC<Props> = memo(({ resendButton }) => {
   const [opened, setOpened] = useState(false)
   const [error, setError] = useState('')
 
   // userに確認メールを送信
-  const handleSendEmail = async (): Promise<void> => {
+  const handleSendEmail = useCallback(async () => {
     try {
       const user = auth.currentUser
       if (user) {
@@ -29,16 +38,15 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
         })
       }
     } catch (error: any) {
-      console.error(error.code)
       setError(error.code)
     }
-  }
+  }, [])
 
   // errorを初期値に戻す＆モーダルを閉じる
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpened(false)
     setError('')
-  }
+  }, [])
 
   return (
     <div className='flex justify-end items-center mt-6 xs:mt-4'>
@@ -58,36 +66,17 @@ export const SendEmailTroubleModal: FC<Props> = ({ resendButton }) => {
         <div className='mb-2 ml-2 text-xl'>主な考えられる原因</div>
         <div className='grow mb-2 border border-dark-400 border-solid'></div>
         <ol className='space-y-1'>
-          <li> 迷惑メールフォルダに振り分けされてしまっている</li>
-          <li>入力したメールアドレスが間違っている</li>
-          <li>受信トレイの空き容量が不足している</li>
-          <li>インターネット接続が不安定である</li>
+          {ITEMS.map((item) => {
+            return <li key={item}>{item}</li>
+          })}
         </ol>
         {/* 再送信ボタンの有無 */}
-        {resendButton ? (
-          <div>
-            <div className='grow mt-16 mb-4 border border-dark-500 border-solid'></div>
-            <div>
-              上記で解決しない場合、認証メールを再送信することもできます。（古いメールのリンクは無効になります）
-            </div>
-            {error !== '' ? (
-              <div className='mt-2 text-sm font-bold text-red-500'>
-                エラーが発生しました。しばらく時間をおいてお試しください。
-              </div>
-            ) : null}
-            <Button
-              onClick={handleSendEmail}
-              className='block px-6 mt-2 mr-2 ml-auto'
-            >
-              再送信
-            </Button>
-          </div>
-        ) : (
-          <div className='mt-8 text-right'>
-            確認後、もう一度お試しください。
-          </div>
-        )}
+        <ResendButton
+          resendButton={resendButton}
+          error={error}
+          handleSendEmail={handleSendEmail}
+        />
       </Modal>
     </div>
   )
-}
+})
