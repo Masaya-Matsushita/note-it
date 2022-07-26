@@ -1,11 +1,10 @@
-import { FC } from 'react'
-import { NextRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 
-type Props = { router: NextRouter }
+const PROVIDER = ['Google', 'Twitter', 'GitHub'] as const
 
-export const AuthProvider: FC<Props> = ({ router }) => {
-  const PROVIDER = ['Google', 'Twitter', 'GitHub'] as const
+export const AuthProvider = () => {
+  const router = useRouter()
 
   return (
     // それぞれproviderのqueryを含んでauth-redirectに遷移するボタン

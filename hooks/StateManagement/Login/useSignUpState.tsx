@@ -5,38 +5,17 @@ const initialState = {
   loading: false,
   error: '',
   method: '',
-  checked: false,
-  emailValue: '',
 }
 
-export type LoginState = typeof initialState
+type State = typeof initialState
 
-export type LoginAction = {
-  type:
-    | 'setEmail'
-    | 'inputEmail'
-    | 'loading'
-    | 'error'
-    | 'resetError'
-    | 'checked'
-} & Partial<LoginState>
+type Action = {
+  type: 'loading' | 'error' | 'resetError'
+} & Partial<State>
 
 // reducer関数
-const reducer: Reducer<LoginState, LoginAction> = (state, action) => {
+const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
-    case 'setEmail': {
-      return {
-        ...state,
-        emailValue: action.emailValue ? action.emailValue : '',
-        checked: true,
-      }
-    }
-    case 'inputEmail': {
-      return {
-        ...state,
-        emailValue: action.emailValue ? action.emailValue : '',
-      }
-    }
     case 'loading': {
       return {
         ...state,
@@ -58,16 +37,10 @@ const reducer: Reducer<LoginState, LoginAction> = (state, action) => {
         method: action.method ? action.method : '',
       }
     }
-    case 'checked': {
-      return {
-        ...state,
-        checked: action.checked ? action.checked : false,
-      }
-    }
   }
 }
 
-export const useLoginState = () => {
+export const useSignUpState = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   return { state, dispatch }
 }
