@@ -96,6 +96,12 @@ export const ErrorModal: FC<Props> = memo(
           setErrorCodeJa('アカウントが既に存在します。')
           return
         }
+        case 'auth/web-storage-unsupported': {
+          setErrorCodeJa(
+            'third-party cookie の設定が無効になってる可能性があります。ブラウザの設定をご確認ください。'
+          )
+          return
+        }
         default:
           if (method === 'signin') {
             setErrorCodeJa(

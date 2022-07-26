@@ -12,9 +12,9 @@ export const AuthDivider: FC<Props> = ({ label }) => {
         <div className='grow mr-4 border border-dark-400 border-solid xs:mr-8 sm:mr-12 md:mr-12'></div>
       </div>
       {/* provider認証のラベル */}
-      <div className='mb-6 text-center xxs:text-lg xs:mb-10 lg:mb-12 lg:text-xl'>
-        お持ちのアカウントで
-        <span className='pl-1 font-bold text-blue-400'>{label}</span>
+      <div className='flex justify-center items-center mb-6 xxs:text-lg xs:mb-10 lg:mb-12 lg:text-xl'>
+        <div className=''>お持ちのアカウントで</div>
+        <div className='ml-1 font-bold text-blue-400'>{label}</div>
       </div>
     </div>
   )
