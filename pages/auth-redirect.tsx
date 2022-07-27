@@ -10,17 +10,45 @@ import {
   twitterProvider,
 } from 'firebaseConfig/firebase'
 import { LoadingOverlay } from '@mantine/core'
-import { useAuthRedirectState } from 'hooks/StateManagement/useAuthRedirectState'
+import { Reducer, useReducer } from 'react'
+
+type State = typeof initialState
+
+type Action = {
+  type: 'error'
+} & Partial<State>
+
+const initialState = {
+  error: '',
+  method: '',
+  pageLoading: true,
+}
+
+const reducer: Reducer<State, Action> = (state, action) => {
+  switch (action.type) {
+    case 'error': {
+      return {
+        ...state,
+        error: action.error ? action.error : '',
+        method: action.method ? action.method : '',
+        pageLoading: false,
+      }
+    }
+  }
+}
 
 const AuthRedirectWithGoogle: NextPage = () => {
   const router = useRouter()
-  const { state, dispatch } = useAuthRedirectState()
+  const [state, dispatch] = useReducer(reducer, initialState)
 
-  // 各プロバイダへリダイレクト認証
-  const redirectToMypage = (): void => {
+  useEffect(() => {
+    if (!router.isReady) {
+      return
+    }
+    // 各プロバイダへリダイレクト認証
     getRedirectResult(auth)
       .then((result) => {
-        // ユーザーが未認証の時
+        // ユーザーが未認証の時のみリダイレクト
         if (result === null) {
           // queryの値で認証先プロバイダを判断
           if (router.query.provider === 'google') {
@@ -33,18 +61,8 @@ const AuthRedirectWithGoogle: NextPage = () => {
         }
       })
       .catch((error: any) => {
-        // pageLoadingを非表示に、ErrorModalを表示
         dispatch({ type: 'error', error: error.code, method: 'redirect' })
       })
-  }
-
-  useEffect(() => {
-    // router起因のエラー対処
-    // 'No router instance found. you should only use "next/router" inside the client side of your app.'
-    if (!router.isReady) {
-      return
-    }
-    redirectToMypage()
   }, [router.isReady])
 
   return (
