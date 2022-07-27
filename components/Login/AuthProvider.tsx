@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-import { InfoPopover } from './InfoPopover'
+import { InfoPopover } from '../Parts/InfoPopover'
 
 const PROVIDER = ['Google', 'Twitter', 'GitHub'] as const
 
@@ -8,7 +8,7 @@ export const AuthProvider = () => {
   const router = useRouter()
 
   return (
-    <div className='sm:mx-8 md:mx-24'>
+    <div className='mx-auto max-w-[480px]'>
       <div className='flex justify-center items-center'>
         {PROVIDER.map((provider) => {
           return (
@@ -44,7 +44,9 @@ export const AuthProvider = () => {
           )
         })}
       </div>
-      <InfoPopover />
+      <InfoPopover label={'サードパーティ認証について'}>
+        Google,Twitter,GitHubアカウントからユーザーを作成できます。プライベートモードのブラウザではご利用いただけません。
+      </InfoPopover>
     </div>
   )
 }

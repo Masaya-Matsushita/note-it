@@ -25,20 +25,20 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'loading': {
       return {
         ...state,
-        loading: action.loading ? action.loading : false,
+        loading: action.loading ?? false,
       }
     }
     case 'error': {
       return {
         ...state,
-        error: action.error ? action.error : '',
+        error: action.error ?? '',
         loading: false,
       }
     }
     case 'resetError': {
       return {
         ...state,
-        error: action.error ? action.error : '',
+        error: action.error ?? '',
       }
     }
   }
@@ -59,11 +59,11 @@ export const EmailForm = () => {
 
   // 再設定メールを送信
   const handleSubmit = useCallback(
-    async (value: { email: string }) => {
+    async (email: string) => {
       try {
         dispatch({ type: 'loading', loading: true })
         auth.languageCode = 'ja'
-        await sendPasswordResetEmail(auth, value.email)
+        await sendPasswordResetEmail(auth, email)
         emailForm.reset()
         showNotification({
           message: '再設定メールが送信されました。',
@@ -84,7 +84,7 @@ export const EmailForm = () => {
       <ErrorModal error={state.error} dispatch={dispatch} />
       <form
         className='px-4 mx-auto mt-12 max-w-lg'
-        onSubmit={emailForm.onSubmit((value) => handleSubmit(value))}
+        onSubmit={emailForm.onSubmit((value) => handleSubmit(value.email))}
       >
         <TextInput
           required

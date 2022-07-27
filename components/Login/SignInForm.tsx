@@ -36,41 +36,41 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'setEmail': {
       return {
         ...state,
-        emailValue: action.emailValue ? action.emailValue : '',
+        emailValue: action.emailValue ?? '',
         checked: true,
       }
     }
     case 'inputEmail': {
       return {
         ...state,
-        emailValue: action.emailValue ? action.emailValue : '',
+        emailValue: action.emailValue ?? '',
       }
     }
     case 'loading': {
       return {
         ...state,
-        loading: action.loading ? action.loading : false,
+        loading: action.loading ?? false,
       }
     }
     case 'error': {
       return {
         ...state,
-        error: action.error ? action.error : '',
-        method: action.method ? action.method : '',
+        error: action.error ?? '',
+        method: action.method ?? '',
         loading: false,
       }
     }
     case 'resetError': {
       return {
         ...state,
-        error: action.error ? action.error : '',
-        method: action.method ? action.method : '',
+        error: action.error ?? '',
+        method: action.method ?? '',
       }
     }
     case 'checked': {
       return {
         ...state,
-        checked: action.checked ? action.checked : false,
+        checked: action.checked ?? false,
       }
     }
   }

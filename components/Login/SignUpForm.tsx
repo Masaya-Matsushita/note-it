@@ -41,22 +41,22 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'loading': {
       return {
         ...state,
-        loading: action.loading ? action.loading : false,
+        loading: action.loading ?? false,
       }
     }
     case 'error': {
       return {
         ...state,
-        error: action.error ? action.error : '',
-        method: action.method ? action.method : '',
+        error: action.error ?? '',
+        method: action.method ?? '',
         loading: false,
       }
     }
     case 'resetError': {
       return {
         ...state,
-        error: action.error ? action.error : '',
-        method: action.method ? action.method : '',
+        error: action.error ?? '',
+        method: action.method ?? '',
       }
     }
   }

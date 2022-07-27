@@ -29,8 +29,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'error': {
       return {
         ...state,
-        error: action.error ? action.error : '',
-        method: action.method ? action.method : '',
+        error: action.error ?? '',
+        method: action.method ?? '',
         pageLoading: false,
       }
     }

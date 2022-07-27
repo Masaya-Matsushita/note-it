@@ -13,11 +13,7 @@ export default function App(props: AppProps) {
 
   // マウント時に一度だけ実行
   useEffect(() => {
-    redirectOnAuthState()
-  }, [])
-
-  // 未ログインのときloginへ、ログイン済のときmy-pageへ
-  const redirectOnAuthState = () => {
+    // 未ログインのときloginへ、ログイン済のときmy-pageへ
     onAuthStateChanged(auth, (user) => {
       if (user) {
         switch (router.pathname) {
@@ -48,7 +44,7 @@ export default function App(props: AppProps) {
         }
       }
     })
-  }
+  }, [])
 
   return (
     <>
