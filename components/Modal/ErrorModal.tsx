@@ -123,7 +123,7 @@ export const ErrorModal: FC<Props> = memo(
       if (method === 'updateUser') {
         location.reload()
       }
-    }, [method])
+    }, [method, dispatch])
 
     return (
       <Modal
