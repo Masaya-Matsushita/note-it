@@ -70,7 +70,7 @@ const AuthRedirectWithGoogle: NextPage = () => {
       .catch((error: any) => {
         dispatch({ type: 'error', error: error.code, method: 'redirect' })
       })
-  }, [router.isReady])
+  }, [router])
 
   return (
     <>

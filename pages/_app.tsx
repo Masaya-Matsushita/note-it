@@ -44,7 +44,7 @@ export default function App(props: AppProps) {
         }
       }
     })
-  }, [])
+  }, [router])
 
   return (
     <>

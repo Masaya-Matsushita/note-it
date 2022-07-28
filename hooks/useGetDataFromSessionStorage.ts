@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
+import { Book } from 'types'
 
 export const useGetDataFromSessionStorage = () => {
-  const [currentBook, setCurrentBook] = useState({
+  const [currentBook, setCurrentBook] = useState<Book>({
     title: '',
     badge: '',
     overview: '',
@@ -13,7 +14,7 @@ export const useGetDataFromSessionStorage = () => {
     note: '',
     clozeNote: '',
   })
-  // マウント時、book,noteを取得
+  // マウント時、sessionStorageからbook,noteを取得
   useEffect(() => {
     const jsonCurrentBook = sessionStorage.getItem('currentBook')
     const jsonCurrentNote = sessionStorage.getItem('currentNote')
