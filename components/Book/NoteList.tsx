@@ -4,7 +4,7 @@ import db from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
 import { FC, useCallback } from 'react'
 import { Note as NoteIcon } from 'tabler-icons-react'
-import { Notes } from 'types'
+import { Note, Notes } from 'types'
 
 type Props = {
   notes: Notes
@@ -12,14 +12,6 @@ type Props = {
   uid: string
   badgeId: string
   bookId: string
-}
-
-type Note = {
-  id: string
-  label: string
-  page: number
-  note: string
-  clozeNote: string
 }
 
 export const NoteList: FC<Props> = ({

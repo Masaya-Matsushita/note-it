@@ -1,6 +1,7 @@
 import { Button } from '@mantine/core'
 import { NoteDisplay } from 'components/Note/NoteDisplay'
 import { NextPage } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -16,7 +17,6 @@ const Note: NextPage = () => {
     note: '',
     clozeNote: '',
   })
-  const [hideCloze, setHideCloze] = useState(false)
 
   // マウント時、noteを取得
   useEffect(() => {
@@ -37,18 +37,11 @@ const Note: NextPage = () => {
             {noteData.page}
           </div>
         </div>
-        <NoteDisplay
-          noteData={noteData}
-          hideCloze={hideCloze}
-          setHideCloze={setHideCloze}
-        />
+        <NoteDisplay noteData={noteData} />
         <div className='mx-2 xs:mx-6'>
-          <Button
-            className='w-full'
-            onClick={() => router.push(`/my-page/${uid}/${badgeId}/${bookId}`)}
-          >
-            戻る
-          </Button>
+          <Link href={`/my-page/${uid}/${badgeId}/${bookId}`} passHref>
+            <Button className='w-full'>戻る</Button>
+          </Link>
         </div>
       </div>
     </>
