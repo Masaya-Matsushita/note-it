@@ -6,7 +6,7 @@ import { collection, getDocs } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Book, BookAndNotes, Notes } from 'types'
 
 const Book: NextPage = () => {
@@ -16,48 +16,60 @@ const Book: NextPage = () => {
   const bookId = String(router.query.bookId)
   const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes | undefined>()
 
-  // notesに値を代入
-  const createBookAndNotes = async (targetBook: Book) => {
-    // notesを取得
-    const noteSnap = await getDocs(
-      collection(db, 'users', uid, 'badges', badgeId, 'books', bookId, 'notes')
-    )
-    let notes: Notes = []
-    // notesへ追加
-    noteSnap.forEach((note) => {
-      notes = [
-        ...notes,
-        {
-          id: note.id,
-          label: note.data().label,
-          page: note.data().page,
-          note: note.data().note,
-          clozeNote: note.data().clozeNote,
+  // bookAndNotesに取得したデータを代入
+  const createBookAndNotes = useCallback(
+    async (targetBook: Book) => {
+      // notesを取得
+      const noteSnap = await getDocs(
+        collection(
+          db,
+          'users',
+          uid,
+          'badges',
+          badgeId,
+          'books',
+          bookId,
+          'notes'
+        )
+      )
+      let notes: Notes = []
+      // 取得したデータを配列へ追加
+      noteSnap.forEach((note) => {
+        notes = [
+          ...notes,
+          {
+            id: note.id,
+            label: note.data().label,
+            page: note.data().page,
+            note: note.data().note,
+            clozeNote: note.data().clozeNote,
+          },
+        ]
+      })
+      // 配列のデータをpage昇順で並べ替え
+      notes.sort((a, b) => {
+        return a.page - b.page
+      })
+      setBookAndNotes({
+        book: {
+          title: targetBook.title,
+          badge: targetBook.badge,
+          overview: targetBook.overview,
         },
-      ]
-    })
-    // page昇順で並べ替え
-    notes.sort((a, b) => {
-      return a.page - b.page
-    })
-    setBookAndNotes({
-      book: {
-        title: targetBook.title,
-        badge: targetBook.badge,
-        overview: targetBook.overview,
-      },
-      notes: notes,
-    })
-  }
+        notes: notes,
+      })
+    },
+    [uid, badgeId, bookId]
+  )
 
   useEffect(() => {
-    // bookに値を代入
+    // sessionStorageからtargetBookを取得
     const jsonTargetBook = sessionStorage.getItem('targetBook')
     if (jsonTargetBook) {
       const targetBook = JSON.parse(jsonTargetBook)
       createBookAndNotes(targetBook)
     }
-  }, [router])
+  }, [router, createBookAndNotes])
 
   return (
     <>

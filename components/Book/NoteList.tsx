@@ -2,8 +2,8 @@ import { ItemMenu } from 'components/Parts/ItemMenu'
 import { deleteDoc, doc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
 import { NextRouter } from 'next/router'
-import { FC } from 'react'
-import { Note } from 'tabler-icons-react'
+import { FC, useCallback } from 'react'
+import { Note as NoteIcon } from 'tabler-icons-react'
 import { Notes } from 'types'
 
 type Props = {
@@ -14,6 +14,14 @@ type Props = {
   bookId: string
 }
 
+type Note = {
+  id: string
+  label: string
+  page: number
+  note: string
+  clozeNote: string
+}
+
 export const NoteList: FC<Props> = ({
   notes,
   router,
@@ -21,38 +29,48 @@ export const NoteList: FC<Props> = ({
   badgeId,
   bookId,
 }) => {
-  const toNotePage = (note: {
-    id: string
-    label: string
-    page: number
-    note: string
-    clozeNote: string
-  }) => {
+  const toNotePage = (note: Note) => {
     sessionStorage.setItem('targetNote', JSON.stringify(note))
     router.push(`/my-page/${uid}/${badgeId}/${bookId}/${note.id}`)
   }
 
-  const toNoteForm = (target: any) => {
+  const toNoteForm = (target: Note) => {
     sessionStorage.setItem('targetNote', JSON.stringify(target))
     router.push(`/my-page/${uid}/${badgeId}/${bookId}/note-form`)
   }
 
   // ブラウザにtargetNoteを保存し、note-formページへ
-  const toEditPage = (target: any, targetId: string) => {
-    sessionStorage.setItem('targetNote', JSON.stringify(target))
-    router.push({
-      pathname: `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
-      query: { id: targetId },
-    })
-  }
+  const toEditPage = useCallback(
+    (target: Note, targetId: string) => {
+      sessionStorage.setItem('targetNote', JSON.stringify(target))
+      router.push({
+        pathname: `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
+        query: { id: targetId },
+      })
+    },
+    [router, uid, badgeId, bookId]
+  )
 
   // noteを削除
-  const handleDelete = async (noteId: string) => {
-    await deleteDoc(
-      doc(db, 'users', uid, 'badges', badgeId, 'books', bookId, 'notes', noteId)
-    )
-    location.reload()
-  }
+  const handleDelete = useCallback(
+    async (noteId: string) => {
+      await deleteDoc(
+        doc(
+          db,
+          'users',
+          uid,
+          'badges',
+          badgeId,
+          'books',
+          bookId,
+          'notes',
+          noteId
+        )
+      )
+      location.reload()
+    },
+    [uid, badgeId, bookId]
+  )
 
   return (
     <div>
@@ -115,7 +133,7 @@ export const NoteList: FC<Props> = ({
               toNoteForm({
                 id: '',
                 label: '',
-                page: '0',
+                page: 1,
                 note: '',
                 clozeNote: '',
               })
@@ -127,7 +145,7 @@ export const NoteList: FC<Props> = ({
       ) : (
         <div>
           <div className='mt-8 xs:mt-16'>
-            <Note
+            <NoteIcon
               size={'160px'}
               strokeWidth={1.5}
               color={'#2b2c31'}
@@ -143,7 +161,7 @@ export const NoteList: FC<Props> = ({
               toNoteForm({
                 id: '',
                 label: '',
-                page: 0,
+                page: 1,
                 note: '',
                 clozeNote: '',
               })

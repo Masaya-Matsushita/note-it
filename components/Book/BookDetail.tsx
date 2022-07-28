@@ -1,10 +1,11 @@
 import { Badge } from '@mantine/core'
-import { FC } from 'react'
+import { FC, memo } from 'react'
 import { Book } from 'types'
 
 type Props = { book: Book }
 
-export const BookDetail: FC<Props> = ({ book }) => {
+// eslint-disable-next-line react/display-name
+export const BookDetail: FC<Props> = memo(({ book }) => {
   return (
     <div>
       <div className='flex items-end mt-6'>
@@ -18,4 +19,4 @@ export const BookDetail: FC<Props> = ({ book }) => {
       </div>
     </div>
   )
-}
+})
