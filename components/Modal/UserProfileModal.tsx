@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  FC,
-  memo,
-  useCallback,
-  useEffect,
-} from 'react'
+import { ChangeEvent, Dispatch, FC, memo, useCallback, useEffect } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import db, { auth, storage } from 'firebaseConfig/firebase'
@@ -28,7 +21,7 @@ type Action = {
 
 const initialState = {
   error: '',
-  userIcon: '',
+  iconURL: '',
   userName: '',
   loading: true,
 }
@@ -38,7 +31,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'icon': {
       return {
         ...state,
-        userIcon: action.userIcon ?? '',
+        iconURL: action.iconURL ?? '',
         loading: false,
       }
     }
@@ -51,7 +44,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'display': {
       return {
         ...state,
-        userIcon: action.userIcon ?? '',
+        iconURL: action.iconURL ?? '',
         userName: action.userName ?? '',
         loading: false,
       }
@@ -91,7 +84,7 @@ export const UserProfileModal: FC<Props> = memo(({ opened, propsDispatch }) => {
       try {
         await uploadBytes(iconUsersRef, file)
         const iconUrl = await getDownloadURL(iconUsersRef)
-        dispatch({ type: 'icon', userIcon: iconUrl })
+        dispatch({ type: 'icon', iconURL: iconUrl })
       } catch (error: any) {
         dispatch({ type: 'error', error: error.message })
       }
@@ -101,17 +94,17 @@ export const UserProfileModal: FC<Props> = memo(({ opened, propsDispatch }) => {
 
   // userのドキュメントを作成/更新、リロード
   const setUserProfile = useCallback(async () => {
-    if (state.userName) {
+    if (state.userName && state.userName.length <= 20) {
       await setDoc(doc(db, 'users', uid), {
         userName: state.userName,
-        iconURL: state.userIcon,
+        iconURL: state.iconURL,
       })
       propsDispatch({ type: 'opened', opened: false })
       location.reload()
     } else {
-      dispatch({ type: 'error', error: 'username not entered' })
+      dispatch({ type: 'error', error: 'username error' })
     }
-  }, [propsDispatch, uid, state.userIcon, state.userName])
+  }, [propsDispatch, uid, state.iconURL, state.userName])
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -121,12 +114,12 @@ export const UserProfileModal: FC<Props> = memo(({ opened, propsDispatch }) => {
           // 更新の場合は現在のプロフィールを表示
           dispatch({
             type: 'display',
-            userIcon: docSnap.data().iconURL,
+            iconURL: docSnap.data().iconURL,
             userName: docSnap.data().userName,
           })
         } else {
           // 新規作成の場合はデフォルトを表示
-          dispatch({ type: 'icon', userIcon: '/UnknownIcon.png' })
+          dispatch({ type: 'icon', iconURL: '/UnknownIcon.png' })
           if (user.displayName) {
             dispatch({ type: 'name', userName: user.displayName })
           }
@@ -153,13 +146,13 @@ export const UserProfileModal: FC<Props> = memo(({ opened, propsDispatch }) => {
         ) : (
           <div className='relative'>
             <img
-              src={state.userIcon}
+              src={state.iconURL}
               alt='アイコンの描画に失敗しました。'
               className='w-20 h-20 rounded-full sm:w-24 sm:h-24'
             />
-            <label htmlFor='userIcon' className='absolute left-14 sm:left-16'>
+            <label htmlFor='iconURL' className='absolute left-14 sm:left-16'>
               <input
-                id='userIcon'
+                id='iconURL'
                 type='file'
                 accept='image/*,.png,.jpg,.jpeg,.gif'
                 onChange={(e) => changeUserImage(e)}
@@ -182,8 +175,8 @@ export const UserProfileModal: FC<Props> = memo(({ opened, propsDispatch }) => {
       </Card>
       {state.error ? (
         <div className='mt-2 text-sm font-bold text-center text-red-500'>
-          {state.error === 'username not entered'
-            ? 'ユーザーネームが未入力です。'
+          {state.error === 'username error'
+            ? 'ユーザーネームは1~20字で入力してください。'
             : 'エラーが発生しました。入力内容をご確認ください。(画像サイズは最大5MBです'}
         </div>
       ) : null}
