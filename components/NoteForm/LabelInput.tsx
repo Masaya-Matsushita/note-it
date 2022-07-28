@@ -1,12 +1,14 @@
 import { TextInput } from '@mantine/core'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { NoteFormAction } from 'pages/my-page/[uid]/[badgeId]/[bookId]/note-form'
+import { Dispatch, FC, memo } from 'react'
 
 type Props = {
   label: string
-  dispatch: Dispatch<any>
+  dispatch: Dispatch<NoteFormAction>
 }
 
-export const LabelInput: FC<Props> = ({ label, dispatch }) => {
+// eslint-disable-next-line react/display-name
+export const LabelInput: FC<Props> = memo(({ label, dispatch }) => {
   return (
     <TextInput
       required
@@ -19,4 +21,4 @@ export const LabelInput: FC<Props> = ({ label, dispatch }) => {
       className='flex-1 mr-4 xs:mr-6'
     />
   )
-}
+})

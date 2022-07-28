@@ -15,7 +15,7 @@ import { Reducer, useReducer } from 'react'
 type State = typeof initialState
 
 type Action = {
-  type: 'error'
+  type: 'error' | 'resetError'
 } & Partial<State>
 
 const initialState = {
@@ -32,6 +32,13 @@ const reducer: Reducer<State, Action> = (state, action) => {
         error: action.error ?? '',
         method: action.method ?? '',
         pageLoading: false,
+      }
+    }
+    case 'resetError': {
+      return {
+        ...state,
+        error: action.error ?? '',
+        method: action.method ?? '',
       }
     }
   }

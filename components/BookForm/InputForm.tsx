@@ -9,32 +9,87 @@ import {
   deleteDoc,
 } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
-import { useBookFormState } from 'hooks/StateManagement/useBookFormState'
 import { NextRouter } from 'next/router'
-import { FC, useEffect } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 import { Book2, Check } from 'tabler-icons-react'
+import { Reducer, useReducer } from 'react'
 
 type Props = {
   router: NextRouter
   uid: string
 }
 
+type State = typeof initialState
+
+type Action = {
+  type: 'set' | 'title' | 'badge' | 'overview' | 'error'
+} & Partial<State>
+
+const initialState = {
+  title: '',
+  badge: '1,学校',
+  overview: '',
+  initBadge: '',
+  error: false,
+}
+
+const reducer: Reducer<State, Action> = (state, action) => {
+  switch (action.type) {
+    case 'set': {
+      return {
+        ...state,
+        title: action.title ? action.title : '',
+        badge: action.badge ? action.badge : '',
+        initBadge: action.badge ? action.badge : '',
+        overview: action.overview ? action.overview : '',
+      }
+    }
+    case 'title': {
+      return {
+        ...state,
+        title: action.title ? action.title : '',
+      }
+    }
+    case 'badge': {
+      return {
+        ...state,
+        badge: action.badge ? action.badge : '',
+      }
+    }
+    case 'overview': {
+      return {
+        ...state,
+        overview: action.overview ? action.overview : '',
+      }
+    }
+    case 'error': {
+      return {
+        ...state,
+        error: true,
+      }
+    }
+  }
+}
+
 export const InputForm: FC<Props> = ({ router, uid }) => {
-  const { state, dispatch } = useBookFormState()
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   // badgeとbookを保存する
-  const setBadgeAndBook = async (badgeId: string, badgeLabel: string) => {
-    await setDoc(doc(db, 'users', uid, 'badges', badgeId), {
-      badge: badgeLabel,
-    })
-    await addDoc(collection(db, 'users', uid, 'badges', badgeId, 'books'), {
-      title: state.title,
-      overview: state.overview,
-    })
-  }
+  const setBadgeAndBook = useCallback(
+    async (badgeId: string, badgeLabel: string) => {
+      await setDoc(doc(db, 'users', uid, 'badges', badgeId), {
+        badge: badgeLabel,
+      })
+      await addDoc(collection(db, 'users', uid, 'badges', badgeId, 'books'), {
+        title: state.title,
+        overview: state.overview,
+      })
+    },
+    [uid, state.title, state.overview]
+  )
 
   // badge,bookをデータベースに登録/更新
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const title = state.title
     const badge = state.badge
     const initBadge = state.initBadge
@@ -80,10 +135,18 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
       icon: <Check size={20} />,
     })
     router.push(`/my-page/${uid}`)
-  }
+  }, [
+    router,
+    setBadgeAndBook,
+    state.badge,
+    state.initBadge,
+    state.overview,
+    state.title,
+    uid,
+  ])
 
   // badgeの値を整形
-  const exchangeBadgeValue = (badge: string) => {
+  const exchangeBadgeValue = useCallback((badge: string) => {
     switch (badge) {
       case '学校': {
         return '1,学校'
@@ -110,7 +173,7 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
         return '8,その他'
       }
     }
-  }
+  }, [])
 
   useEffect(() => {
     // WebストレージからtargetBookを取得
@@ -130,7 +193,7 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
         overview: targetBook.overview,
       })
     }
-  }, [])
+  }, [exchangeBadgeValue])
 
   return (
     <div>

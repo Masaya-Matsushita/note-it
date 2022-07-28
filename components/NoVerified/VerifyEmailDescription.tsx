@@ -8,7 +8,7 @@ import { auth } from 'firebaseConfig/firebase'
 type State = typeof initialState
 
 type Action = {
-  type: 'error' | 'active'
+  type: 'error' | 'active' | 'resetError'
 } & Partial<State>
 
 const initialState = {
@@ -20,6 +20,13 @@ const initialState = {
 const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case 'error': {
+      return {
+        ...state,
+        error: action.error ?? '',
+        method: action.method ?? '',
+      }
+    }
+    case 'resetError': {
       return {
         ...state,
         error: action.error ?? '',

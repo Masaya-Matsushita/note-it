@@ -1,21 +1,22 @@
 import { NumberInput } from '@mantine/core'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { NoteFormAction } from 'pages/my-page/[uid]/[badgeId]/[bookId]/note-form'
+import { Dispatch, FC, memo } from 'react'
 
 type Props = {
   page: number
-  dispatch: Dispatch<any>
+  dispatch: Dispatch<NoteFormAction>
 }
-export const PageInput: FC<Props> = ({ page, dispatch }) => {
+// eslint-disable-next-line react/display-name
+export const PageInput: FC<Props> = memo(({ page, dispatch }) => {
   return (
     <NumberInput
-      min={0}
+      min={1}
       required
       label='Page'
-      placeholder='26'
       size='md'
       value={page}
       onChange={(val) => dispatch({ type: 'page', page: val })}
       className='w-20'
     />
   )
-}
+})

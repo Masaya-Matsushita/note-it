@@ -12,7 +12,7 @@ import { Settings, Logout } from 'tabler-icons-react'
 type State = typeof initialState
 
 type Action = {
-  type: 'icon' | 'name' | 'error' | 'display' | 'opened'
+  type: 'icon' | 'name' | 'error' | 'display' | 'opened' | 'resetError'
 } & Partial<State>
 
 const initialState = {
@@ -47,6 +47,12 @@ const reducer: Reducer<State, Action> = (state, action) => {
       return {
         ...state,
         error: action.error ? action.error : '',
+      }
+    }
+    case 'resetError': {
+      return {
+        ...state,
+        error: action.error ?? '',
       }
     }
     case 'opened': {
