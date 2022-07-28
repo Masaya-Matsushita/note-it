@@ -13,7 +13,7 @@ import { NextRouter } from 'next/router'
 import { FC, useCallback, useEffect } from 'react'
 import { Book2, Check } from 'tabler-icons-react'
 import { Reducer, useReducer } from 'react'
-import { useGetDataFromSessionStorage } from 'hooks/useGetDataFromSessionStorage'
+import { useGetItem } from 'hooks/useGetItem'
 
 type Props = {
   router: NextRouter
@@ -74,7 +74,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
 export const InputForm: FC<Props> = ({ router, uid }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { currentBook } = useGetDataFromSessionStorage()
+  const { currentBook } = useGetItem()
 
   // badgeとbookを保存する
   const setBadgeAndBook = useCallback(

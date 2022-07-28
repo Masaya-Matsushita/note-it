@@ -1,6 +1,6 @@
 import { Button } from '@mantine/core'
 import { NoteDisplay } from 'components/Note/NoteDisplay'
-import { useGetDataFromSessionStorage } from 'hooks/useGetDataFromSessionStorage'
+import { useGetItem } from 'hooks/useGetItem'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -10,7 +10,7 @@ const Note: NextPage = () => {
   const uid = String(router.query.uid)
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
-  const { currentNote } = useGetDataFromSessionStorage()
+  const { currentNote } = useGetItem()
 
   return (
     <>

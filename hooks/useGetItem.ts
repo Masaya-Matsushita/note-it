@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Book } from 'types'
 
-export const useGetDataFromSessionStorage = () => {
+export const useGetItem = () => {
   const [currentBook, setCurrentBook] = useState<Book>({
     title: '',
     badge: '',

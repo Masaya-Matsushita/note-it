@@ -1,46 +1,45 @@
 import { ItemMenu } from 'components/Parts/ItemMenu'
 import { deleteDoc, doc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
-import { NextRouter } from 'next/router'
+import { useSetItemAndRouter } from 'hooks/useSetItemAndRouter'
 import { FC, useCallback } from 'react'
 import { Note as NoteIcon } from 'tabler-icons-react'
 import { Note, Notes } from 'types'
 
 type Props = {
   notes: Notes
-  router: NextRouter
   uid: string | string[] | undefined
   badgeId: string
   bookId: string
 }
 
-export const NoteList: FC<Props> = ({
-  notes,
-  router,
-  uid,
-  badgeId,
-  bookId,
-}) => {
-  const toNotePage = (currentNote: Note) => {
-    sessionStorage.setItem('currentNote', JSON.stringify(currentNote))
-    router.push(`/my-page/${uid}/${badgeId}/${bookId}/${currentNote.id}`)
+export const NoteList: FC<Props> = ({ notes, uid, badgeId, bookId }) => {
+  const { setNoteAndTransition } = useSetItemAndRouter()
+
+  const toNotePage = (note: Note) => {
+    setNoteAndTransition(
+      JSON.stringify(note),
+      `/my-page/${uid}/${badgeId}/${bookId}/${note.id}`
+    )
   }
 
-  const toNoteForm = (currentNote: Note) => {
-    sessionStorage.setItem('currentNote', JSON.stringify(currentNote))
-    router.push(`/my-page/${uid}/${badgeId}/${bookId}/note-form`)
+  const toNoteForm = () => {
+    setNoteAndTransition(
+      JSON.stringify({ id: '', label: '', page: 1, note: '', clozeNote: '' }),
+      `/my-page/${uid}/${badgeId}/${bookId}/note-form`
+    )
   }
 
   // ブラウザにtargetNoteを保存し、note-formページへ
   const toEditPage = useCallback(
-    (currentNote: Note, targetId: string) => {
-      sessionStorage.setItem('currentNote', JSON.stringify(currentNote))
-      router.push({
-        pathname: `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
-        query: { id: targetId },
-      })
+    (note: Note, id: string) => {
+      setNoteAndTransition(
+        JSON.stringify(note),
+        `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
+        id
+      )
     },
-    [router, uid, badgeId, bookId]
+    [setNoteAndTransition, uid, badgeId, bookId]
   )
 
   // noteを削除
@@ -123,15 +122,7 @@ export const NoteList: FC<Props> = ({
           })}
           <div
             className='py-1 mx-4 mt-4 text-sm text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:py-2 xs:mx-8 xs:text-base'
-            onClick={() =>
-              toNoteForm({
-                id: '',
-                label: '',
-                page: 1,
-                note: '',
-                clozeNote: '',
-              })
-            }
+            onClick={() => toNoteForm()}
           >
             + 追加
           </div>
@@ -151,15 +142,7 @@ export const NoteList: FC<Props> = ({
           </div>
           <div
             className='py-2 mx-auto mt-8 w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:mt-12'
-            onClick={() =>
-              toNoteForm({
-                id: '',
-                label: '',
-                page: 1,
-                note: '',
-                clozeNote: '',
-              })
-            }
+            onClick={() => toNoteForm()}
           >
             + 作成
           </div>

@@ -2,6 +2,7 @@ import { Accordion, Loader } from '@mantine/core'
 import { ItemMenu } from 'components/Parts/ItemMenu'
 import { deleteDoc, doc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
+import { useSetItemAndRouter } from 'hooks/useSetItemAndRouter'
 import { useRouter } from 'next/router'
 import { FC, memo, useCallback } from 'react'
 import { Book2 } from 'tabler-icons-react'
@@ -15,14 +16,17 @@ type Props = {
 export const BookList: FC<Props> = memo(({ badgeAndBooksList }) => {
   const router = useRouter()
   const uid = String(router.query.uid)
+  const { setBookAndTransition } = useSetItemAndRouter()
 
   // targetBookをブラウザに保存し、bookページへ
   const toBookPage = useCallback(
-    (currentBook: Book, badgeId: string, bookId: string) => {
-      sessionStorage.setItem('currentBook', JSON.stringify(currentBook))
-      router.push(`/my-page/${uid}/${badgeId}/${bookId}`)
+    (book: Book, badgeId: string, bookId: string) => {
+      setBookAndTransition(
+        JSON.stringify(book),
+        `/my-page/${uid}/${badgeId}/${bookId}`
+      )
     },
-    [router, uid]
+    [setBookAndTransition, uid]
   )
 
   // ブラウザにtargetBookを保存し、book-formページへ

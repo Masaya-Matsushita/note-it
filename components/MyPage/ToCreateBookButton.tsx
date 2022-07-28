@@ -1,4 +1,5 @@
 import { Button } from '@mantine/core'
+import { useSetItemAndRouter } from 'hooks/useSetItemAndRouter'
 import { useRouter } from 'next/router'
 import { memo } from 'react'
 import { Plus } from 'tabler-icons-react'
@@ -7,12 +8,14 @@ import { Plus } from 'tabler-icons-react'
 export const ToCreateBookButton = memo(() => {
   const router = useRouter()
   const uid = String(router.query.uid)
+  const { setBookAndTransition } = useSetItemAndRouter()
 
   // ブラウザのtargetBookを空にしてbook-formページへ移動
   const toBookForm = () => {
-    const emptyBook = { badge: '', title: '', overview: '' }
-    sessionStorage.setItem('currentBook', JSON.stringify(emptyBook))
-    router.push(`/my-page/${uid}/book-form`)
+    setBookAndTransition(
+      JSON.stringify({ badge: '', title: '', overview: '' }),
+      `/my-page/${uid}/book-form`
+    )
   }
 
   return (

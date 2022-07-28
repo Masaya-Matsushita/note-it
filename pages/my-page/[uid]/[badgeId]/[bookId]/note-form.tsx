@@ -11,7 +11,7 @@ import { AddNoteButton } from 'components/NoteForm/AddNoteButton'
 import { ToBackLink } from 'components/Parts/ToBackLink'
 import { Reducer, useReducer } from 'react'
 import { ClozeNoteDisplay } from 'components/NoteForm/ClozeNoteDisplay'
-import { useGetDataFromSessionStorage } from 'hooks/useGetDataFromSessionStorage'
+import { useGetItem } from 'hooks/useGetItem'
 
 export type NoteFormState = typeof initialState
 
@@ -142,7 +142,7 @@ const NoteForm: NextPage = () => {
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { currentBook, currentNote } = useGetDataFromSessionStorage()
+  const { currentBook, currentNote } = useGetItem()
 
   // clozeが切り替わったとき、clozeNoteを変更
   useEffect(() => {
@@ -166,8 +166,8 @@ const NoteForm: NextPage = () => {
         label: currentNote.label,
         page: Number(currentNote.page),
         note: currentNote.note,
-        cloze: true,
-        showClozeNote: true,
+        cloze: Boolean(currentNote.clozeNote),
+        showClozeNote: Boolean(currentNote.clozeNote),
         clozeNote: currentNote.clozeNote,
       })
     } else {

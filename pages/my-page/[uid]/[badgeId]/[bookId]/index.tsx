@@ -4,7 +4,7 @@ import { NoteList } from 'components/Book/NoteList'
 import { ToBackLink } from 'components/Parts/ToBackLink'
 import { collection, getDocs } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
-import { useGetDataFromSessionStorage } from 'hooks/useGetDataFromSessionStorage'
+import { useGetItem } from 'hooks/useGetItem'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -16,7 +16,7 @@ const Book: NextPage = () => {
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
   const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes | undefined>()
-  const { currentBook } = useGetDataFromSessionStorage()
+  const { currentBook } = useGetItem()
 
   // bookAndNotesに取得したデータを代入
   useEffect(() => {
@@ -74,7 +74,6 @@ const Book: NextPage = () => {
           <BookDetail book={bookAndNotes.book} />
           <NoteList
             notes={bookAndNotes.notes}
-            router={router}
             uid={uid}
             badgeId={badgeId}
             bookId={bookId}
