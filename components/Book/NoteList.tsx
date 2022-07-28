@@ -2,7 +2,7 @@ import { ItemMenu } from 'components/Parts/ItemMenu'
 import { deleteDoc, doc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
 import { useSetItemAndRouter } from 'hooks/useSetItemAndRouter'
-import { FC, useCallback } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { Note as NoteIcon } from 'tabler-icons-react'
 import { Note, Notes } from 'types'
 
@@ -11,9 +11,16 @@ type Props = {
   uid: string | string[] | undefined
   badgeId: string
   bookId: string
+  setReloadNote: Dispatch<SetStateAction<boolean>>
 }
 
-export const NoteList: FC<Props> = ({ notes, uid, badgeId, bookId }) => {
+export const NoteList: FC<Props> = ({
+  notes,
+  uid,
+  badgeId,
+  bookId,
+  setReloadNote,
+}) => {
   const { setNoteAndTransition } = useSetItemAndRouter()
 
   const toNotePage = (note: Note) => {
@@ -59,10 +66,11 @@ export const NoteList: FC<Props> = ({ notes, uid, badgeId, bookId }) => {
             noteId
           )
         )
-        location.reload()
+        // useEffect内でnotesを再取得
+        setReloadNote((prev) => !prev)
       }
     },
-    [uid, badgeId, bookId]
+    [uid, badgeId, bookId, setReloadNote]
   )
 
   return (

@@ -4,16 +4,18 @@ import { deleteDoc, doc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
 import { useSetItemAndRouter } from 'hooks/useSetItemAndRouter'
 import { useRouter } from 'next/router'
-import { FC, memo, useCallback } from 'react'
+import { BookListAction } from 'pages/my-page/[uid]'
+import { Dispatch, FC, memo, useCallback } from 'react'
 import { Book2 } from 'tabler-icons-react'
 import { BadgeAndBooksList, Book } from 'types'
 
 type Props = {
   badgeAndBooksList: BadgeAndBooksList | undefined
+  dispatch: Dispatch<BookListAction>
 }
 
 // eslint-disable-next-line react/display-name
-export const BookList: FC<Props> = memo(({ badgeAndBooksList }) => {
+export const BookList: FC<Props> = memo(({ badgeAndBooksList, dispatch }) => {
   const router = useRouter()
   const uid = String(router.query.uid)
   const { setBookAndTransition } = useSetItemAndRouter()
@@ -45,7 +47,8 @@ export const BookList: FC<Props> = memo(({ badgeAndBooksList }) => {
   const handleDelete = useCallback(
     async (badgeId: string, bookId: string) => {
       await deleteDoc(doc(db, 'users', uid, 'badges', badgeId, 'books', bookId))
-      location.reload()
+      // useEffect内でbooksを再取得
+      dispatch({ type: 'reloadList' })
     },
     [uid]
   )

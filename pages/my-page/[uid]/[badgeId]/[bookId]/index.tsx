@@ -16,6 +16,7 @@ const Book: NextPage = () => {
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
   const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes | undefined>()
+  const [reloadNote, setReloadNote] = useState(false)
   const { currentBook } = useGetItem()
 
   // bookAndNotesに取得したデータを代入
@@ -63,7 +64,7 @@ const Book: NextPage = () => {
         })
       }
     })()
-  }, [badgeId, bookId, currentBook, uid])
+  }, [badgeId, bookId, currentBook, uid, reloadNote])
 
   return (
     <>
@@ -77,6 +78,7 @@ const Book: NextPage = () => {
             uid={uid}
             badgeId={badgeId}
             bookId={bookId}
+            setReloadNote={setReloadNote}
           />
           <div className='flex justify-start mt-10 ml-2 xs:mt-14 xs:ml-4'>
             <ToBackLink text='Home' href={`/my-page/${uid}`} />

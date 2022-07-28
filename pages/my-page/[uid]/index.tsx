@@ -12,22 +12,24 @@ import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
 import { Reducer, useReducer } from 'react'
 
 type State = {
-  pageLoading: boolean
   opened: boolean
   badgeAndBooksList?: BadgeAndBooksList | undefined
+  pageLoading: boolean
+  reloadList: boolean
 }
 
-type Action = {
-  type: 'opened' | 'setList'
+export type BookListAction = {
+  type: 'opened' | 'setList' | 'reloadList'
 } & Partial<State>
 
 const initialState = {
   opened: false,
   badgeAndBooksList: undefined,
   pageLoading: true,
+  reloadList: false,
 }
 
-const reducer: Reducer<State, Action> = (state, action) => {
+const reducer: Reducer<State, BookListAction> = (state, action) => {
   switch (action.type) {
     case 'opened': {
       return {
@@ -41,6 +43,12 @@ const reducer: Reducer<State, Action> = (state, action) => {
         ...state,
         badgeAndBooksList: action.badgeAndBooksList,
         pageLoading: false,
+      }
+    }
+    case 'reloadList': {
+      return {
+        ...state,
+        reloadList: !state.reloadList,
       }
     }
   }
@@ -134,7 +142,7 @@ const Mypage: NextPage = () => {
         }
       }
     })
-  }, [router, checkUserExists])
+  }, [router, checkUserExists, state.reloadList])
 
   return (
     <>
@@ -147,7 +155,10 @@ const Mypage: NextPage = () => {
           <div className='min-h-screen'>
             <div className='mt-6 text-3xl'>My Books</div>
             <div className='grow my-2 border border-dark-400 border-solid'></div>
-            <BookList badgeAndBooksList={state.badgeAndBooksList} />
+            <BookList
+              badgeAndBooksList={state.badgeAndBooksList}
+              dispatch={dispatch}
+            />
           </div>
           <ToCreateBookButton />
         </>
