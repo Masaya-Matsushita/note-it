@@ -1,13 +1,11 @@
 import { Button } from '@mantine/core'
-import { NextRouter } from 'next/router'
-import { FC } from 'react'
+import { useRouter } from 'next/router'
+import { memo } from 'react'
 import { Plus } from 'tabler-icons-react'
 
-type Props = {
-  router: NextRouter
-}
-
-export const ToCreateBookButton: FC<Props> = ({ router }) => {
+// eslint-disable-next-line react/display-name
+export const ToCreateBookButton = memo(() => {
+  const router = useRouter()
   const uid = String(router.query.uid)
 
   // ブラウザのtargetBookを空にしてbook-formページへ移動
@@ -26,4 +24,4 @@ export const ToCreateBookButton: FC<Props> = ({ router }) => {
       <Plus size={48} />
     </Button>
   )
-}
+})

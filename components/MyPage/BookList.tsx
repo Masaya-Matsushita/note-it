@@ -3,7 +3,7 @@ import { ItemMenu } from 'components/Parts/ItemMenu'
 import { deleteDoc, doc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, memo, useCallback } from 'react'
 import { Book2 } from 'tabler-icons-react'
 import { BadgeAndBooksList, Book } from 'types'
 
@@ -11,30 +11,40 @@ type Props = {
   badgeAndBooksList: BadgeAndBooksList | undefined
 }
 
-export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
+// eslint-disable-next-line react/display-name
+export const BookList: FC<Props> = memo(({ badgeAndBooksList }) => {
   const router = useRouter()
   const uid = String(router.query.uid)
 
   // targetBookをブラウザに保存し、bookページへ
-  const toBookPage = (targetBook: Book, badgeId: string, bookId: string) => {
-    sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
-    router.push(`/my-page/${uid}/${badgeId}/${bookId}`)
-  }
+  const toBookPage = useCallback(
+    (targetBook: Book, badgeId: string, bookId: string) => {
+      sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
+      router.push(`/my-page/${uid}/${badgeId}/${bookId}`)
+    },
+    [router, uid]
+  )
 
   // ブラウザにtargetBookを保存し、book-formページへ
-  const toEditPage = (target: Book, targetId: string) => {
-    sessionStorage.setItem('targetBook', JSON.stringify(target))
-    router.push({
-      pathname: `/my-page/${uid}/book-form`,
-      query: { id: targetId },
-    })
-  }
+  const toEditPage = useCallback(
+    (target: Book, targetId: string) => {
+      sessionStorage.setItem('targetBook', JSON.stringify(target))
+      router.push({
+        pathname: `/my-page/${uid}/book-form`,
+        query: { id: targetId },
+      })
+    },
+    [router, uid]
+  )
 
   // bookを削除
-  const handleDelete = async (badgeId: string, bookId: string) => {
-    await deleteDoc(doc(db, 'users', uid, 'badges', badgeId, 'books', bookId))
-    location.reload()
-  }
+  const handleDelete = useCallback(
+    async (badgeId: string, bookId: string) => {
+      await deleteDoc(doc(db, 'users', uid, 'badges', badgeId, 'books', bookId))
+      location.reload()
+    },
+    [uid]
+  )
 
   // ローディング中
   if (!badgeAndBooksList) {
@@ -128,4 +138,4 @@ export const ListContent: FC<Props> = ({ badgeAndBooksList }) => {
       })}
     </div>
   )
-}
+})

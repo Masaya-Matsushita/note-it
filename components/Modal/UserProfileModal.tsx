@@ -1,6 +1,5 @@
 import {
   ChangeEvent,
-  ComponentProps,
   Dispatch,
   FC,
   memo,
