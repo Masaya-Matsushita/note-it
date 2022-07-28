@@ -1,5 +1,5 @@
 import { Checkbox, TextInput, PasswordInput } from '@mantine/core'
-import { ErrorModal } from 'components/Modal/ErrorModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
 import { LoginButton } from 'components/Parts/LoginButton'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'

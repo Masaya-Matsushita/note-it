@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { ErrorModal } from 'components/Modal/ErrorModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
 import { LabelInput } from 'components/NoteForm/LabelInput'
 import { PageInput } from 'components/NoteForm/PageInput'
 import { NoteInput } from 'components/NoteForm/NoteInput'

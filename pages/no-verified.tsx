@@ -1,5 +1,5 @@
-import { ResendVerifyEmailModal } from 'components/Modal/ResendVerifyEmailModal'
-import { SendEmailTroubleModal } from 'components/Modal/SendEmailTroubleModal'
+import { ResendVerifyEmailModal } from 'components/NoVerified/ResendVerifyEmailModal'
+import { SendEmailTroubleModal } from 'components/Parts/SendEmailTroubleModal'
 import { NextPage } from 'next'
 import { TitleWrapper } from 'components/Parts/TitleWrapper'
 import { VerifyEmailDescription } from 'components/NoVerified/VerifyEmailDescription'

@@ -1,4 +1,4 @@
-import { UserProfileModal } from 'components/Modal/UserProfileModal'
+import { UserProfileModal } from 'components/Parts/UserProfileModal'
 import { useCallback, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'

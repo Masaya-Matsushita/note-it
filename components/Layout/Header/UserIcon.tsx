@@ -1,6 +1,6 @@
 import { Menu } from '@mantine/core'
-import { ErrorModal } from 'components/Modal/ErrorModal'
-import { UserProfileModal } from 'components/Modal/UserProfileModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
+import { UserProfileModal } from 'components/Parts/UserProfileModal'
 import { signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import db, { auth } from 'firebaseConfig/firebase'

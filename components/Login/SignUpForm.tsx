@@ -1,6 +1,6 @@
 import { TextInput, PasswordInput } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
-import { ErrorModal } from 'components/Modal/ErrorModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
 import { LoginButton } from 'components/Parts/LoginButton'
 import {
   createUserWithEmailAndPassword,

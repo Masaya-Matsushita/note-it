@@ -1,5 +1,5 @@
-import { ErrorModal } from 'components/Modal/ErrorModal'
-import { SendEmailTroubleModal } from 'components/Modal/SendEmailTroubleModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
+import { SendEmailTroubleModal } from 'components/Parts/SendEmailTroubleModal'
 import Link from 'next/link'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'

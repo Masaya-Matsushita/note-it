@@ -1,4 +1,4 @@
-import { ErrorModal } from 'components/Modal/ErrorModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
 import { useEffect } from 'react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'

@@ -1,4 +1,4 @@
-import { ErrorModal } from 'components/Modal/ErrorModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
 import { Button, Stepper } from '@mantine/core'
 import { Reducer, useCallback, useReducer } from 'react'
 import { useRouter } from 'next/router'
