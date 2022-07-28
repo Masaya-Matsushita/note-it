@@ -10,7 +10,6 @@ import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
 import { Reducer, useReducer } from 'react'
-import { Id } from 'tabler-icons-react'
 
 type State = {
   pageLoading: boolean

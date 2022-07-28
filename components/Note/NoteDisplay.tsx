@@ -2,18 +2,18 @@ import { DocumentData } from 'firebase/firestore'
 import { FC, memo, useState } from 'react'
 
 type Props = {
-  noteData: DocumentData
+  currentNote: DocumentData
 }
 
 // eslint-disable-next-line react/display-name
-export const NoteDisplay: FC<Props> = memo(({ noteData }) => {
+export const NoteDisplay: FC<Props> = memo(({ currentNote }) => {
   const [hideCloze, setHideCloze] = useState(false)
 
   // clozeNoteが無い(空文字)の場合
-  if (!noteData.clozeNote) {
+  if (!currentNote.clozeNote) {
     return (
       <div className='p-4 mx-2 mb-12 text-lg tracking-wider leading-7 bg-dark-600 rounded-md xs:p-6 xs:mx-6'>
-        {noteData.note}
+        {currentNote.note}
       </div>
     )
   }
@@ -44,7 +44,7 @@ export const NoteDisplay: FC<Props> = memo(({ noteData }) => {
       </div>
       <div className='grow mb-2 border border-dark-600 border-solid xs:mx-4'></div>
       <div className='p-4 mx-2 mb-12 text-lg tracking-wider leading-7 bg-dark-600 rounded-md xs:p-6 xs:mx-6'>
-        {hideCloze ? noteData.note : noteData.clozeNote}
+        {hideCloze ? currentNote.note : currentNote.clozeNote}
       </div>
     </div>
   )

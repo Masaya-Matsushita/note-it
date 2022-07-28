@@ -21,20 +21,20 @@ export const NoteList: FC<Props> = ({
   badgeId,
   bookId,
 }) => {
-  const toNotePage = (note: Note) => {
-    sessionStorage.setItem('targetNote', JSON.stringify(note))
-    router.push(`/my-page/${uid}/${badgeId}/${bookId}/${note.id}`)
+  const toNotePage = (currentNote: Note) => {
+    sessionStorage.setItem('currentNote', JSON.stringify(currentNote))
+    router.push(`/my-page/${uid}/${badgeId}/${bookId}/${currentNote.id}`)
   }
 
-  const toNoteForm = (target: Note) => {
-    sessionStorage.setItem('targetNote', JSON.stringify(target))
+  const toNoteForm = (currentNote: Note) => {
+    sessionStorage.setItem('currentNote', JSON.stringify(currentNote))
     router.push(`/my-page/${uid}/${badgeId}/${bookId}/note-form`)
   }
 
   // ブラウザにtargetNoteを保存し、note-formページへ
   const toEditPage = useCallback(
-    (target: Note, targetId: string) => {
-      sessionStorage.setItem('targetNote', JSON.stringify(target))
+    (currentNote: Note, targetId: string) => {
+      sessionStorage.setItem('currentNote', JSON.stringify(currentNote))
       router.push({
         pathname: `/my-page/${uid}/${badgeId}/${bookId}/note-form`,
         query: { id: targetId },

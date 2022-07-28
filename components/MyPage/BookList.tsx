@@ -18,8 +18,8 @@ export const BookList: FC<Props> = memo(({ badgeAndBooksList }) => {
 
   // targetBookをブラウザに保存し、bookページへ
   const toBookPage = useCallback(
-    (targetBook: Book, badgeId: string, bookId: string) => {
-      sessionStorage.setItem('targetBook', JSON.stringify(targetBook))
+    (currentBook: Book, badgeId: string, bookId: string) => {
+      sessionStorage.setItem('currentBook', JSON.stringify(currentBook))
       router.push(`/my-page/${uid}/${badgeId}/${bookId}`)
     },
     [router, uid]
@@ -27,8 +27,8 @@ export const BookList: FC<Props> = memo(({ badgeAndBooksList }) => {
 
   // ブラウザにtargetBookを保存し、book-formページへ
   const toEditPage = useCallback(
-    (target: Book, targetId: string) => {
-      sessionStorage.setItem('targetBook', JSON.stringify(target))
+    (currentBook: Book, targetId: string) => {
+      sessionStorage.setItem('currentBook', JSON.stringify(currentBook))
       router.push({
         pathname: `/my-page/${uid}/book-form`,
         query: { id: targetId },
@@ -95,13 +95,12 @@ export const BookList: FC<Props> = memo(({ badgeAndBooksList }) => {
                     <div
                       className='flex-1 p-4 text-lg md:ml-2 md:text-xl'
                       onClick={() => {
-                        const targetBook = {
-                          badge: badgeAndBooks.badge,
-                          title: book.title,
-                          overview: book.overview,
-                        }
                         toBookPage(
-                          targetBook,
+                          {
+                            badge: badgeAndBooks.badge,
+                            title: book.title,
+                            overview: book.overview,
+                          },
                           String(badgeAndBooks.priority),
                           book.id
                         )

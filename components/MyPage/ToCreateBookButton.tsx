@@ -10,8 +10,8 @@ export const ToCreateBookButton = memo(() => {
 
   // ブラウザのtargetBookを空にしてbook-formページへ移動
   const toBookForm = () => {
-    const emptyTargetBook = { badge: '', title: '', overview: '' }
-    sessionStorage.setItem('targetBook', JSON.stringify(emptyTargetBook))
+    const emptyBook = { badge: '', title: '', overview: '' }
+    sessionStorage.setItem('currentBook', JSON.stringify(emptyBook))
     router.push(`/my-page/${uid}/book-form`)
   }
 

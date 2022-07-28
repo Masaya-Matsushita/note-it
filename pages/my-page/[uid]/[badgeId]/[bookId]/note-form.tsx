@@ -11,6 +11,7 @@ import { AddNoteButton } from 'components/NoteForm/AddNoteButton'
 import { ToBackLink } from 'components/Parts/ToBackLink'
 import { Reducer, useReducer } from 'react'
 import { ClozeNoteDisplay } from 'components/NoteForm/ClozeNoteDisplay'
+import { useGetDataFromSessionStorage } from 'hooks/useGetDataFromSessionStorage'
 
 export type NoteFormState = typeof initialState
 
@@ -141,6 +142,7 @@ const NoteForm: NextPage = () => {
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
   const [state, dispatch] = useReducer(reducer, initialState)
+  const { currentBook, currentNote } = useGetDataFromSessionStorage()
 
   // clozeが切り替わったとき、clozeNoteを変更
   useEffect(() => {
@@ -154,31 +156,24 @@ const NoteForm: NextPage = () => {
     }
   }, [state.throughSetClozeNote, state.cloze, state.note])
 
-  //マウント時にsessionStorageからデータを取得
   useEffect(() => {
-    const jsonTargetBook = sessionStorage.getItem('targetBook')
-    const jsonTargetNote = sessionStorage.getItem('targetNote')
-    if (jsonTargetBook && jsonTargetNote) {
-      const targetBook = JSON.parse(jsonTargetBook)
-      const targetNote = JSON.parse(jsonTargetNote)
-      // 編集の場合、フォームに値を代入
-      if (targetNote.label !== '') {
-        dispatch({
-          type: 'setBookAndNote',
-          edit: true,
-          title: targetBook.title,
-          label: targetNote.label,
-          page: Number(targetNote.page),
-          note: targetNote.note,
-          cloze: true,
-          showClozeNote: true,
-          clozeNote: targetNote.clozeNote,
-        })
-      } else {
-        dispatch({ type: 'setBook', title: targetBook.title })
-      }
+    // 編集の場合、フォームに値を代入
+    if (currentNote.label) {
+      dispatch({
+        type: 'setBookAndNote',
+        edit: true,
+        title: currentBook.title,
+        label: currentNote.label,
+        page: Number(currentNote.page),
+        note: currentNote.note,
+        cloze: true,
+        showClozeNote: true,
+        clozeNote: currentNote.clozeNote,
+      })
+    } else {
+      dispatch({ type: 'setBook', title: currentBook.title })
     }
-  }, [])
+  }, [currentBook, currentNote])
 
   return (
     <div className='mx-auto max-w-xl'>

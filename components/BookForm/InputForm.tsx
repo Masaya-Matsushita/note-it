@@ -13,6 +13,7 @@ import { NextRouter } from 'next/router'
 import { FC, useCallback, useEffect } from 'react'
 import { Book2, Check } from 'tabler-icons-react'
 import { Reducer, useReducer } from 'react'
+import { useGetDataFromSessionStorage } from 'hooks/useGetDataFromSessionStorage'
 
 type Props = {
   router: NextRouter
@@ -73,6 +74,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
 export const InputForm: FC<Props> = ({ router, uid }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
+  const { currentBook } = useGetDataFromSessionStorage()
 
   // badgeとbookを保存する
   const setBadgeAndBook = useCallback(
@@ -176,24 +178,18 @@ export const InputForm: FC<Props> = ({ router, uid }) => {
   }, [])
 
   useEffect(() => {
-    // WebストレージからtargetBookを取得
-    const jsonTargetBook = sessionStorage.getItem('targetBook')
-    if (!jsonTargetBook) {
-      return
-    }
-    const targetBook = JSON.parse(jsonTargetBook)
-    if (targetBook.title !== '') {
+    if (currentBook.title) {
       // 更新の場合
-      const badgeValue = exchangeBadgeValue(targetBook.badge)
+      const badgeValue = exchangeBadgeValue(currentBook.badge)
       // 値をフォームに代入
       dispatch({
         type: 'set',
-        title: targetBook.title,
+        title: currentBook.title,
         badge: badgeValue,
-        overview: targetBook.overview,
+        overview: currentBook.overview,
       })
     }
-  }, [exchangeBadgeValue])
+  }, [exchangeBadgeValue, currentBook])
 
   return (
     <div>

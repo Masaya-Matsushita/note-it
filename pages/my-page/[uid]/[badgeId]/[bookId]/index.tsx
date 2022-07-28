@@ -4,10 +4,11 @@ import { NoteList } from 'components/Book/NoteList'
 import { ToBackLink } from 'components/Parts/ToBackLink'
 import { collection, getDocs } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
+import { useGetDataFromSessionStorage } from 'hooks/useGetDataFromSessionStorage'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useState } from 'react'
-import { Book, BookAndNotes, Notes } from 'types'
+import { useEffect, useState } from 'react'
+import { BookAndNotes, Notes } from 'types'
 
 const Book: NextPage = () => {
   const router = useRouter()
@@ -15,10 +16,11 @@ const Book: NextPage = () => {
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
   const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes | undefined>()
+  const { currentBook } = useGetDataFromSessionStorage()
 
   // bookAndNotesに取得したデータを代入
-  const createBookAndNotes = useCallback(
-    async (targetBook: Book) => {
+  useEffect(() => {
+    ;(async () => {
       // notesを取得
       const noteSnap = await getDocs(
         collection(
@@ -52,24 +54,14 @@ const Book: NextPage = () => {
       })
       setBookAndNotes({
         book: {
-          title: targetBook.title,
-          badge: targetBook.badge,
-          overview: targetBook.overview,
+          title: currentBook.title,
+          badge: currentBook.badge,
+          overview: currentBook.overview,
         },
         notes: notes,
       })
-    },
-    [uid, badgeId, bookId]
-  )
-
-  useEffect(() => {
-    // sessionStorageからtargetBookを取得
-    const jsonTargetBook = sessionStorage.getItem('targetBook')
-    if (jsonTargetBook) {
-      const targetBook = JSON.parse(jsonTargetBook)
-      createBookAndNotes(targetBook)
-    }
-  }, [router, createBookAndNotes])
+    })()
+  }, [badgeId, bookId, currentBook, uid])
 
   return (
     <>
