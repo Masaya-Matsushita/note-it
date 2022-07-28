@@ -10,6 +10,7 @@ import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
 import { Reducer, useReducer } from 'react'
+import { Id } from 'tabler-icons-react'
 
 type State = {
   pageLoading: boolean
@@ -97,6 +98,13 @@ const Mypage: NextPage = () => {
           dispatch({ type: 'setList', badgeAndBooksList: badgeAndBooksArray })
         }
       })
+      // 全てのbookが削除されたとき
+      if (!badgeAndBooksArray.length) {
+        dispatch({
+          type: 'setList',
+          badgeAndBooksList: [],
+        })
+      }
     }
   }, [])
 
