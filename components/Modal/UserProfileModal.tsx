@@ -1,4 +1,12 @@
-import { ComponentProps, Dispatch, FC, useEffect } from 'react'
+import {
+  ChangeEvent,
+  ComponentProps,
+  Dispatch,
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+} from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import db, { auth, storage } from 'firebaseConfig/firebase'
@@ -6,37 +14,94 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Button, Card, Modal, Skeleton, TextInput } from '@mantine/core'
 import { Plus } from 'tabler-icons-react'
 import { useRouter } from 'next/router'
-import { useUserProfileModalState } from 'hooks/StateManagement/useUserProfileModalState'
+import { Reducer, useReducer } from 'react'
 
 type Props = {
   opened: boolean
   propsDispatch: Dispatch<any>
 }
 
-export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
-  const router = useRouter()
-  const uid = String(router.query.uid)
-  const { state, dispatch } = useUserProfileModalState()
+type State = typeof initialState
 
-  // アイコンをアップロード＆URLを取得して表示
-  const changeUserImage: ComponentProps<'input'>['onChange'] = async (e) => {
-    // fileが選択されてない場合
-    if (!e.target.files) {
-      return
+type Action = {
+  type: 'icon' | 'name' | 'error' | 'display' | 'loading'
+} & Partial<State>
+
+const initialState = {
+  error: '',
+  userIcon: '',
+  userName: '',
+  loading: true,
+}
+
+const reducer: Reducer<State, Action> = (state, action) => {
+  switch (action.type) {
+    case 'icon': {
+      return {
+        ...state,
+        userIcon: action.userIcon ?? '',
+        loading: false,
+      }
     }
-    const file = e.target.files[0]
-    const iconUsersRef = ref(storage, `users/${uid}/icon`)
-    try {
-      await uploadBytes(iconUsersRef, file)
-      const iconUrl = await getDownloadURL(iconUsersRef)
-      dispatch({ type: 'icon', userIcon: iconUrl })
-    } catch (error: any) {
-      dispatch({ type: 'error', error: error.message })
+    case 'name': {
+      return {
+        ...state,
+        userName: action.userName ?? '',
+      }
+    }
+    case 'display': {
+      return {
+        ...state,
+        userIcon: action.userIcon ?? '',
+        userName: action.userName ?? '',
+        loading: false,
+      }
+    }
+    case 'error': {
+      return {
+        ...state,
+        error: action.error ?? '',
+        loading: false,
+      }
+    }
+    case 'loading': {
+      return {
+        ...state,
+        loading: action.loading ?? false,
+      }
     }
   }
+}
+
+// eslint-disable-next-line react/display-name
+export const UserProfileModal: FC<Props> = memo(({ opened, propsDispatch }) => {
+  const router = useRouter()
+  const uid = String(router.query.uid)
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  // アイコンをアップロード＆URLを取得して表示
+  const changeUserImage = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      // fileが選択されてない場合
+      if (!e.target.files) {
+        return
+      }
+      dispatch({ type: 'loading', loading: true })
+      const file = e.target.files[0]
+      const iconUsersRef = ref(storage, `users/${uid}/icon`)
+      try {
+        await uploadBytes(iconUsersRef, file)
+        const iconUrl = await getDownloadURL(iconUsersRef)
+        dispatch({ type: 'icon', userIcon: iconUrl })
+      } catch (error: any) {
+        dispatch({ type: 'error', error: error.message })
+      }
+    },
+    [uid]
+  )
 
   // userのドキュメントを作成/更新、リロード
-  const setUserProfile = async () => {
+  const setUserProfile = useCallback(async () => {
     if (state.userName) {
       await setDoc(doc(db, 'users', uid), {
         userName: state.userName,
@@ -47,7 +112,7 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
     } else {
       dispatch({ type: 'error', error: 'username not entered' })
     }
-  }
+  }, [propsDispatch, uid, state.userIcon, state.userName])
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -84,7 +149,9 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
         アイコンと名前を設定してください。
       </div>
       <Card className='flex flex-col items-center mx-16'>
-        {state.userIcon ? (
+        {state.loading ? (
+          <Skeleton className='w-20 h-20 rounded-full sm:w-24 sm:h-24' />
+        ) : (
           <div className='relative'>
             <img
               src={state.userIcon}
@@ -104,8 +171,6 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
               </div>
             </label>
           </div>
-        ) : (
-          <Skeleton className='w-20 h-20 rounded-full sm:w-24 sm:h-24' />
         )}
         <TextInput
           placeholder='User Name'
@@ -128,4 +193,4 @@ export const UserProfileModal: FC<Props> = ({ opened, propsDispatch }) => {
       </Button>
     </Modal>
   )
-}
+})
