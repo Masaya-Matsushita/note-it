@@ -12,7 +12,7 @@ import { BookAndNotes, Notes } from 'types'
 
 const Book: NextPage = () => {
   const router = useRouter()
-  const uid = String(router.query.uid)
+  const uid = router.query.uid
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
   const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes | undefined>()
@@ -22,44 +22,46 @@ const Book: NextPage = () => {
   useEffect(() => {
     ;(async () => {
       // notesを取得
-      const noteSnap = await getDocs(
-        collection(
-          db,
-          'users',
-          uid,
-          'badges',
-          badgeId,
-          'books',
-          bookId,
-          'notes'
+      if (typeof uid === 'string') {
+        const noteSnap = await getDocs(
+          collection(
+            db,
+            'users',
+            uid,
+            'badges',
+            badgeId,
+            'books',
+            bookId,
+            'notes'
+          )
         )
-      )
-      let notes: Notes = []
-      // 取得したデータを配列へ追加
-      noteSnap.forEach((note) => {
-        notes = [
-          ...notes,
-          {
-            id: note.id,
-            label: note.data().label,
-            page: note.data().page,
-            note: note.data().note,
-            clozeNote: note.data().clozeNote,
+        let notes: Notes = []
+        // 取得したデータを配列へ追加
+        noteSnap.forEach((note) => {
+          notes = [
+            ...notes,
+            {
+              id: note.id,
+              label: note.data().label,
+              page: note.data().page,
+              note: note.data().note,
+              clozeNote: note.data().clozeNote,
+            },
+          ]
+        })
+        // 配列のデータをpage昇順で並べ替え
+        notes.sort((a, b) => {
+          return a.page - b.page
+        })
+        setBookAndNotes({
+          book: {
+            title: currentBook.title,
+            badge: currentBook.badge,
+            overview: currentBook.overview,
           },
-        ]
-      })
-      // 配列のデータをpage昇順で並べ替え
-      notes.sort((a, b) => {
-        return a.page - b.page
-      })
-      setBookAndNotes({
-        book: {
-          title: currentBook.title,
-          badge: currentBook.badge,
-          overview: currentBook.overview,
-        },
-        notes: notes,
-      })
+          notes: notes,
+        })
+      }
     })()
   }, [badgeId, bookId, currentBook, uid])
 

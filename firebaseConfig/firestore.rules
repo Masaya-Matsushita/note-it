@@ -31,20 +31,24 @@ service cloud.firestore {
 
         // booksへの書き込み
         match /books/{bookId} {
-          allow write: if (isUserAuthenticated(userId) &&
+          allow create, update: if (isUserAuthenticated(userId) &&
             request.resource.data.keys().hasAll(['title', 'overview']) &&
             request.resource.data.title is string &&
             request.resource.data.overview is string
             )
 
+          allow delete: if isUserAuthenticated(userId)
+
           // notesへの書き込み
           match /notes/{noteId} {
-            allow write: if (isUserAuthenticated(userId) &&
+            allow create, update: if (isUserAuthenticated(userId) &&
               request.resource.data.keys().hasAll(['page', 'label', 'note', 'clozeNote']) &&
               request.resource.data.label is string &&
               request.resource.data.page is number &&
               request.resource.data.note is string &&
               request.resource.data.clozeNote is string)
+
+            allow delete: if isUserAuthenticated(userId)
           }
         }
       }

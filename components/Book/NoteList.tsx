@@ -9,7 +9,7 @@ import { Note, Notes } from 'types'
 type Props = {
   notes: Notes
   router: NextRouter
-  uid: string
+  uid: string | string[] | undefined
   badgeId: string
   bookId: string
 }
@@ -46,20 +46,22 @@ export const NoteList: FC<Props> = ({
   // noteを削除
   const handleDelete = useCallback(
     async (noteId: string) => {
-      await deleteDoc(
-        doc(
-          db,
-          'users',
-          uid,
-          'badges',
-          badgeId,
-          'books',
-          bookId,
-          'notes',
-          noteId
+      if (typeof uid === 'string') {
+        await deleteDoc(
+          doc(
+            db,
+            'users',
+            uid,
+            'badges',
+            badgeId,
+            'books',
+            bookId,
+            'notes',
+            noteId
+          )
         )
-      )
-      location.reload()
+        location.reload()
+      }
     },
     [uid, badgeId, bookId]
   )
