@@ -1,4 +1,5 @@
 import { Menu } from '@mantine/core'
+import { ConfirmDialog } from 'components/Parts/ConfirmDialog'
 import { ErrorModal } from 'components/Parts/ErrorModal'
 import { UserProfileModal } from 'components/Parts/UserProfileModal'
 import { signOut } from 'firebase/auth'
@@ -7,12 +8,19 @@ import db, { auth } from 'firebaseConfig/firebase'
 import { useRouter } from 'next/router'
 import { Reducer, useCallback, useEffect, useReducer } from 'react'
 import { AiOutlineDown } from 'react-icons/ai'
-import { Settings, Logout, User } from 'tabler-icons-react'
+import { Logout, User } from 'tabler-icons-react'
 
 type State = typeof initialState
 
 type Action = {
-  type: 'icon' | 'name' | 'error' | 'display' | 'opened' | 'resetError'
+  type:
+    | 'icon'
+    | 'name'
+    | 'error'
+    | 'display'
+    | 'opened'
+    | 'resetError'
+    | 'openDialog'
 } & Partial<State>
 
 const initialState = {
@@ -20,6 +28,7 @@ const initialState = {
   userName: '',
   error: '',
   opened: false,
+  openDialog: false,
 }
 
 const reducer: Reducer<State, Action> = (state, action) => {
@@ -27,26 +36,27 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'icon': {
       return {
         ...state,
-        userIcon: action.userIcon ? action.userIcon : '',
+        userIcon: action.userIcon ?? '',
       }
     }
     case 'name': {
       return {
         ...state,
-        userName: action.userName ? action.userName : '',
+        userName: action.userName ?? '',
       }
     }
     case 'display': {
       return {
         ...state,
-        userIcon: action.userIcon ? action.userIcon : '',
-        userName: action.userName ? action.userName : '',
+        userIcon: action.userIcon ?? '',
+        userName: action.userName ?? '',
       }
     }
     case 'error': {
       return {
         ...state,
-        error: action.error ? action.error : '',
+        error: action.error ?? '',
+        openDialog: false,
       }
     }
     case 'resetError': {
@@ -58,7 +68,13 @@ const reducer: Reducer<State, Action> = (state, action) => {
     case 'opened': {
       return {
         ...state,
-        opened: action.opened ? action.opened : false,
+        opened: action.opened ?? false,
+      }
+    }
+    case 'openDialog': {
+      return {
+        ...state,
+        openDialog: action.openDialog ?? false,
       }
     }
   }
@@ -92,6 +108,7 @@ export const UserIcon = () => {
   const logout = useCallback(async () => {
     try {
       await signOut(auth)
+      dispatch({ type: 'openDialog', openDialog: false })
       router.push('/login')
     } catch (error: any) {
       dispatch({ type: 'error', error: error.code })
@@ -104,6 +121,12 @@ export const UserIcon = () => {
         <div>
           <ErrorModal error={state.error} dispatch={dispatch} />
           <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
+          <ConfirmDialog
+            label='ログアウトしてもよろしいですか？'
+            openDialog={state.openDialog}
+            dispatch={dispatch}
+            handleConfirm={logout}
+          />
           <Menu
             control={
               <div className='flex items-center hover:cursor-pointer'>
@@ -129,7 +152,11 @@ export const UserIcon = () => {
             >
               Account
             </Menu.Item>
-            <Menu.Item color='red' icon={<Logout size={14} />} onClick={logout}>
+            <Menu.Item
+              color='red'
+              icon={<Logout size={14} />}
+              onClick={() => dispatch({ type: 'openDialog', openDialog: true })}
+            >
               Logout
             </Menu.Item>
           </Menu>

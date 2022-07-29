@@ -16,10 +16,11 @@ type State = {
   badgeAndBooksList?: BadgeAndBooksList | undefined
   pageLoading: boolean
   reloadList: boolean
+  openDialog: boolean
 }
 
 export type BookListAction = {
-  type: 'opened' | 'setList' | 'reloadList'
+  type: 'opened' | 'setList' | 'reloadList' | 'openDialog'
 } & Partial<State>
 
 const initialState = {
@@ -27,6 +28,7 @@ const initialState = {
   badgeAndBooksList: undefined,
   pageLoading: true,
   reloadList: false,
+  openDialog: false,
 }
 
 const reducer: Reducer<State, BookListAction> = (state, action) => {
@@ -49,6 +51,13 @@ const reducer: Reducer<State, BookListAction> = (state, action) => {
       return {
         ...state,
         reloadList: !state.reloadList,
+        openDialog: false,
+      }
+    }
+    case 'openDialog': {
+      return {
+        ...state,
+        openDialog: action.openDialog ?? false,
       }
     }
   }
@@ -158,6 +167,7 @@ const Mypage: NextPage = () => {
             <div className='grow my-2 border border-dark-400 border-solid'></div>
             <BookList
               badgeAndBooksList={state.badgeAndBooksList}
+              openDialog={state.openDialog}
               dispatch={dispatch}
             />
           </div>
