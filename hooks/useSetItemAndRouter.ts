@@ -5,17 +5,17 @@ export const useSetItemAndRouter = () => {
   const router = useRouter()
 
   const setNoteAndTransition = useCallback(
-    (item: string, href: string, query?: string) => {
+    (item: string, href: string, noteId?: string) => {
       sessionStorage.setItem('currentNote', item)
-      router.push(query ? { pathname: href, query: query } : href)
+      router.push(noteId ? { pathname: href, query: { id: noteId } } : href)
     },
     [router]
   )
 
   const setBookAndTransition = useCallback(
-    (item: string, href: string, query?: string) => {
+    (item: string, href: string, bookId?: string) => {
       sessionStorage.setItem('currentBook', item)
-      router.push(query ? { pathname: href, query: query } : href)
+      router.push(bookId ? { pathname: href, query: { id: bookId } } : href)
     },
     [router]
   )
