@@ -72,17 +72,17 @@ const Book: NextPage = () => {
       {!bookAndNotes ? (
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
-        <div className='mx-auto max-w-3xl'>
+        <div>
           <BreadCrumbs page='book' book={currentBook.title} uid={uid} />
-          <BookDetail book={bookAndNotes.book} />
-          <NoteList
-            notes={bookAndNotes.notes}
-            uid={uid}
-            badgeId={badgeId}
-            bookId={bookId}
-            setReloadNote={setReloadNote}
-          />
-          <div className='flex justify-start mt-10 ml-2 xs:mt-14 xs:ml-4'>
+          <div className='px-2 mx-auto max-w-3xl md:px-0'>
+            <BookDetail book={bookAndNotes.book} />
+            <NoteList
+              notes={bookAndNotes.notes}
+              uid={uid}
+              badgeId={badgeId}
+              bookId={bookId}
+              setReloadNote={setReloadNote}
+            />
             <ToBackLink text='Home' href={`/my-page/${uid}`} />
           </div>
         </div>

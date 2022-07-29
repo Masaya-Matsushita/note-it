@@ -81,7 +81,7 @@ export const BreadCrumbs: FC<Props> = ({
   }
   return (
     <Breadcrumbs
-      className='flex flex-wrap'
+      className='flex flex-wrap mb-4 md:mb-6'
       classNames={{ separator: 'hidden' }}
     >
       {itemsArr().map((item) => {

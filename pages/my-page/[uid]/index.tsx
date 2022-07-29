@@ -153,9 +153,9 @@ const Mypage: NextPage = () => {
       ) : (
         <>
           <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
-          <div className='min-h-screen'>
-            <BreadCrumbs page='my-page' />
-            <div className='mt-6 text-3xl'>My Books</div>
+          <BreadCrumbs page='my-page' />
+          <div className='px-2 mx-auto max-w-3xl min-h-screen md:px-0'>
+            <div className='text-4xl font-medium'>My Books</div>
             <div className='grow my-2 border border-dark-400 border-solid'></div>
             <BookList
               badgeAndBooksList={state.badgeAndBooksList}
