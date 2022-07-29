@@ -34,17 +34,17 @@ export const BreadCrumbs: FC<Props> = ({
   const itemsArr = () => {
     switch (page) {
       case 'my-page': {
-        return [{ label: 'My Books', href: '#' }]
+        return [{ label: 'Home', href: '#' }]
       }
       case 'book-form': {
         return [
-          { label: 'My Books', href: `/my-page/${uid}` },
+          { label: 'Home', href: `/my-page/${uid}` },
           { label: 'Form', href: '#' },
         ]
       }
       case 'book': {
         return [
-          { label: 'My Books', href: `/my-page/${uid}` },
+          { label: 'Home', href: `/my-page/${uid}` },
           {
             label: bookLabel,
             href: '#',
@@ -53,7 +53,7 @@ export const BreadCrumbs: FC<Props> = ({
       }
       case 'note-form': {
         return [
-          { label: 'My Books', href: `/my-page/${uid}` },
+          { label: 'Home', href: `/my-page/${uid}` },
           {
             label: bookLabel,
             href: `/my-page/${uid}/${badgeId}/${bookId}`,
@@ -63,7 +63,7 @@ export const BreadCrumbs: FC<Props> = ({
       }
       case 'note': {
         return [
-          { label: 'My Books', href: `/my-page/${uid}` },
+          { label: 'Home', href: `/my-page/${uid}` },
           {
             label: bookLabel,
             href: `/my-page/${uid}/${badgeId}/${bookId}`,
@@ -88,7 +88,7 @@ export const BreadCrumbs: FC<Props> = ({
         return (
           <div key={item.label}>
             <span
-              className={item.label === 'My Books' ? 'hidden' : 'mr-3 ml-1'}
+              className={item.label === 'Home' ? 'hidden' : 'mr-3 ml-1'}
             >
               /
             </span>

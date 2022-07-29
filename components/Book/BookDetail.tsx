@@ -9,7 +9,7 @@ export const BookDetail: FC<Props> = memo(({ book }) => {
   return (
     <div>
       <div className='flex items-end'>
-        <div className='mr-2 text-3xl font-bold md:text-4xl'>{book.title}</div>
+        <div className='mr-2 text-3xl font-semibold md:text-4xl'>{book.title}</div>
         <Badge size='lg' className='shrink-0'>
           {book.badge}
         </Badge>

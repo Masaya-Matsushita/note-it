@@ -15,7 +15,7 @@ const Note: NextPage = () => {
 
   return (
     <>
-      <div className='mx-auto max-w-xl'>
+      <div className=''>
         <BreadCrumbs
           page='note'
           book={currentBook.title}
@@ -24,18 +24,22 @@ const Note: NextPage = () => {
           badgeId={badgeId}
           bookId={bookId}
         />
-        <div className='mt-4 ml-2 text-3xl font-bold'>{currentNote.label}</div>
-        <div className='flex justify-end items-center mr-4 mb-4 xs:mr-8'>
-          <div className='text-xl'>Page :</div>
-          <div className='inline-block py-1 px-2 ml-2 text-xl font-semibold bg-dark-600 rounded-md'>
-            {currentNote.page}
+        <div className='px-2 mx-auto mt-8 max-w-xl md:px-0'>
+          <div className='text-2xl font-semibold text-dark-100 sm:text-3xl'>
+            {currentNote.label}
           </div>
-        </div>
-        <NoteDisplay currentNote={currentNote} />
-        <div className='mx-2 xs:mx-6'>
-          <Link href={`/my-page/${uid}/${badgeId}/${bookId}`} passHref>
-            <Button className='w-full'>戻る</Button>
-          </Link>
+          <div className='flex justify-end items-center my-4 mr-4 xs:mr-8'>
+            <div className='text-xl'>Page :</div>
+            <div className='inline-block py-1 px-2 ml-2 text-xl font-semibold bg-dark-600 rounded-md'>
+              {currentNote.page}
+            </div>
+          </div>
+          <NoteDisplay currentNote={currentNote} />
+          <div className='xs:mx-12'>
+            <Link href={`/my-page/${uid}/${badgeId}/${bookId}`} passHref>
+              <Button className='w-full'>戻る</Button>
+            </Link>
+          </div>
         </div>
       </div>
     </>

@@ -34,6 +34,8 @@ export const AddNoteButton: FC<Props> = memo(
     clozeNote,
     dispatch,
   }) => {
+    const noteId: string | undefined = String(router.query.id)
+
     // noteをデータベースに登録
     const handleSubmit = async () => {
       // フォームのバリデーション
@@ -45,7 +47,6 @@ export const AddNoteButton: FC<Props> = memo(
         return
       }
       if (edit) {
-        const noteId = String(router.query.id)
         // 更新する場合
         await updateDoc(
           doc(

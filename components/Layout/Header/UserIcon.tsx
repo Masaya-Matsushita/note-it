@@ -7,7 +7,7 @@ import db, { auth } from 'firebaseConfig/firebase'
 import { useRouter } from 'next/router'
 import { Reducer, useCallback, useEffect, useReducer } from 'react'
 import { AiOutlineDown } from 'react-icons/ai'
-import { Settings, Logout } from 'tabler-icons-react'
+import { Settings, Logout, User } from 'tabler-icons-react'
 
 type State = typeof initialState
 
@@ -117,17 +117,17 @@ export const UserIcon = () => {
             }
             className='mt-2 mr-6 sm:mr-12 lg:mr-20'
             classNames={{
-              body: 'md:w-60',
+              body: 'md:w-60 border-dark-500 border-solid',
               label: 'md:h-10 md:text-base',
               item: 'md:h-10 md:text-sm',
             }}
           >
             <Menu.Label>{state.userName}</Menu.Label>
             <Menu.Item
-              icon={<Settings size={14} />}
+              icon={<User size={14} />}
               onClick={() => dispatch({ type: 'opened', opened: true })}
             >
-              Settings
+              Account
             </Menu.Item>
             <Menu.Item color='red' icon={<Logout size={14} />} onClick={logout}>
               Logout

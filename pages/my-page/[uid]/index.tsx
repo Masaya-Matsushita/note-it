@@ -10,7 +10,6 @@ import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
 import { Reducer, useReducer } from 'react'
-import { BreadCrumbs } from 'components/Parts/BreadCrumbs'
 
 type State = {
   opened: boolean
@@ -105,14 +104,14 @@ const Mypage: NextPage = () => {
           // badgeAndBooksListへ追加
           dispatch({ type: 'setList', badgeAndBooksList: badgeAndBooksArray })
         }
+        // 全てのbookが削除されたとき
+        if (!badgeAndBooksArray.length) {
+          dispatch({
+            type: 'setList',
+            badgeAndBooksList: [],
+          })
+        }
       })
-      // 全てのbookが削除されたとき
-      if (!badgeAndBooksArray.length) {
-        dispatch({
-          type: 'setList',
-          badgeAndBooksList: [],
-        })
-      }
     }
   }, [])
 
@@ -153,9 +152,9 @@ const Mypage: NextPage = () => {
       ) : (
         <>
           <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
-          <BreadCrumbs page='my-page' />
-          <div className='px-2 mx-auto max-w-3xl min-h-screen md:px-0'>
-            <div className='text-4xl font-medium'>My Books</div>
+          {/* <BreadCrumbs page='my-page' /> */}
+          <div className='px-2 mx-auto mt-12 max-w-3xl min-h-screen md:px-0'>
+            <div className='text-3xl md:font-semibold'>My Books</div>
             <div className='grow my-2 border border-dark-400 border-solid'></div>
             <BookList
               badgeAndBooksList={state.badgeAndBooksList}

@@ -50,7 +50,7 @@ export const BookList: FC<Props> = memo(({ badgeAndBooksList, dispatch }) => {
       // useEffect内でbooksを再取得
       dispatch({ type: 'reloadList' })
     },
-    [uid]
+    [uid, dispatch]
   )
 
   // ローディング中
