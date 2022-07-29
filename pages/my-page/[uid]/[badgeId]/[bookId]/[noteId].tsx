@@ -1,4 +1,4 @@
-import { Button } from '@mantine/core'
+import { Anchor, Breadcrumbs, Button } from '@mantine/core'
 import { NoteDisplay } from 'components/Note/NoteDisplay'
 import { useGetItem } from 'hooks/useGetItem'
 import { NextPage } from 'next'
@@ -10,11 +10,48 @@ const Note: NextPage = () => {
   const uid = String(router.query.uid)
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
-  const { currentNote } = useGetItem()
+  const { currentBook, currentNote } = useGetItem()
+
+  const breadItems = [
+    { label: 'My Books', href: `/my-page/${uid}` },
+    {
+      label: `${
+        currentBook.title.length > 7
+          ? currentBook.title.slice(0, 7) + '...'
+          : currentBook.title
+      }`,
+      href: `/my-page/${uid}/${badgeId}/${bookId}`,
+    },
+    {
+      label: `${
+        currentNote.label.length > 7
+          ? currentNote.label.slice(0, 7) + '...'
+          : currentNote.label
+      }`,
+      href: '#',
+    },
+  ].map((item) => {
+    return (
+      <div key={item.label}>
+        <span className={item.label === 'My Books' ? 'hidden' : 'mr-3 ml-1'}>
+          /
+        </span>
+        <Link href={item.href} passHref>
+          <Anchor className='mr-2 whitespace-nowrap'>{item.label}</Anchor>
+        </Link>
+      </div>
+    )
+  })
 
   return (
     <>
       <div className='mx-auto max-w-xl'>
+        <Breadcrumbs
+          className='flex flex-wrap'
+          classNames={{ separator: 'hidden' }}
+        >
+          {breadItems}
+        </Breadcrumbs>
         <div className='mt-4 ml-2 text-3xl font-bold'>{currentNote.label}</div>
         <div className='flex justify-end items-center mr-4 mb-4 xs:mr-8'>
           <div className='text-xl'>Page :</div>
