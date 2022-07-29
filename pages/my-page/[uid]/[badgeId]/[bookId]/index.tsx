@@ -1,6 +1,7 @@
 import { Loader } from '@mantine/core'
 import { BookDetail } from 'components/Book/BookDetail'
 import { NoteList } from 'components/Book/NoteList'
+import { BreadCrumbs } from 'components/Parts/BreadCrumbs'
 import { ToBackLink } from 'components/Parts/ToBackLink'
 import { collection, getDocs } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
@@ -72,6 +73,7 @@ const Book: NextPage = () => {
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <div className='mx-auto max-w-3xl'>
+          <BreadCrumbs page='book' book={currentBook.title} uid={uid} />
           <BookDetail book={bookAndNotes.book} />
           <NoteList
             notes={bookAndNotes.notes}

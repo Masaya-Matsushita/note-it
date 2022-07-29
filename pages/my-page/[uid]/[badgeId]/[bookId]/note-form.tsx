@@ -12,6 +12,7 @@ import { ToBackLink } from 'components/Parts/ToBackLink'
 import { Reducer, useReducer } from 'react'
 import { ClozeNoteDisplay } from 'components/NoteForm/ClozeNoteDisplay'
 import { useGetItem } from 'hooks/useGetItem'
+import { BreadCrumbs } from 'components/Parts/BreadCrumbs'
 
 export type NoteFormState = typeof initialState
 
@@ -184,7 +185,14 @@ const NoteForm: NextPage = () => {
         note={state.note}
         dispatch={dispatch}
       />
-      <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
+      <BreadCrumbs
+        page='note-form'
+        book={currentBook.title}
+        uid={uid}
+        badgeId={badgeId}
+        bookId={bookId}
+      />
+      <div className='ml-2 max-w-lg text-3xl'>Note{state.edit ? '更新' : '作成'}</div>
       <div className='mt-2 ml-4 text-lg text-dark-400'>- {state.title}</div>
       <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
         <div className='flex mr-4'>

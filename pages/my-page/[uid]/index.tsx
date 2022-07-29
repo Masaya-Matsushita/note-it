@@ -10,6 +10,7 @@ import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
 import { Reducer, useReducer } from 'react'
+import { BreadCrumbs } from 'components/Parts/BreadCrumbs'
 
 type State = {
   opened: boolean
@@ -153,6 +154,7 @@ const Mypage: NextPage = () => {
         <>
           <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
           <div className='min-h-screen'>
+            <BreadCrumbs page='my-page' />
             <div className='mt-6 text-3xl'>My Books</div>
             <div className='grow my-2 border border-dark-400 border-solid'></div>
             <BookList

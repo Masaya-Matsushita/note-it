@@ -103,7 +103,7 @@ export const AddNoteButton: FC<Props> = memo(
           leftIcon={<Note size={18} />}
           onClick={() => handleSubmit()}
         >
-          作成
+          {edit ? '更新' : '作成'}
         </Button>
       </div>
     )
