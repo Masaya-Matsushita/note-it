@@ -149,7 +149,7 @@ export const NoteList: FC<Props> = ({
             </div>
           </div>
           <div
-            className='py-2 mx-auto mt-8 w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:mt-12'
+            className='py-2 mx-auto mt-8 mb-16 w-52 text-center text-dark-200 bg-dark-700 hover:bg-dark-600 hover:cursor-pointer xs:mt-12'
             onClick={() => toNoteForm()}
           >
             + 作成
