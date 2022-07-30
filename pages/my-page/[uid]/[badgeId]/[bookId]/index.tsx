@@ -8,16 +8,54 @@ import db from 'firebaseConfig/firebase'
 import { useGetItem } from 'hooks/useGetItem'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Reducer, useEffect, useReducer } from 'react'
 import { BookAndNotes, Notes } from 'types'
+
+export type BookState = {
+  bookAndNotes: BookAndNotes | undefined
+  reloadNote: boolean
+  openDialog: boolean
+}
+
+export type BookAction = {
+  type: keyof typeof initialState
+} & Partial<BookState>
+
+const initialState = {
+  bookAndNotes: undefined,
+  reloadNote: false,
+  openDialog: false,
+}
+
+const reducer: Reducer<BookState, BookAction> = (state, action) => {
+  switch (action.type) {
+    case 'bookAndNotes': {
+      return {
+        ...state,
+        bookAndNotes: action.bookAndNotes ?? undefined,
+      }
+    }
+    case 'reloadNote': {
+      return {
+        ...state,
+        reloadNote: !state.reloadNote ?? false,
+      }
+    }
+    case 'openDialog': {
+      return {
+        ...state,
+        openDialog: action.openDialog ?? false,
+      }
+    }
+  }
+}
 
 const Book: NextPage = () => {
   const router = useRouter()
   const uid = router.query.uid
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
-  const [bookAndNotes, setBookAndNotes] = useState<BookAndNotes | undefined>()
-  const [reloadNote, setReloadNote] = useState(false)
+  const [state, dispatch] = useReducer(reducer, initialState)
   const { currentBook } = useGetItem()
 
   // bookAndNotesに取得したデータを代入
@@ -55,33 +93,37 @@ const Book: NextPage = () => {
         notes.sort((a, b) => {
           return a.page - b.page
         })
-        setBookAndNotes({
-          book: {
-            title: currentBook.title,
-            badge: currentBook.badge,
-            overview: currentBook.overview,
+        dispatch({
+          type: 'bookAndNotes',
+          bookAndNotes: {
+            book: {
+              title: currentBook.title,
+              badge: currentBook.badge,
+              overview: currentBook.overview,
+            },
+            notes: notes,
           },
-          notes: notes,
         })
       }
     })()
-  }, [badgeId, bookId, currentBook, uid, reloadNote])
+  }, [badgeId, bookId, currentBook, uid, state.reloadNote])
 
   return (
     <>
-      {!bookAndNotes ? (
+      {!state.bookAndNotes ? (
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <div>
           <BreadCrumbs page='book' book={currentBook.title} uid={uid} />
           <div className='px-2 mx-auto max-w-3xl md:px-0'>
-            <BookDetail book={bookAndNotes.book} />
+            <BookDetail book={state.bookAndNotes.book} />
             <NoteList
-              notes={bookAndNotes.notes}
+              notes={state.bookAndNotes.notes}
+              openDialog={state.openDialog}
               uid={uid}
               badgeId={badgeId}
               bookId={bookId}
-              setReloadNote={setReloadNote}
+              dispatch={dispatch}
             />
             <ToBackLink text='Home' href={`/my-page/${uid}`} />
           </div>

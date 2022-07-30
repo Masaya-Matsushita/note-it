@@ -192,7 +192,9 @@ const NoteForm: NextPage = () => {
         badgeId={badgeId}
         bookId={bookId}
       />
-      <div className='ml-2 max-w-lg text-3xl'>Note{state.edit ? '更新' : '作成'}</div>
+      <div className='ml-2 max-w-lg text-3xl'>
+        Note{state.edit ? '更新' : '作成'}
+      </div>
       <div className='mt-2 ml-4 text-lg text-dark-400'>- {state.title}</div>
       <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
         <div className='flex mr-4'>

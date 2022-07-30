@@ -1,15 +1,14 @@
 import { Menu } from '@mantine/core'
-import { BookListAction } from 'pages/my-page/[uid]'
 import { Dispatch, FC, memo } from 'react'
 import { Pencil, Trash } from 'tabler-icons-react'
 import { ConfirmDialog } from './ConfirmDialog'
 
 type Props = {
   label: string
-  toEditPage: any
-  handleDelete: any
+  toEditPage: () => void
+  handleDelete: () => void
   openDialog: boolean
-  dispatch: Dispatch<BookListAction>
+  dispatch: Dispatch<any>
 }
 
 // eslint-disable-next-line react/display-name

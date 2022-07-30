@@ -2,27 +2,31 @@ import { ItemMenu } from 'components/Parts/ItemMenu'
 import { deleteDoc, doc } from 'firebase/firestore'
 import db from 'firebaseConfig/firebase'
 import { useSetItemAndRouter } from 'hooks/useSetItemAndRouter'
-import { Dispatch, FC, SetStateAction, useCallback } from 'react'
+import { BookAction } from 'pages/my-page/[uid]/[badgeId]/[bookId]'
+import { Dispatch, FC, useCallback } from 'react'
 import { Note as NoteIcon } from 'tabler-icons-react'
 import { Note, Notes } from 'types'
 
 type Props = {
   notes: Notes
+  openDialog: boolean
   uid: string | string[] | undefined
   badgeId: string
   bookId: string
-  setReloadNote: Dispatch<SetStateAction<boolean>>
+  dispatch: Dispatch<BookAction>
 }
 
 export const NoteList: FC<Props> = ({
   notes,
+  openDialog,
   uid,
   badgeId,
   bookId,
-  setReloadNote,
+  dispatch,
 }) => {
   const { setNoteAndTransition } = useSetItemAndRouter()
 
+  // ブラウザにcurrentNoteを保存し、noteページへ
   const toNotePage = (note: Note) => {
     setNoteAndTransition(
       JSON.stringify(note),
@@ -30,6 +34,7 @@ export const NoteList: FC<Props> = ({
     )
   }
 
+  // ブラウザに空のcurrentNoteを保存し、note-formページへ
   const toNoteForm = () => {
     setNoteAndTransition(
       JSON.stringify({ id: '', label: '', page: 1, note: '', clozeNote: '' }),
@@ -37,7 +42,7 @@ export const NoteList: FC<Props> = ({
     )
   }
 
-  // ブラウザにtargetNoteを保存し、note-formページへ
+  // ブラウザにcurrentNoteを保存し、note-formページへ
   const toEditPage = useCallback(
     (note: Note, id: string) => {
       setNoteAndTransition(
@@ -67,10 +72,10 @@ export const NoteList: FC<Props> = ({
           )
         )
         // useEffect内でnotesを再取得
-        setReloadNote((prev) => !prev)
+        dispatch({ type: 'reloadNote' })
       }
     },
-    [uid, badgeId, bookId, setReloadNote]
+    [uid, badgeId, bookId, dispatch]
   )
 
   return (
@@ -123,6 +128,8 @@ export const NoteList: FC<Props> = ({
                     }
                     toEditPage={() => toEditPage(note, note.id)}
                     handleDelete={() => handleDelete(note.id)}
+                    openDialog={openDialog}
+                    dispatch={dispatch}
                   />
                 </div>
               </div>
