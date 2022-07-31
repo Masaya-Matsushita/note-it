@@ -84,6 +84,9 @@ export const UserIcon = () => {
   const router = useRouter()
   const uid = router.query.uid
   const [state, dispatch] = useReducer(reducer, initialState)
+  const handleClose = () => {
+    dispatch({ type: 'openDialog', openDialog: false })
+  }
 
   useEffect(() => {
     // ユーザがログインしているときはアイコンを表示させる
@@ -127,7 +130,7 @@ export const UserIcon = () => {
           <ConfirmDialog
             label='ログアウトしてもよろしいですか？'
             openDialog={state.openDialog}
-            dispatch={dispatch}
+            handleClose={handleClose}
             handleConfirm={logout}
           />
           <Menu

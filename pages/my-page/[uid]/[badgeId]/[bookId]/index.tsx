@@ -38,7 +38,8 @@ const reducer: Reducer<BookState, BookAction> = (state, action) => {
     case 'reloadNote': {
       return {
         ...state,
-        reloadNote: !state.reloadNote ?? false,
+        reloadNote: !state.reloadNote,
+        openDialog: false,
       }
     }
     case 'openDialog': {

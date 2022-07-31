@@ -14,18 +14,21 @@ type Props = {
 // eslint-disable-next-line react/display-name
 export const ItemMenu: FC<Props> = memo(
   ({ label, toEditPage, handleDelete, openDialog, dispatch }) => {
+    const handleClose = () => {
+      dispatch({ type: 'openDialog', openDialog: false })
+    }
     return (
       <div>
         <ConfirmDialog
           label='削除してもよろしいですか？'
           openDialog={openDialog}
-          dispatch={dispatch}
+          handleClose={handleClose}
           handleConfirm={handleDelete}
         />
         <Menu
           control={<div>...</div>}
           classNames={{
-            root: 'w-12 text-center h-14 text-dark-400 md:text-4xl text-2xl mr-4',
+            root: 'w-12 text-center h-14 text-dark-400 md:text-3xl text-2xl mr-4',
             body: 'border-dark-500 border-solid',
           }}
         >

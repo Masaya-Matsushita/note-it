@@ -101,6 +101,7 @@ export const UserProfileModal: FC<Props> = memo(({ opened, handleClose }) => {
           userName: state.userName,
           iconURL: state.iconURL,
         })
+        location.reload()
         return
       }
       // Storageへアイコン画像(Base64)を保存
