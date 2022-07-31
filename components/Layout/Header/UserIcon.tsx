@@ -120,7 +120,10 @@ export const UserIcon = () => {
       {state.userIcon ? (
         <div>
           <ErrorModal error={state.error} dispatch={dispatch} />
-          <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
+          <UserProfileModal
+            opened={state.opened}
+            handleClose={() => dispatch({ type: 'opened', opened: false })}
+          />
           <ConfirmDialog
             label='ログアウトしてもよろしいですか？'
             openDialog={state.openDialog}

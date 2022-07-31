@@ -160,7 +160,10 @@ const Mypage: NextPage = () => {
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <>
-          <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
+          <UserProfileModal
+            opened={state.opened}
+            handleClose={() => dispatch({ type: 'opened', opened: false })}
+          />
           {/* <BreadCrumbs page='my-page' /> */}
           <div className='px-2 mx-auto mt-12 max-w-3xl min-h-screen md:px-0'>
             <div className='text-3xl md:font-semibold'>My Books</div>
