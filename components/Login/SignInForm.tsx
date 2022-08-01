@@ -123,7 +123,7 @@ export const SignInForm: FC<Props> = ({ label }) => {
         method={state.method}
         dispatch={dispatch}
       />
-      <form onSubmit={emailSignIn} className='mx-auto max-w-[480px]'>
+      <form onSubmit={emailSignIn} className='mx-2 max-w-[480px] xs:mx-auto'>
         <TextInput
           required
           id='email'
@@ -146,7 +146,7 @@ export const SignInForm: FC<Props> = ({ label }) => {
           name='password'
           label='Password'
           placeholder='半角英数6文字以上'
-          mt='sm'
+          mt='md'
           size='md'
           icon={<AiOutlineKey />}
         />

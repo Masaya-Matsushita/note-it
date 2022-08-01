@@ -12,7 +12,7 @@ const Login: NextPage = () => {
     <>
       <Tabs
         className='pt-8 focus:outline-none sm:mx-8 md:mx-24'
-        tabPadding='xl'
+        classNames={{ tabsListWrapper: 'mb-6', }}
       >
         {LABELS.map((label) => {
           return (

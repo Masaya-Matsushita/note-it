@@ -167,6 +167,7 @@ export const SignUpForm: FC<Props> = ({ label }) => {
           mt='sm'
           size='md'
           icon={<AiOutlineKey />}
+          className='mb-10'
           {...signUpForm.getInputProps('password')}
         />
         <LoginButton label={label} loading={state.loading} />
