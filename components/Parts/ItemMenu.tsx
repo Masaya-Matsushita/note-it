@@ -20,11 +20,14 @@ export const ItemMenu: FC<Props> = memo(
     return (
       <div>
         <ConfirmDialog
-          label='削除してもよろしいですか？'
           openDialog={openDialog}
           handleClose={handleClose}
           handleConfirm={handleDelete}
-        />
+        >
+          <div className='mt-4 mb-8 text-center'>
+            削除してもよろしいですか？
+          </div>
+        </ConfirmDialog>
         <Menu
           control={<div>...</div>}
           classNames={{

@@ -24,6 +24,7 @@ export type UserProfileIconAction = {
     | 'openTrim'
     | 'closeTrim'
     | 'croppedImgSrc'
+    | 'loading'
 } & Partial<UserProfileIconState>
 
 const initialState = {
@@ -32,6 +33,7 @@ const initialState = {
   userName: '',
   trimOpened: false,
   croppedImgSrc: '',
+  loading: false,
 }
 
 const reducer: Reducer<UserProfileIconState, UserProfileIconAction> = (
@@ -62,6 +64,7 @@ const reducer: Reducer<UserProfileIconState, UserProfileIconAction> = (
       return {
         ...state,
         error: action.error ?? '',
+        loading: false,
       }
     }
     case 'openTrim': {
@@ -83,6 +86,12 @@ const reducer: Reducer<UserProfileIconState, UserProfileIconAction> = (
         trimOpened: false,
       }
     }
+    case 'loading': {
+      return {
+        ...state,
+        loading: true,
+      }
+    }
   }
 }
 
@@ -95,6 +104,7 @@ export const UserProfileModal: FC<Props> = memo(({ opened, handleClose }) => {
   // userのドキュメントを作成/更新
   const setUserProfile = useCallback(async () => {
     if (state.userName && state.userName.length <= 20) {
+      dispatch({ type: 'loading' })
       // ユーザーネームのみ保存/更新する場合
       if (!state.croppedImgSrc) {
         await setDoc(doc(db, 'users', uid), {
@@ -172,7 +182,11 @@ export const UserProfileModal: FC<Props> = memo(({ opened, handleClose }) => {
             : 'エラーが発生しました。入力内容をご確認ください。(画像サイズは最大5MBです'}
         </div>
       ) : null}
-      <Button onClick={setUserProfile} className='block mx-auto mt-8 w-48'>
+      <Button
+        onClick={setUserProfile}
+        className='block mx-auto mt-8 w-48'
+        loading={state.loading}
+      >
         完了
       </Button>
     </Modal>

@@ -128,11 +128,14 @@ export const UserIcon = () => {
             handleClose={() => dispatch({ type: 'opened', opened: false })}
           />
           <ConfirmDialog
-            label='ログアウトしてもよろしいですか？'
             openDialog={state.openDialog}
             handleClose={handleClose}
             handleConfirm={logout}
-          />
+          >
+            <div className='mt-4 mb-8 text-center'>
+              ログアウトしてもよろしいですか？
+            </div>
+          </ConfirmDialog>
           <Menu
             control={
               <div className='flex items-center hover:cursor-pointer'>

@@ -127,7 +127,6 @@ export const ClozeModal: FC<Props> = ({
             Cansel
           </Button>
           <Button
-            leftIcon={<Ballpen size={18} />}
             onClick={() => {
               dispatch({
                 type: 'okClozeModal',
