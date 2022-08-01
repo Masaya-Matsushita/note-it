@@ -1,5 +1,5 @@
-import { FC, memo, useCallback, useState } from 'react'
-import { sendEmailVerification } from 'firebase/auth'
+import { FC, memo, useCallback, useEffect, useState } from 'react'
+import { onAuthStateChanged, sendEmailVerification } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
 import { Modal } from '@mantine/core'
 import { BiHelpCircle } from 'react-icons/bi'
@@ -20,6 +20,8 @@ const ITEMS = [
 export const SendEmailTroubleModal: FC<Props> = memo(({ resendButton }) => {
   const [opened, setOpened] = useState(false)
   const [error, setError] = useState('')
+  const [email, setEmail] = useState('')
+  const [openDialog, setOpenDialog] = useState(false)
 
   // userに確認メールを送信
   const handleSendEmail = useCallback(async () => {
@@ -28,6 +30,7 @@ export const SendEmailTroubleModal: FC<Props> = memo(({ resendButton }) => {
       if (user) {
         auth.languageCode = 'ja'
         await sendEmailVerification(user)
+        setOpenDialog(false)
         setOpened(false)
         showNotification({
           title: '認証メールを送信しました！',
@@ -42,9 +45,18 @@ export const SendEmailTroubleModal: FC<Props> = memo(({ resendButton }) => {
     }
   }, [])
 
+  // マウント時、ユーザーのemailを取得
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email) {
+        setEmail(user.email)
+      }
+    })
+  }, [])
+
   // errorを初期値に戻す＆モーダルを閉じる
   const handleClose = useCallback(() => {
-    setOpened(false)
+    setOpenDialog(false)
     setError('')
   }, [])
 
@@ -59,7 +71,7 @@ export const SendEmailTroubleModal: FC<Props> = memo(({ resendButton }) => {
       </span>
       <Modal
         opened={opened}
-        onClose={handleClose}
+        onClose={() => setOpened(false)}
         withCloseButton={false}
         className='mt-16'
       >
@@ -74,6 +86,10 @@ export const SendEmailTroubleModal: FC<Props> = memo(({ resendButton }) => {
         <ResendButton
           resendButton={resendButton}
           error={error}
+          email={email}
+          openDialog={openDialog}
+          switchModal={() => setOpenDialog(true)}
+          handleClose={handleClose}
           handleSendEmail={handleSendEmail}
         />
       </Modal>

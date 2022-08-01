@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { auth } from 'firebaseConfig/firebase'
 import { onAuthStateChanged, sendEmailVerification } from 'firebase/auth'
-import { Button, Modal } from '@mantine/core'
+import { Button, Modal, Space } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { AiOutlineMail } from 'react-icons/ai'
 import { BiHelpCircle } from 'react-icons/bi'
@@ -9,7 +9,7 @@ import { ConfirmDialog } from 'components/Parts/ConfirmDialog'
 
 export const ResendVerifyEmailModal = (): JSX.Element => {
   const [opened, setOpened] = useState(false)
-  const [error, setError] = useState('aaa')
+  const [error, setError] = useState('')
   const [email, setEmail] = useState('')
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -21,7 +21,6 @@ export const ResendVerifyEmailModal = (): JSX.Element => {
         auth.languageCode = 'ja'
         await sendEmailVerification(user)
         setOpenDialog(false)
-        setOpened(false)
         showNotification({
           title: '認証メールを送信しました！',
           message: 'メールフォルダをご確認ください',
@@ -35,7 +34,7 @@ export const ResendVerifyEmailModal = (): JSX.Element => {
     }
   }
 
-  // ユーザーのemailを取得
+  // マウント時、ユーザーのemailを取得
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user && user.email) {
@@ -74,14 +73,16 @@ export const ResendVerifyEmailModal = (): JSX.Element => {
           <div className='my-2 text-center text-dark-100'>
             こちらのメールアドレスに再送信。
           </div>
-          {error !== '' ? (
-            <div className='my-2 text-sm font-bold text-red-500'>
-              エラーが発生しました。しばらく時間をおいてお試しください。
-            </div>
-          ) : null}
-          <div className='py-2 px-4 mx-4 mb-8 text-center text-dark-200 bg-dark-1000 rounded-md'>
+          <div className='p-2 text-center text-dark-200 bg-dark-1000 rounded-md xs:py-4 xs:mx-6'>
             {email}
           </div>
+          {error !== '' ? (
+            <div className='my-4 text-sm font-bold text-red-500'>
+              エラーが発生しました。しばらく時間をおいてお試しください。
+            </div>
+          ) : (
+            <Space h='xl' />
+          )}
         </ConfirmDialog>
         <Modal
           opened={opened}
