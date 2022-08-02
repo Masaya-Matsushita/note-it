@@ -1,12 +1,14 @@
 import { Switch } from '@mantine/core'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { NoteFormAction } from 'pages/my-page/[uid]/[badgeId]/[bookId]/note-form'
+import { Dispatch, FC, memo } from 'react'
 
 type Props = {
   cloze: boolean
-  dispatch: Dispatch<any>
+  dispatch: Dispatch<NoteFormAction>
 }
 
-export const ClozeSwitch: FC<Props> = ({ cloze, dispatch }) => {
+// eslint-disable-next-line react/display-name
+export const ClozeSwitch: FC<Props> = memo(({ cloze, dispatch }) => {
   return (
     <div className='flex justify-end'>
       <Switch
@@ -18,11 +20,10 @@ export const ClozeSwitch: FC<Props> = ({ cloze, dispatch }) => {
             type: 'toggleClozeSwitch',
             cloze: e.target.checked,
             opened: e.target.checked,
-            setShowClozeNote: false,
           })
         }}
         className='mt-4 mr-4 hover:cursor-pointer'
       />
     </div>
   )
-}
+})

@@ -1,20 +1,54 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+		// 認証済ユーザー
+    function isAnyAuthengicated() {
+      return request.auth != null
+    }
+		// 認証済かつuidが一致
+    function isUserAuthenticated(userId) {
+      return isAnyAuthengicated() && request.auth.uid == userId
+    }
     match /users/{userId}{
       // ユーザーは自分のuserId以降の階層のデータのみ参照
       match /{document=**} {
-        allow read: if request.auth != null && request.auth.uid == userId;
+        allow read: if isUserAuthenticated(userId);
       }
+
+      // usersへの書き込み
+      allow write: if (isUserAuthenticated(userId) &&
+        request.resource.data.keys().hasAll(['userName', 'iconURL']) &&
+        request.resource.data.userName is string &&
+        request.resource.data.iconURL is string
+        )
+
       // badgesへの書き込み
       match /badges/{badgeId} {
-        allow write: if request.resource.data.keys().hasAll(['badge']);
+        allow write: if (isUserAuthenticated(userId) &&
+          request.resource.data.keys().hasAll(['badge']) &&
+          request.resource.data.badge is string
+          )
+
         // booksへの書き込み
         match /books/{bookId} {
-          allow write: if request.resource.data.keys().hasAll(['title', 'overview']);
+          allow create, update: if (isUserAuthenticated(userId) &&
+            request.resource.data.keys().hasAll(['title', 'overview']) &&
+            request.resource.data.title is string &&
+            request.resource.data.overview is string
+            )
+
+          allow delete: if isUserAuthenticated(userId)
+
           // notesへの書き込み
           match /notes/{noteId} {
-            allow write: if request.resource.data.keys().hasAll(['page', 'label', 'note', 'clozeNote']);
+            allow create, update: if (isUserAuthenticated(userId) &&
+              request.resource.data.keys().hasAll(['page', 'label', 'note', 'clozeNote']) &&
+              request.resource.data.label is string &&
+              request.resource.data.page is number &&
+              request.resource.data.note is string &&
+              request.resource.data.clozeNote is string)
+
+            allow delete: if isUserAuthenticated(userId)
           }
         }
       }

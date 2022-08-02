@@ -1,5 +1,5 @@
 import { Modal, Popover, Stepper, Card, Button } from '@mantine/core'
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, useState } from 'react'
 import { BsArrowCounterclockwise } from 'react-icons/bs'
 import { Ballpen } from 'tabler-icons-react'
 
@@ -127,7 +127,6 @@ export const ClozeModal: FC<Props> = ({
             Cansel
           </Button>
           <Button
-            leftIcon={<Ballpen size={18} />}
             onClick={() => {
               dispatch({
                 type: 'okClozeModal',

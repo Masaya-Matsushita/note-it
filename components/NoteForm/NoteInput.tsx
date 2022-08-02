@@ -1,13 +1,15 @@
 import { Textarea } from '@mantine/core'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { NoteFormAction } from 'pages/my-page/[uid]/[badgeId]/[bookId]/note-form'
+import { Dispatch, FC, memo } from 'react'
 
 type Props = {
   note: string
   cloze: boolean
-  dispatch: Dispatch<any>
+  dispatch: Dispatch<NoteFormAction>
 }
 
-export const NoteInput: FC<Props> = ({ note, cloze, dispatch }) => {
+// eslint-disable-next-line react/display-name
+export const NoteInput: FC<Props> = memo(({ note, cloze, dispatch }) => {
   return (
     <Textarea
       required
@@ -25,4 +27,4 @@ export const NoteInput: FC<Props> = ({ note, cloze, dispatch }) => {
       classNames={{ input: 'h-32' }}
     />
   )
-}
+})

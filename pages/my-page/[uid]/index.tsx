@@ -1,5 +1,5 @@
-import { UserProfileModal } from 'components/Modal/UserProfileModal'
-import { useEffect } from 'react'
+import { UserProfileModal } from 'components/Parts/UserProfileModal'
+import { useCallback, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -9,24 +9,66 @@ import { Loader } from '@mantine/core'
 import { BookList } from 'components/MyPage/BookList'
 import { Books, BadgeAndBooksList } from 'types'
 import { ToCreateBookButton } from 'components/MyPage/ToCreateBookButton'
-import { useMypageState } from 'hooks/StateManagement/useMypageState'
+import { Reducer, useReducer } from 'react'
+
+type State = {
+  opened: boolean
+  badgeAndBooksList?: BadgeAndBooksList | undefined
+  pageLoading: boolean
+  reloadList: boolean
+  openDialog: boolean
+}
+
+export type BookListAction = {
+  type: 'opened' | 'setList' | 'reloadList' | 'openDialog'
+} & Partial<State>
+
+const initialState = {
+  opened: false,
+  badgeAndBooksList: undefined,
+  pageLoading: true,
+  reloadList: false,
+  openDialog: false,
+}
+
+const reducer: Reducer<State, BookListAction> = (state, action) => {
+  switch (action.type) {
+    case 'opened': {
+      return {
+        ...state,
+        opened: action.opened ?? false,
+        pageLoading: false,
+      }
+    }
+    case 'setList': {
+      return {
+        ...state,
+        badgeAndBooksList: action.badgeAndBooksList,
+        pageLoading: false,
+      }
+    }
+    case 'reloadList': {
+      return {
+        ...state,
+        reloadList: !state.reloadList,
+        openDialog: false,
+      }
+    }
+    case 'openDialog': {
+      return {
+        ...state,
+        openDialog: action.openDialog ?? false,
+      }
+    }
+  }
+}
 
 const Mypage: NextPage = () => {
   const router = useRouter()
-  const { state, dispatch } = useMypageState()
-
-  // userのドキュメントが存在するか判断
-  const checkUserExists = async (userId: string) => {
-    const userSnap = await getDoc(doc(db, 'users', userId))
-    if (userSnap.exists()) {
-      createBadgeAndBooksList(userId)
-    } else {
-      dispatch({ type: 'opened', opened: true })
-    }
-  }
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   // badgesとbooksを取得しbadgeAndBooksListへ追加
-  const createBadgeAndBooksList = async (userId: string) => {
+  const createBadgeAndBooksList = useCallback(async (userId: string) => {
     // userのbadgesを取得
     const badgesSnap = await getDocs(collection(db, 'users', userId, 'badges'))
     if (badgesSnap.empty) {
@@ -71,9 +113,29 @@ const Mypage: NextPage = () => {
           // badgeAndBooksListへ追加
           dispatch({ type: 'setList', badgeAndBooksList: badgeAndBooksArray })
         }
+        // 全てのbookが削除されたとき
+        if (!badgeAndBooksArray.length) {
+          dispatch({
+            type: 'setList',
+            badgeAndBooksList: [],
+          })
+        }
       })
     }
-  }
+  }, [])
+
+  // userのドキュメントが存在するか判断
+  const checkUserExists = useCallback(
+    async (userId: string) => {
+      const userSnap = await getDoc(doc(db, 'users', userId))
+      if (userSnap.exists()) {
+        createBadgeAndBooksList(userId)
+      } else {
+        dispatch({ type: 'opened', opened: true })
+      }
+    },
+    [createBadgeAndBooksList]
+  )
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -86,11 +148,10 @@ const Mypage: NextPage = () => {
           router.push('/no-verified')
         } else {
           checkUserExists(user.uid)
-          dispatch({ type: 'pageLoading', pageLoading: false })
         }
       }
     })
-  }, [])
+  }, [router, checkUserExists, state.reloadList])
 
   return (
     <>
@@ -99,9 +160,21 @@ const Mypage: NextPage = () => {
         <Loader size='xl' className='fixed inset-0 m-auto' />
       ) : (
         <>
-          <UserProfileModal opened={state.opened} propsDispatch={dispatch} />
-          <BookList badgeAndBooksList={state.badgeAndBooksList} />
-          <ToCreateBookButton router={router} />
+          <UserProfileModal
+            opened={state.opened}
+            handleClose={() => dispatch({ type: 'opened', opened: false })}
+          />
+          {/* <BreadCrumbs page='my-page' /> */}
+          <div className='px-2 mx-auto mt-8 max-w-3xl min-h-screen sm:mt-12 md:px-0'>
+            <div className='text-3xl md:font-semibold'>My Books</div>
+            <div className='grow my-2 border border-dark-400 border-solid'></div>
+            <BookList
+              badgeAndBooksList={state.badgeAndBooksList}
+              openDialog={state.openDialog}
+              dispatch={dispatch}
+            />
+          </div>
+          <ToCreateBookButton />
         </>
       )}
     </>

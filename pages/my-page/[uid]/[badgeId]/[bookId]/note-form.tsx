@@ -1,8 +1,7 @@
-import { Card } from '@mantine/core'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { ErrorModal } from 'components/Modal/ErrorModal'
+import { ErrorModal } from 'components/Parts/ErrorModal'
 import { LabelInput } from 'components/NoteForm/LabelInput'
 import { PageInput } from 'components/NoteForm/PageInput'
 import { NoteInput } from 'components/NoteForm/NoteInput'
@@ -10,47 +9,172 @@ import { ClozeSwitch } from 'components/NoteForm/ClozeSwitch'
 import { ClozeModal } from 'components/NoteForm/ClozeModal'
 import { AddNoteButton } from 'components/NoteForm/AddNoteButton'
 import { ToBackLink } from 'components/Parts/ToBackLink'
-import { useNoteFormState } from 'hooks/StateManagement/useNoteFormState'
+import { Reducer, useReducer } from 'react'
+import { ClozeNoteDisplay } from 'components/NoteForm/ClozeNoteDisplay'
+import { useGetItem } from 'hooks/useGetItem'
+import { BreadCrumbs } from 'components/Parts/BreadCrumbs'
+
+export type NoteFormState = typeof initialState
+
+export type NoteFormAction = {
+  type:
+    | 'opened'
+    | 'label'
+    | 'page'
+    | 'error'
+    | 'resetError'
+    | 'cloze'
+    | 'note'
+    | 'showClozeNote'
+    | 'clozeNote'
+    | 'cancelClozeModal'
+    | 'okClozeModal'
+    | 'toggleClozeSwitch'
+    | 'setBookAndNote'
+    | 'setBook'
+} & Partial<NoteFormState>
+
+const initialState = {
+  edit: false,
+  opened: false,
+  title: '',
+  label: '',
+  page: 1,
+  note: '',
+  error: '',
+  cloze: false,
+  showClozeNote: false,
+  clozeNote: '',
+  throughSetClozeNote: false,
+}
+
+const reducer: Reducer<NoteFormState, NoteFormAction> = (state, action) => {
+  switch (action.type) {
+    case 'opened':
+      return {
+        ...state,
+        opened: action.opened ?? false,
+      }
+    case 'label':
+      return {
+        ...state,
+        label: action.label ?? '',
+      }
+    case 'page':
+      return {
+        ...state,
+        page: action.page ?? 0,
+      }
+    case 'note':
+      return {
+        ...state,
+        note: action.note ?? '',
+      }
+    case 'error':
+      return {
+        ...state,
+        error: action.error ?? '',
+      }
+    case 'resetError': {
+      return {
+        ...state,
+        error: action.error ?? '',
+      }
+    }
+    case 'cloze':
+      return {
+        ...state,
+        cloze: action.cloze ?? false,
+      }
+    case 'showClozeNote':
+      return {
+        ...state,
+        showClozeNote: action.showClozeNote ?? false,
+      }
+    case 'clozeNote':
+      return {
+        ...state,
+        clozeNote: action.clozeNote ?? '',
+      }
+    case 'cancelClozeModal':
+      return {
+        ...state,
+        cloze: action.cloze ?? false,
+        opened: action.opened ?? false,
+      }
+    case 'okClozeModal':
+      return {
+        ...state,
+        showClozeNote: action.showClozeNote ?? false,
+        opened: action.opened ?? false,
+      }
+    case 'toggleClozeSwitch':
+      return {
+        ...state,
+        cloze: action.cloze ?? false,
+        opened: action.opened ?? false,
+        showClozeNote: false,
+        throughSetClozeNote: false,
+      }
+    case 'setBook':
+      return {
+        ...state,
+        title: action.title ?? '',
+      }
+    case 'setBookAndNote':
+      return {
+        ...state,
+        edit: action.edit ?? false,
+        title: action.title ?? '',
+        label: action.label ?? '',
+        page: action.page ?? 0,
+        note: action.note ?? '',
+        cloze: action.cloze ?? false,
+        showClozeNote: action.showClozeNote ?? false,
+        clozeNote: action.clozeNote ?? '',
+        throughSetClozeNote: true,
+      }
+  }
+}
 
 const NoteForm: NextPage = () => {
   const router = useRouter()
-
-  const { state, dispatch } = useNoteFormState()
   const uid = String(router.query.uid)
   const badgeId = String(router.query.badgeId)
   const bookId = String(router.query.bookId)
-
-  //マウント時にsessionStorageからデータを取得
-  useEffect(() => {
-    const jsonTargetBook = sessionStorage.getItem('targetBook')
-    const jsonTargetNote = sessionStorage.getItem('targetNote')
-    if (jsonTargetBook && jsonTargetNote) {
-      const targetBook = JSON.parse(jsonTargetBook)
-      const targetNote = JSON.parse(jsonTargetNote)
-      // 編集の場合、フォームに値を代入
-      if (targetNote.label !== '') {
-        dispatch({
-          type: 'setBookAndNote',
-          edit: true,
-          title: targetBook.title,
-          label: targetNote.label,
-          page: Number(targetNote.page),
-          note: targetNote.note,
-        })
-      } else {
-        dispatch({ type: 'setBook', title: targetBook.title })
-      }
-    }
-  }, [])
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const { currentBook, currentNote } = useGetItem()
 
   // clozeが切り替わったとき、clozeNoteを変更
   useEffect(() => {
-    if (state.cloze) {
-      dispatch({ type: 'clozeNote', clozeNote: state.note })
-    } else {
-      dispatch({ type: 'clozeNote', clozeNote: '' })
+    // 編集の場合、マウント時にclozeNoteが上書きされるのを阻止
+    if (!state.throughSetClozeNote) {
+      if (state.cloze) {
+        dispatch({ type: 'clozeNote', clozeNote: state.note })
+      } else {
+        dispatch({ type: 'clozeNote', clozeNote: '' })
+      }
     }
-  }, [state.cloze])
+  }, [state.throughSetClozeNote, state.cloze, state.note])
+
+  useEffect(() => {
+    // 編集の場合、フォームに値を代入
+    if (currentNote.label) {
+      dispatch({
+        type: 'setBookAndNote',
+        edit: true,
+        title: currentBook.title,
+        label: currentNote.label,
+        page: Number(currentNote.page),
+        note: currentNote.note,
+        cloze: Boolean(currentNote.clozeNote),
+        showClozeNote: Boolean(currentNote.clozeNote),
+        clozeNote: currentNote.clozeNote,
+      })
+    } else {
+      dispatch({ type: 'setBook', title: currentBook.title })
+    }
+  }, [currentBook, currentNote])
 
   return (
     <div className='mx-auto max-w-xl'>
@@ -61,21 +185,28 @@ const NoteForm: NextPage = () => {
         note={state.note}
         dispatch={dispatch}
       />
-      <div className='ml-2 max-w-lg text-3xl'>Note作成</div>
-      <div className='mt-2 ml-4 text-lg text-dark-400'>- {state.title}</div>
-      <div className='py-8 px-4 mt-6 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
+      <BreadCrumbs
+        page='note-form'
+        book={currentBook.title}
+        uid={uid}
+        badgeId={badgeId}
+        bookId={bookId}
+      />
+      <div className='ml-2 max-w-lg text-3xl'>
+        Note{state.edit ? '更新' : '作成'}
+      </div>
+      <div className='mt-1 ml-4 text-lg text-dark-400'>- {state.title}</div>
+      <div className='py-8 px-4 mt-2 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
         <div className='flex mr-4'>
           <LabelInput label={state.label} dispatch={dispatch} />
           <PageInput page={state.page} dispatch={dispatch} />
         </div>
         <NoteInput note={state.note} cloze={state.cloze} dispatch={dispatch} />
         <ClozeSwitch cloze={state.cloze} dispatch={dispatch} />
-        {state.showClozeNote ? (
-          <div>
-            <div className='mb-2 text-sm font-semibold'>括弧抜き</div>
-            <Card className='mb-4 min-h-[100px]'>{state.clozeNote}</Card>
-          </div>
-        ) : null}
+        <ClozeNoteDisplay
+          clozeNote={state.clozeNote}
+          isShow={state.showClozeNote}
+        />
       </div>
       <AddNoteButton
         uid={uid}

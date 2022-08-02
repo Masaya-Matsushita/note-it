@@ -1,34 +1,37 @@
 import { AuthProvider } from 'components/Login/AuthProvider'
-import { ErrorModal } from 'components/Modal/ErrorModal'
-import { useEffect } from 'react'
 import { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import { LoginForm } from 'components/Login/LoginForm'
-import { useLoginState } from 'hooks/StateManagement/useLoginState'
+import { Tabs } from '@mantine/core'
+import { AuthDivider } from 'components/Login/AuthDivider'
+import { SignInForm } from 'components/Login/SignInForm'
+import { SignUpForm } from 'components/Login/SignUpForm'
+
+const LABELS = ['ログイン', '新規登録'] as const
 
 const Login: NextPage = () => {
-  const router = useRouter()
-  const { state, dispatch } = useLoginState()
-
-  // localStorageにemailが保存されていた場合
-  useEffect(() => {
-    if (localStorage.hasOwnProperty('email')) {
-      dispatch({
-        type: 'setEmail',
-        emailValue: localStorage.email,
-      })
-    }
-  }, [])
-
   return (
     <>
-      <ErrorModal
-        error={state.error}
-        method={state.method}
-        dispatch={dispatch}
-      />
-      <LoginForm state={state} dispatch={dispatch} router={router} />
-      <AuthProvider router={router} />
+      <Tabs
+        className='pt-8 focus:outline-none sm:mx-8 md:mx-24'
+        classNames={{ tabsListWrapper: 'mb-6', }}
+      >
+        {LABELS.map((label) => {
+          return (
+            <Tabs.Tab
+              key={label}
+              label={label}
+              className='px-4 pb-2 text-xl font-bold text-dark-300 xxs:text-2xl sm:px-6 md:px-8'
+            >
+              {label === 'ログイン' ? (
+                <SignInForm label={label} />
+              ) : (
+                <SignUpForm label={label} />
+              )}
+              <AuthDivider label={label} />
+            </Tabs.Tab>
+          )
+        })}
+      </Tabs>
+      <AuthProvider />
     </>
   )
 }
