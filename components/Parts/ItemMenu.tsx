@@ -9,14 +9,40 @@ type Props = {
   handleDelete: () => void
   openDialog: boolean
   dispatch: Dispatch<any>
+  badgeId?: string
+  bookId?: string
+  noteId?: string
 }
 
 // eslint-disable-next-line react/display-name
 export const ItemMenu: FC<Props> = memo(
-  ({ label, toEditPage, handleDelete, openDialog, dispatch }) => {
+  ({
+    label,
+    toEditPage,
+    handleDelete,
+    openDialog,
+    dispatch,
+    badgeId,
+    bookId,
+    noteId,
+  }) => {
     const handleClose = () => {
       dispatch({ type: 'openDialog', openDialog: false })
     }
+
+    // sessionStorageに削除対象のidを保存
+    const setDeleteItem = () => {
+      if (noteId) {
+        sessionStorage.setItem('deleteTarget', noteId)
+      } else {
+        sessionStorage.setItem(
+          'deleteTarget',
+          JSON.stringify({ badgeId: badgeId, bookId: bookId })
+        )
+      }
+      dispatch({ type: 'openDialog', openDialog: true })
+    }
+    
     return (
       <div>
         <ConfirmDialog
@@ -42,7 +68,7 @@ export const ItemMenu: FC<Props> = memo(
           <Menu.Item
             color='red'
             icon={<Trash size={14} />}
-            onClick={() => dispatch({ type: 'openDialog', openDialog: true })}
+            onClick={setDeleteItem}
           >
             削除
           </Menu.Item>

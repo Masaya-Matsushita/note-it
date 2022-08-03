@@ -22,7 +22,7 @@ export const BookList: FC<Props> = memo(
     const uid = String(router.query.uid)
     const { setBookAndTransition } = useSetItemAndRouter()
 
-    // targetBookをブラウザに保存し、bookページへ
+    // currentBookをブラウザに保存し、bookページへ
     const toBookPage = useCallback(
       (book: Book, badgeId: string, bookId: string) => {
         setBookAndTransition(
@@ -33,7 +33,7 @@ export const BookList: FC<Props> = memo(
       [setBookAndTransition, uid]
     )
 
-    // ブラウザにtargetBookを保存し、book-formページへ
+    // currentBookを保存し、book-formページへ
     const toEditPage = useCallback(
       (currentBook: Book, targetId: string) => {
         sessionStorage.setItem('currentBook', JSON.stringify(currentBook))
@@ -46,16 +46,25 @@ export const BookList: FC<Props> = memo(
     )
 
     // bookを削除
-    const handleDelete = useCallback(
-      async (badgeId: string, bookId: string) => {
+    const handleDelete = useCallback(async () => {
+      const jsonTarget = sessionStorage.getItem('deleteTarget')
+      if (jsonTarget) {
+        const target = JSON.parse(jsonTarget)
         await deleteDoc(
-          doc(db, 'users', uid, 'badges', badgeId, 'books', bookId)
+          doc(
+            db,
+            'users',
+            uid,
+            'badges',
+            target.badgeId,
+            'books',
+            target.bookId
+          )
         )
         // useEffect内でbooksを再取得
         dispatch({ type: 'reloadList' })
-      },
-      [uid, dispatch]
-    )
+      }
+    }, [uid, dispatch])
 
     // ローディング中
     if (!badgeAndBooksList) {
@@ -79,6 +88,8 @@ export const BookList: FC<Props> = memo(
         </div>
       )
     }
+
+    console.log(badgeAndBooksList)
 
     return (
       <div>
@@ -135,11 +146,11 @@ export const BookList: FC<Props> = memo(
                             book.id
                           )
                         }
-                        handleDelete={() =>
-                          handleDelete(String(badgeAndBooks.priority), book.id)
-                        }
+                        handleDelete={() => handleDelete()}
                         openDialog={openDialog}
                         dispatch={dispatch}
+                        badgeId={String(badgeAndBooks.priority)}
+                        bookId={book.id}
                       />
                     </div>
                   )

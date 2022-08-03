@@ -81,15 +81,13 @@ export const BreadCrumbs: FC<Props> = ({
   }
   return (
     <Breadcrumbs
-      className='flex flex-wrap mb-4 md:mb-6'
+      className='flex flex-wrap mb-4 md:mb-6 md:ml-8 lg:ml-20'
       classNames={{ separator: 'hidden' }}
     >
       {itemsArr().map((item) => {
         return (
           <div key={item.label}>
-            <span
-              className={item.label === 'Home' ? 'hidden' : 'mr-3 ml-1'}
-            >
+            <span className={item.label === 'Home' ? 'hidden' : 'mr-3 ml-1'}>
               /
             </span>
             <Link href={item.href} passHref>
