@@ -55,8 +55,9 @@ export const NoteList: FC<Props> = ({
   )
 
   // noteを削除
-  const handleDelete = useCallback(
-    async (noteId: string) => {
+  const handleDelete = useCallback(async () => {
+    const noteId = sessionStorage.getItem('deleteTarget')
+    if (noteId) {
       if (typeof uid === 'string') {
         await deleteDoc(
           doc(
@@ -74,9 +75,8 @@ export const NoteList: FC<Props> = ({
         // useEffect内でnotesを再取得
         dispatch({ type: 'reloadNote' })
       }
-    },
-    [uid, badgeId, bookId, dispatch]
-  )
+    }
+  }, [uid, badgeId, bookId, dispatch])
 
   return (
     <div>
@@ -127,9 +127,10 @@ export const NoteList: FC<Props> = ({
                         : note.label
                     }
                     toEditPage={() => toEditPage(note, note.id)}
-                    handleDelete={() => handleDelete(note.id)}
+                    handleDelete={() => handleDelete()}
                     openDialog={openDialog}
                     dispatch={dispatch}
+                    noteId={note.id}
                   />
                 </div>
               </div>
