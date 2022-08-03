@@ -89,8 +89,6 @@ export const BookList: FC<Props> = memo(
       )
     }
 
-    console.log(badgeAndBooksList)
-
     return (
       <div>
         {badgeAndBooksList.map((badgeAndBooks) => {

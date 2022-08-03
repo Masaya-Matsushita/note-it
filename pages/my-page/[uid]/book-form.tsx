@@ -9,11 +9,13 @@ const BookForm: NextPage = () => {
   const uid = String(router.query.uid)
 
   return (
-    <div className='mx-auto max-w-xl'>
+    <>
       <BreadCrumbs page='book-form' uid={uid} />
-      <InputForm router={router} uid={uid} />
-      <ToBackLink text='Home' href={`/my-page/${uid}`} />
-    </div>
+      <div className='mx-auto max-w-xl'>
+        <InputForm router={router} uid={uid} />
+        <ToBackLink text='Home' href={`/my-page/${uid}`} />
+      </div>
+    </>
   )
 }
 
