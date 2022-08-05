@@ -6,13 +6,13 @@
 
 [プロダクトのリンクはこちら](https://note-it-five.vercel.app/)
 
-![mac-top](https://user-images.githubusercontent.com/97160510/182673355-c6bad813-f7bb-4e46-811f-88999df8e843.jpg)
+![NoteIt-gif](https://user-images.githubusercontent.com/97160510/182994075-67ffe7eb-a1fe-4640-9c8e-78d4e90644fa.gif)
 
-### PC版
+### デモ動画(約25秒)
 
 ![ 2022:08:04 2 41 31](https://user-images.githubusercontent.com/97160510/182674011-44e11f50-1f52-4b80-bb2b-a9d3cd2a114a.jpg)
 
-### スマホ版(iPhone11 & iPhoneSE2)
+### スマホ対応(iPhone11 & iPhoneSE2)
 <br />
 
 ## 💭 作成の背景
