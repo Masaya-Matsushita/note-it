@@ -1,7 +1,6 @@
 import { Modal, Popover, Stepper, Card, Button } from '@mantine/core'
 import { Dispatch, FC, useState } from 'react'
 import { BsArrowCounterclockwise } from 'react-icons/bs'
-import { Ballpen } from 'tabler-icons-react'
 
 type Props = {
   clozeNote: string

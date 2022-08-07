@@ -164,7 +164,6 @@ const Mypage: NextPage = () => {
             opened={state.opened}
             handleClose={() => dispatch({ type: 'opened', opened: false })}
           />
-          {/* <BreadCrumbs page='my-page' /> */}
           <div className='px-2 mx-auto mt-8 max-w-3xl min-h-screen sm:mt-12 md:px-0'>
             <div className='text-3xl md:font-semibold'>My Books</div>
             <div className='grow my-2 border border-dark-400 border-solid'></div>

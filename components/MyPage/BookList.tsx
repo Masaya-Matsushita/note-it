@@ -101,7 +101,7 @@ export const BookList: FC<Props> = memo(
               classNames={{
                 itemTitle: 'h-8',
                 contentInner: 'pt-0',
-                control: 'hover:cursor-pointer',
+                control: 'hover:cursor-pointer hover:bg-dark-800',
               }}
               key={badgeAndBooks.badge}
             >
