@@ -3,9 +3,9 @@ import { Provider } from 'components/Layout/Provider'
 import { useEffect } from 'react'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
-import 'styles/globals.css'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from 'firebaseConfig/firebase'
+import 'styles/globals.css'
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props
@@ -17,6 +17,7 @@ export default function App(props: AppProps) {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         switch (router.pathname) {
+          case '/':
           case '/login':
           case '/forgot-password':
           case '/auth-redirect': {
@@ -47,12 +48,13 @@ export default function App(props: AppProps) {
   }, [router])
 
   return (
-    <>
+    //　ブラウザの翻訳でDOMが書き換えられ、仮想DOMとの整合性が取れなくなるのを防ぐ
+    <div translate='no'>
       <Provider>
         <Layout>
           <Component {...pageProps} />
         </Layout>
       </Provider>
-    </>
+    </div>
   )
 }

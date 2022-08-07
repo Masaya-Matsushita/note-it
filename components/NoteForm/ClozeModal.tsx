@@ -61,8 +61,11 @@ export const ClozeModal: FC<Props> = ({
       <div className='mb-2 text-xl'>括弧抜きを追加</div>
       <div className='grow mb-2 border border-dark-400 border-solid'></div>
       <div className='p-2'>
-        <div className=' mt-[3px] text-dark-300'>
+        <div className='mt-[3px] text-dark-300'>
           追加後はNoteの編集が行えません。先にNoteの編集を完了させてください。
+        </div>
+        <div className='ml-1 text-sm text-dark-300'>
+          ※ iPhoneの場合は、利用できません。
         </div>
         <Popover
           opened={popover}

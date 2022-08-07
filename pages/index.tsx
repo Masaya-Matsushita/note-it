@@ -3,6 +3,7 @@ import { DevideLabel } from 'components/Parts/DevideLabel'
 import { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Divide } from 'tabler-icons-react'
 
 const ITEMS = [
   { id: '1', label: 'ジャンル別、本別で簡単整理' },
@@ -89,7 +90,7 @@ const Top: NextPage = () => {
         </span>
       </DevideLabel>
       <div className='text-center'>サービスの特徴</div>
-      <div className='flex flex-col items-center my-12 xs:flex-row xs:flex-wrap xs:justify-center'>
+      <div className='flex flex-col items-center my-12 xs:flex-row xs:flex-wrap xs:justify-center xs:items-start'>
         {ITEMS.map((item) => {
           return (
             <div key={item.id} className='my-8 mx-4'>
@@ -106,6 +107,11 @@ const Top: NextPage = () => {
               <div className='mt-6 font-bold tracking-wide text-center text-dark-200'>
                 {item.label}
               </div>
+              {item.id === '3' ? (
+                <div className='mt-1 ml-auto w-64 text-sm text-right text-dark-300'>
+                  ※iPhoneでは括弧抜き機能をご利用いただけません。
+                </div>
+              ) : null}
             </div>
           )
         })}
@@ -113,7 +119,7 @@ const Top: NextPage = () => {
       <Link href='/login' passHref>
         <Button
           variant='light'
-          className='block mx-auto mt-48 mb-8 w-5/6 h-12 xs:w-96'
+          className='block my-32 mx-auto w-5/6 h-12 xs:w-96'
         >
           使ってみる ( ログイン画面へ )
         </Button>
