@@ -177,14 +177,7 @@ const NoteForm: NextPage = () => {
   }, [currentBook, currentNote])
 
   return (
-    <div className='mx-auto max-w-xl'>
-      <ErrorModal error={state.error} dispatch={dispatch} />
-      <ClozeModal
-        clozeNote={state.clozeNote}
-        opened={state.opened}
-        note={state.note}
-        dispatch={dispatch}
-      />
+    <>
       <BreadCrumbs
         page='note-form'
         book={currentBook.title}
@@ -192,43 +185,56 @@ const NoteForm: NextPage = () => {
         badgeId={badgeId}
         bookId={bookId}
       />
-      <div className='ml-2 max-w-lg text-3xl'>
-        Note{state.edit ? '更新' : '作成'}
-      </div>
-      <div className='mt-1 ml-4 text-lg text-dark-400'>- {state.title}</div>
-      <div className='py-8 px-4 mt-2 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
-        <div className='flex mr-4'>
-          <LabelInput label={state.label} dispatch={dispatch} />
-          <PageInput page={state.page} dispatch={dispatch} />
-        </div>
-        <NoteInput note={state.note} cloze={state.cloze} dispatch={dispatch} />
-        <ClozeSwitch cloze={state.cloze} dispatch={dispatch} />
-        <ClozeNoteDisplay
+      <div className='mx-auto max-w-xl'>
+        <ErrorModal error={state.error} dispatch={dispatch} />
+        <ClozeModal
           clozeNote={state.clozeNote}
-          isShow={state.showClozeNote}
+          opened={state.opened}
+          note={state.note}
+          dispatch={dispatch}
+        />
+        <div className='ml-2 max-w-lg text-3xl'>
+          Note{state.edit ? '更新' : '作成'}
+        </div>
+        <div className='mt-1 ml-4 text-lg text-dark-400'>- {state.title}</div>
+        <div className='py-8 px-4 mt-2 mb-8 rounded-md border-dark-600 border-solid xs:px-6'>
+          <div className='flex mr-4'>
+            <LabelInput label={state.label} dispatch={dispatch} />
+            <PageInput page={state.page} dispatch={dispatch} />
+          </div>
+          <NoteInput
+            note={state.note}
+            cloze={state.cloze}
+            dispatch={dispatch}
+          />
+          <ClozeSwitch cloze={state.cloze} dispatch={dispatch} />
+          <ClozeNoteDisplay
+            clozeNote={state.clozeNote}
+            isShow={state.showClozeNote}
+          />
+        </div>
+        <AddNoteButton
+          uid={uid}
+          badgeId={badgeId}
+          bookId={bookId}
+          router={router}
+          edit={state.edit}
+          label={state.label}
+          page={state.page}
+          note={state.note}
+          clozeNote={state.clozeNote}
+          dispatch={dispatch}
+        />
+        <ToBackLink
+          text={
+            state.title.length > 10
+              ? `「${state.title.slice(0, 10)}...」`
+              : `「${state.title}」`
+          }
+          href={`/my-page/${uid}/${badgeId}/${bookId}`}
         />
       </div>
-      <AddNoteButton
-        uid={uid}
-        badgeId={badgeId}
-        bookId={bookId}
-        router={router}
-        edit={state.edit}
-        label={state.label}
-        page={state.page}
-        note={state.note}
-        clozeNote={state.clozeNote}
-        dispatch={dispatch}
-      />
-      <ToBackLink
-        text={
-          state.title.length > 10
-            ? `「${state.title.slice(0, 10)}...」`
-            : `「${state.title}」`
-        }
-        href={`/my-page/${uid}/${badgeId}/${bookId}`}
-      />
-    </div>
+    </>
   )
 }
 
